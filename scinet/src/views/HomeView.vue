@@ -38,12 +38,12 @@ const stats = [
 
 <style scoped>
 .hero {
-  padding: 80px 0 56px;
+  padding: 48px 0 36px;
   text-align: center;
 }
 
 .hero h1 {
-  margin: 0 0 20px;
+  margin: 0 0 12px;
   font-size: clamp(2.4rem, 6vw, 3.6rem);
 }
 
@@ -53,7 +53,7 @@ const stats = [
 
 .hero p {
   max-width: 600px;
-  margin: 0 auto 36px;
+  margin: 0 auto 24px;
   color: var(--color-text-muted);
   font-size: 1.25rem;
 }
@@ -77,14 +77,14 @@ const stats = [
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-bottom: 72px;
+  margin-bottom: 44px;
 }
 
 .stat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 12px;
+  padding: 20px 12px;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -106,7 +106,7 @@ const stats = [
   justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .section-head h2 {
