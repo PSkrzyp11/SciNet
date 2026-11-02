@@ -11,11 +11,11 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 64px;
-  padding: 20px 24px;
-  border-top: 1px solid #e5e7eb;
-  background: #fff;
-  color: #9ca3af;
+  margin-top: 80px;
+  padding: 28px 32px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
   font-size: 0.9rem;
 }
 </style>

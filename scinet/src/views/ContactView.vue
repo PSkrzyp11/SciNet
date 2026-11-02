@@ -10,6 +10,34 @@ function submit() {
   form.email = ''
   form.message = ''
 }
+
+const info = [
+  { label: 'E-mail', value: 'kontakt@scinet.pl' },
+  { label: 'Adres', value: 'ul. Naukowa 12, 00-001 Warszawa' },
+  { label: 'Odpowiadamy', value: 'pon.–pt., zwykle w ciągu 2 dni roboczych' },
+]
+
+const faq = [
+  {
+    question: 'Jak mogę zostać autorem?',
+    answer:
+      'Napisz do nas przez formularz, dołącz krótki opis siebie i pomysł na pierwszy artykuł. Odezwiemy się z dalszymi krokami.',
+  },
+  {
+    question: 'Czy mogę cytować artykuły z SciNet?',
+    answer:
+      'Tak, pod warunkiem podania autora i linku do oryginalnego tekstu. Przy przedruku całego artykułu poproś nas o zgodę.',
+  },
+  {
+    question: 'Znalazłem błąd w artykule. Co zrobić?',
+    answer:
+      'Daj nam znać, podając tytuł artykułu i fragment z błędem. Każde zgłoszenie sprawdzamy razem z autorem.',
+  },
+  {
+    question: 'Czy SciNet jest płatny?',
+    answer: 'Nie, wszystkie artykuły są dostępne za darmo i bez zakładania konta.',
+  },
+]
 </script>
 
 <template>
@@ -17,32 +45,53 @@ function submit() {
     <h1>Kontakt</h1>
     <p class="lead">Masz pytanie albo pomysł na artykuł? Napisz do nas.</p>
 
-    <div v-if="sent" class="success">
-      Dzięki! Wiadomość została wysłana.
-      <button class="link" @click="sent = false">Napisz kolejną</button>
+    <div class="columns">
+      <div v-if="sent" class="success">
+        <strong>Dzięki! Wiadomość została wysłana.</strong>
+        <p>Odpowiemy najszybciej, jak to możliwe.</p>
+        <button class="link" @click="sent = false">Napisz kolejną wiadomość</button>
+      </div>
+
+      <form v-else @submit.prevent="submit">
+        <label>
+          Imię
+          <input v-model="form.name" type="text" required />
+        </label>
+        <label>
+          E-mail
+          <input v-model="form.email" type="email" required />
+        </label>
+        <label>
+          Wiadomość
+          <textarea v-model="form.message" rows="6" required></textarea>
+        </label>
+        <button type="submit" class="btn">Wyślij</button>
+      </form>
+
+      <aside class="info">
+        <h2>Dane kontaktowe</h2>
+        <dl>
+          <div v-for="item in info" :key="item.label">
+            <dt>{{ item.label }}</dt>
+            <dd>{{ item.value }}</dd>
+          </div>
+        </dl>
+      </aside>
     </div>
 
-    <form v-else @submit.prevent="submit">
-      <label>
-        Imię
-        <input v-model="form.name" type="text" required />
-      </label>
-      <label>
-        E-mail
-        <input v-model="form.email" type="email" required />
-      </label>
-      <label>
-        Wiadomość
-        <textarea v-model="form.message" rows="5" required></textarea>
-      </label>
-      <button type="submit" class="btn">Wyślij</button>
-    </form>
+    <section class="faq">
+      <h2>Najczęstsze pytania</h2>
+      <details v-for="item in faq" :key="item.question">
+        <summary>{{ item.question }}</summary>
+        <p>{{ item.answer }}</p>
+      </details>
+    </section>
   </div>
 </template>
 
 <style scoped>
 .contact {
-  max-width: 520px;
+  max-width: 980px;
   margin: 0 auto;
 }
 
@@ -51,41 +100,52 @@ h1,
   text-align: center;
 }
 
-h1 {
-  margin: 32px 0 8px;
-  color: #1f2937;
+.lead {
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.lead {
-  margin: 0 0 24px;
-  color: #6b7280;
+.columns {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+form,
+.info,
+.success {
+  padding: 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
 }
 
 form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 520px;
-  padding: 24px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  gap: 20px;
 }
 
 label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   color: #374151;
   font-weight: 500;
 }
 
 input,
 textarea {
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid #d1d5db;
-  border-radius: 8px;
-  font: inherit;
+  border-radius: 10px;
   resize: vertical;
   transition: border-color 0.2s;
 }
@@ -93,41 +153,100 @@ textarea {
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px #eef2ff;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
 }
 
 .btn {
   align-self: flex-start;
-  padding: 10px 24px;
+  padding: 14px 32px;
   border: none;
-  border-radius: 10px;
-  background: #4f46e5;
+  border-radius: 12px;
+  background: var(--color-primary);
   color: #fff;
-  font: inherit;
   font-weight: 600;
   cursor: pointer;
 }
 
 .btn:hover {
-  background: #4338ca;
+  background: var(--color-primary-dark);
 }
 
 .success {
-  max-width: 520px;
-  padding: 20px 24px;
-  border-radius: 12px;
   background: #ecfdf5;
+  border-color: #a7f3d0;
   color: #065f46;
 }
 
+.success p {
+  margin: 8px 0 16px;
+}
+
 .link {
-  margin-left: 8px;
+  padding: 0;
   border: none;
   background: none;
-  color: #4f46e5;
-  font: inherit;
+  color: var(--color-primary);
   text-decoration: underline;
   cursor: pointer;
+}
+
+.info {
+  background: var(--color-primary-light);
+  border-color: #c7d2fe;
+}
+
+.info h2 {
+  font-size: 1.3rem;
+}
+
+dl {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 0;
+}
+
+dt {
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+dd {
+  margin: 2px 0 0;
+}
+
+.faq {
+  margin-top: 64px;
+}
+
+.faq h2 {
+  text-align: center;
+}
+
+details {
+  margin-bottom: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+summary {
+  padding: 20px 24px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+details[open] summary {
+  color: var(--color-primary);
+}
+
+details p {
+  margin: 0;
+  padding: 0 24px 20px;
+  color: var(--color-text-muted);
 }
 </style>

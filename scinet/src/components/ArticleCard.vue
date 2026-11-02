@@ -5,7 +5,7 @@ defineProps<{ article: Article }>()
 </script>
 
 <template>
-  <article class="card">
+  <RouterLink :to="`/artykuly/${article.id}`" class="card">
     <span class="category">{{ article.category }}</span>
     <h3>{{ article.title }}</h3>
     <p>{{ article.excerpt }}</p>
@@ -13,56 +13,67 @@ defineProps<{ article: Article }>()
       <span>{{ article.author }}</span>
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
     </footer>
-  </article>
+    <span class="more">Czytaj dalej →</span>
+  </RouterLink>
 </template>
 
 <style scoped>
 .card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 20px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: inherit;
+  text-decoration: none;
   transition:
     transform 0.2s,
-    box-shadow 0.2s;
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: var(--color-primary);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07);
 }
 
 .category {
   align-self: flex-start;
-  padding: 2px 10px;
+  padding: 3px 12px;
   border-radius: 999px;
-  background: #eef2ff;
-  color: #4f46e5;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   font-size: 0.8rem;
   font-weight: 600;
 }
 
 h3 {
   margin: 4px 0 0;
-  font-size: 1.1rem;
-  color: #1f2937;
+  font-size: 1.3rem;
 }
 
 p {
   margin: 0;
   flex: 1;
-  color: #6b7280;
-  line-height: 1.5;
+  color: var(--color-text-muted);
 }
 
 footer {
   display: flex;
   justify-content: space-between;
-  margin-top: 8px;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: var(--color-text-muted);
+}
+
+.more {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
 }
 </style>

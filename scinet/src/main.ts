@@ -11,4 +11,5 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-app.mount('#app')
+// Montujemy dopiero, gdy router ustali startowy adres (inaczej menu na chwilę podświetla „Start”)
+router.isReady().then(() => app.mount('#app'))

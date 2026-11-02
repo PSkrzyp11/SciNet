@@ -1,10 +1,18 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+
 const links = [
   { to: '/', label: 'Start' },
   { to: '/artykuly', label: 'Artykuły' },
   { to: '/autorzy', label: 'Autorzy' },
   { to: '/kontakt', label: 'Kontakt' },
 ]
+
+// Podstrona artykułu (/artykuly/3) też podświetla zakładkę „Artykuły”
+const isActive = (to: string) =>
+  route.path === to || (to !== '/' && route.path.startsWith(`${to}/`))
 </script>
 
 <template>
@@ -12,7 +20,12 @@ const links = [
     <RouterLink to="/" class="logo">Sci<span>Net</span></RouterLink>
 
     <nav>
-      <RouterLink v-for="link in links" :key="link.to" :to="link.to" exact-active-class="active">
+      <RouterLink
+        v-for="link in links"
+        :key="link.to"
+        :to="link.to"
+        :class="{ active: isActive(link.to) }"
+      >
         {{ link.label }}
       </RouterLink>
     </nav>
@@ -29,32 +42,32 @@ const links = [
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 14px 24px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 16px 32px;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
 }
 
 .logo {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .logo span {
-  color: #4f46e5;
+  color: var(--color-primary);
 }
 
 nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 6px;
 }
 
 nav a {
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
   color: #4b5563;
   text-decoration: none;
   font-weight: 500;
@@ -65,11 +78,11 @@ nav a {
 
 nav a:hover {
   background: #f3f4f6;
-  color: #1f2937;
+  color: var(--color-text);
 }
 
 nav a.active {
-  background: #eef2ff;
-  color: #4f46e5;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 </style>

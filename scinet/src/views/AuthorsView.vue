@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { articles } from '@/data/articles'
-
-const authors = [
-  { name: 'Anna Nowak', field: 'Fizyka i astronomia', color: '#4f46e5' },
-  { name: 'Marek Wiśniewski', field: 'Biologia molekularna', color: '#059669' },
-  { name: 'Kasia Zielińska', field: 'Informatyka i matematyka', color: '#d97706' },
-  { name: 'Tomasz Lewandowski', field: 'Ekologia', color: '#0891b2' },
-]
+import { authors } from '@/data/authors'
 
 const initials = (name: string) =>
   name
@@ -14,72 +8,118 @@ const initials = (name: string) =>
     .map((part) => part[0])
     .join('')
 
-const articleCount = (name: string) => articles.filter((a) => a.author === name).length
+const articlesBy = (name: string) => articles.filter((a) => a.author === name)
 </script>
 
 <template>
   <h1>Autorzy</h1>
+  <p class="lead">Poznaj osoby, które piszą dla SciNet, i zobacz, o czym piszą.</p>
 
   <div class="grid">
     <div v-for="author in authors" :key="author.name" class="author">
-      <div class="avatar" :style="{ background: author.color }">
-        {{ initials(author.name) }}
+      <div class="head">
+        <div class="avatar" :style="{ background: author.color }">
+          {{ initials(author.name) }}
+        </div>
+        <div>
+          <h3>{{ author.name }}</h3>
+          <span class="field">{{ author.field }}</span>
+        </div>
       </div>
-      <h3>{{ author.name }}</h3>
-      <p>{{ author.field }}</p>
-      <span class="count">Artykuły: {{ articleCount(author.name) }}</span>
+
+      <p class="bio">{{ author.bio }}</p>
+
+      <div class="written">
+        <strong>Artykuły ({{ articlesBy(author.name).length }})</strong>
+        <ul>
+          <li v-for="article in articlesBy(author.name)" :key="article.id">
+            <RouterLink :to="`/artykuly/${article.id}`">{{ article.title }}</RouterLink>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-h1 {
-  margin: 32px 0 20px;
-  color: #1f2937;
-}
-
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 500px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .author {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  padding: 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+}
+
+.head {
+  display: flex;
   align-items: center;
-  padding: 28px 16px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  text-align: center;
+  gap: 18px;
 }
 
 .avatar {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 12px;
+  flex-shrink: 0;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   color: #fff;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 700;
 }
 
 h3 {
-  margin: 0 0 4px;
-  color: #1f2937;
+  margin: 0 0 2px;
+  font-size: 1.35rem;
 }
 
-p {
-  margin: 0 0 12px;
-  color: #6b7280;
+.field {
+  color: var(--color-text-muted);
 }
 
-.count {
-  font-size: 0.85rem;
-  color: #4f46e5;
-  font-weight: 600;
+.bio {
+  margin: 0;
+  flex: 1;
+}
+
+.written {
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.written strong {
+  font-size: 0.95rem;
+}
+
+.written ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.written li + li {
+  margin-top: 4px;
+}
+
+.written a {
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.written a:hover {
+  text-decoration: underline;
 }
 </style>
