@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import { readingTime, type Article } from '@/data/articles'
+import { authorName } from '@/data/authors'
 
 defineProps<{ article: Article }>()
 </script>
@@ -16,7 +17,7 @@ defineProps<{ article: Article }>()
     </h3>
     <p>{{ article.excerpt }}</p>
     <footer>
-      <span>{{ article.author }}</span>
+      <span>{{ authorName(article.authorId) }}</span>
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
     </footer>
     <div class="bottom">

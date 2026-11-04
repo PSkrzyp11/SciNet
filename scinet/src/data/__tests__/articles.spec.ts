@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest'
 import { articles, readingTime, type Article } from '../articles'
-import { authors } from '../authors'
 
 function articleWithWords(count: number): Article {
   return {
     id: 1,
     title: 'Test',
     excerpt: 'Test',
-    author: 'Test',
-    category: 'Test',
+    authorId: 'anna-nowak',
+    category: 'Fizyka',
     date: '2026-01-01',
     content: [Array(count).fill('słowo').join(' ')],
   }
@@ -37,14 +36,6 @@ describe('dane artykułów', () => {
     const ids = articles.map((a) => a.id)
 
     expect(new Set(ids).size).toBe(ids.length)
-  })
-
-  it('mają autorów z listy autorów', () => {
-    const names = authors.map((a) => a.name)
-
-    for (const article of articles) {
-      expect(names).toContain(article.author)
-    }
   })
 
   it('mają poprawną datę i treść', () => {

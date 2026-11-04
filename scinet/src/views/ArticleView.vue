@@ -2,13 +2,14 @@
 import { computed } from 'vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import { articles, readingTime } from '@/data/articles'
+import { authorName } from '@/data/authors'
 
 const props = defineProps<{ id: string }>()
 
 const article = computed(() => articles.find((a) => a.id === Number(props.id)))
 
 const related = computed(() =>
-  articles.filter((a) => a.id !== article.value?.id && a.author === article.value?.author),
+  articles.filter((a) => a.id !== article.value?.id && a.authorId === article.value?.authorId),
 )
 </script>
 
@@ -23,7 +24,7 @@ const related = computed(() =>
     <h1>{{ article.title }}</h1>
 
     <div class="meta">
-      <span>{{ article.author }}</span>
+      <span>{{ authorName(article.authorId) }}</span>
       <span>·</span>
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
       <span>·</span>

@@ -1,9 +1,14 @@
+import type { AuthorId } from './authors'
+
+export type Category =
+  'Fizyka' | 'Biologia' | 'Informatyka' | 'Astronomia' | 'Ekologia' | 'Matematyka'
+
 export interface Article {
   id: number
   title: string
   excerpt: string
-  author: string
-  category: string
+  authorId: AuthorId
+  category: Category
   date: string
   content: string[]
 }
@@ -21,7 +26,7 @@ export const articles: Article[] = [
     id: 1,
     title: 'Jak działają komputery kwantowe?',
     excerpt: 'Kubity, superpozycja i splątanie wyjaśnione bez skomplikowanej matematyki.',
-    author: 'Anna Nowak',
+    authorId: 'anna-nowak',
     category: 'Fizyka',
     date: '2026-10-28',
     content: [
@@ -34,7 +39,7 @@ export const articles: Article[] = [
     id: 2,
     title: 'CRISPR w praktyce',
     excerpt: 'Edycja genów przestaje być science fiction. Gdzie jesteśmy dziś?',
-    author: 'Marek Wiśniewski',
+    authorId: 'marek-wisniewski',
     category: 'Biologia',
     date: '2026-10-21',
     content: [
@@ -47,7 +52,7 @@ export const articles: Article[] = [
     id: 3,
     title: 'Sieci neuronowe od podstaw',
     excerpt: 'Budujemy prosty model krok po kroku i sprawdzamy, czego się uczy.',
-    author: 'Kasia Zielińska',
+    authorId: 'kasia-zielinska',
     category: 'Informatyka',
     date: '2026-10-14',
     content: [
@@ -60,7 +65,7 @@ export const articles: Article[] = [
     id: 4,
     title: 'Czarne dziury na zdjęciach',
     excerpt: 'Jak astronomowie sfotografowali coś, czego z definicji nie widać.',
-    author: 'Anna Nowak',
+    authorId: 'anna-nowak',
     category: 'Astronomia',
     date: '2026-10-05',
     content: [
@@ -73,7 +78,7 @@ export const articles: Article[] = [
     id: 5,
     title: 'Mikroplastik w oceanach',
     excerpt: 'Skąd się bierze, gdzie trafia i co możemy z tym zrobić.',
-    author: 'Tomasz Lewandowski',
+    authorId: 'tomasz-lewandowski',
     category: 'Ekologia',
     date: '2026-09-29',
     content: [
@@ -86,7 +91,7 @@ export const articles: Article[] = [
     id: 6,
     title: 'Matematyka w muzyce',
     excerpt: 'Proporcje, częstotliwości i to, dlaczego niektóre akordy brzmią dobrze.',
-    author: 'Kasia Zielińska',
+    authorId: 'kasia-zielinska',
     category: 'Matematyka',
     date: '2026-09-18',
     content: [

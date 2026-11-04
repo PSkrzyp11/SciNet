@@ -81,7 +81,7 @@ scinet/src/
 └── style.css     # style globalne i kolory obu motywów
 ```
 
-Nowy artykuł wystarczy dopisać w `scinet/src/data/articles.ts`. Lista, filtry, statystyki i strona Autorzy uwzględnią go automatycznie.
+Nowy artykuł wystarczy dopisać w `scinet/src/data/articles.ts`. Lista, filtry, statystyki i strona Autorzy uwzględnią go automatycznie. Nową kategorię trzeba najpierw dodać do typu `Category`, a nowego autora do listy w `scinet/src/data/authors.ts`.
 
 ## Plany
 

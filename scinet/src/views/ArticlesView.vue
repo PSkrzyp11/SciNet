@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import { articles, type Article } from '@/data/articles'
+import { authorName } from '@/data/authors'
 
 const sorters = {
   newest: (a: Article, b: Article) => b.date.localeCompare(a.date),
@@ -47,7 +48,9 @@ const filtered = computed(() => {
       const inCategory = selected.value === 'Wszystkie' || a.category === selected.value
       const matches =
         !query ||
-        [a.title, a.excerpt, a.author].some((text) => text.toLowerCase().includes(query))
+        [a.title, a.excerpt, authorName(a.authorId)].some((text) =>
+          text.toLowerCase().includes(query),
+        )
       return inCategory && matches
     })
     .sort(sorters[sort.value])
@@ -61,7 +64,12 @@ function reset() {
 <template>
   <h1>Artykuły</h1>
 
-  <input v-model="search" type="search" class="search" placeholder="Szukaj po tytule, opisie lub autorze…" />
+  <input
+    v-model="search"
+    type="search"
+    class="search"
+    placeholder="Szukaj po tytule, opisie lub autorze…"
+  />
 
   <div class="filters">
     <button
