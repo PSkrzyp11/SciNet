@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
-import { readingTime, seedArticles } from '@/data/articles'
+import { readingTime } from '@/data/articles'
+import { useArticlesStore } from '@/stores/articles'
 
 const props = defineProps<{ id: string }>()
 
-const article = computed(() => seedArticles.find((a) => a.id === Number(props.id)))
+const store = useArticlesStore()
+
+const article = computed(() => store.articles.find((a) => a.id === Number(props.id)))
 
 const related = computed(() =>
-  seedArticles.filter((a) => a.id !== article.value?.id && a.author === article.value?.author),
+  store.articles.filter((a) => a.id !== article.value?.id && a.author === article.value?.author),
 )
 </script>
 

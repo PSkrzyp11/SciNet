@@ -1,6 +1,6 @@
 import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { seedArticles } from '@/data/articles'
+import { useArticlesStore } from './articles'
 
 const STORAGE_KEY = 'scinet-favorites'
 
@@ -23,9 +23,10 @@ function save(ids: number[]) {
 }
 
 export const useFavoritesStore = defineStore('favorites', () => {
+  const store = useArticlesStore()
   const ids = ref<number[]>(load())
 
-  const savedArticles = computed(() => seedArticles.filter((a) => ids.value.includes(a.id)))
+  const savedArticles = computed(() => store.articles.filter((a) => ids.value.includes(a.id)))
   const count = computed(() => savedArticles.value.length)
 
   function isFavorite(id: number) {

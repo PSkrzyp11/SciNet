@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { useFavoritesStore } from '../favorites'
+import { seedArticles } from '@/data/articles'
 
 const STORAGE_KEY = 'scinet-favorites'
 
@@ -53,6 +54,14 @@ describe('useFavoritesStore', () => {
     localStorage.setItem(STORAGE_KEY, '[1,999]')
 
     expect(useFavoritesStore().count).toBe(1)
+  })
+
+  it('korzysta z artykułów zapisanych w przeglądarce', () => {
+    const [first] = seedArticles
+    localStorage.setItem('scinet-articles', JSON.stringify([{ ...first, id: 100 }]))
+    localStorage.setItem(STORAGE_KEY, '[100,1]')
+
+    expect(useFavoritesStore().savedArticles.map((a) => a.id)).toEqual([100])
   })
 
   it.each(['{zepsute', '"tekst"', '{"id":1}', 'null'])('ignoruje uszkodzone dane: %s', (saved) => {

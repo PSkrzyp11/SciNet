@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import ArticlesView from '../ArticlesView.vue'
 import { seedArticles as articles } from '@/data/articles'
+import { useArticlesStore } from '@/stores/articles'
 
 async function mountAt(url: string) {
   const router = createRouter({
@@ -16,7 +17,8 @@ async function mountAt(url: string) {
   await router.push(url)
   await router.isReady()
 
-  const wrapper = mount(ArticlesView, { global: { plugins: [router, createPinia()] } })
+  const pinia = createPinia()
+  const wrapper = mount(ArticlesView, { global: { plugins: [router, pinia] } })
 
   const titles = () => wrapper.findAll('.card h3').map((title) => title.text())
   const filter = (name: string) => {
@@ -25,7 +27,7 @@ async function mountAt(url: string) {
     return button
   }
 
-  return { wrapper, router, titles, filter }
+  return { wrapper, router, titles, filter, store: useArticlesStore(pinia) }
 }
 
 describe('ArticlesView', () => {
@@ -41,6 +43,31 @@ describe('ArticlesView', () => {
     )
     expect(wrapper.find('.count').text()).toBe(`Znaleziono: ${articles.length}`)
     expect(filter('Wszystkie').classes()).toContain('active')
+  })
+
+  it('pokazuje artykuły zapisane w przeglądarce i ich dziedziny', async () => {
+    const [first] = articles
+    localStorage.setItem(
+      'scinet-articles',
+      JSON.stringify([{ ...first, title: 'Zapisany artykuł', category: 'Ekologia' }]),
+    )
+
+    const { wrapper, titles } = await mountAt('/artykuly')
+
+    expect(titles()).toEqual(['Zapisany artykuł'])
+    expect(wrapper.findAll('.filters button').map((b) => b.text())).toEqual([
+      'Wszystkie',
+      'Ekologia',
+    ])
+  })
+
+  it('reaguje na zmiany w store', async () => {
+    const { wrapper, store, titles } = await mountAt('/artykuly')
+
+    store.articles = store.articles.filter((a) => a.title === 'CRISPR w praktyce')
+    await wrapper.vm.$nextTick()
+
+    expect(titles()).toEqual(['CRISPR w praktyce'])
   })
 
   it('czyta kategorię i wyszukiwanie z adresu', async () => {
@@ -130,11 +157,11 @@ describe('ArticlesView', () => {
   })
 
   it('nie zmienia kolejności wspólnej listy artykułów', async () => {
-    const before = articles.map((a) => a.id)
-    const { wrapper } = await mountAt('/artykuly')
+    const { wrapper, store } = await mountAt('/artykuly')
+    const before = store.articles.map((a) => a.id)
 
     await wrapper.find('.sort select').setValue('title')
 
-    expect(articles.map((a) => a.id)).toEqual(before)
+    expect(store.articles.map((a) => a.id)).toEqual(before)
   })
 })

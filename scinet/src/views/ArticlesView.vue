@@ -2,7 +2,8 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
-import { seedArticles, type Article } from '@/data/articles'
+import type { Article } from '@/data/articles'
+import { useArticlesStore } from '@/stores/articles'
 
 const sorters = {
   newest: (a: Article, b: Article) => b.date.localeCompare(a.date),
@@ -10,7 +11,8 @@ const sorters = {
   title: (a: Article, b: Article) => a.title.localeCompare(b.title, 'pl'),
 }
 
-const categories = ['Wszystkie', ...new Set(seedArticles.map((a) => a.category))]
+const store = useArticlesStore()
+const categories = computed(() => ['Wszystkie', ...new Set(store.articles.map((a) => a.category))])
 const route = useRoute()
 const router = useRouter()
 
@@ -27,7 +29,7 @@ function updateQuery(changes: Record<string, string | undefined>) {
 const selected = computed({
   get: () => {
     const category = queryParam('kategoria')
-    return categories.includes(category) ? category : 'Wszystkie'
+    return categories.value.includes(category) ? category : 'Wszystkie'
   },
   set: (category) => updateQuery({ kategoria: category === 'Wszystkie' ? undefined : category }),
 })
@@ -42,7 +44,7 @@ const sort = ref<keyof typeof sorters>('newest')
 const filtered = computed(() => {
   const query = search.value.trim().toLowerCase()
 
-  return seedArticles
+  return store.articles
     .filter((a) => {
       const inCategory = selected.value === 'Wszystkie' || a.category === selected.value
       const matches = a.title.toLowerCase().includes(query)

@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { seedArticles } from '@/data/articles'
 import { authors, initials } from '@/data/authors'
+import { useArticlesStore } from '@/stores/articles'
 
-const articlesBy = (name: string) => seedArticles.filter((a) => a.author === name)
+const store = useArticlesStore()
+
+const articlesBy = (name: string) => store.articles.filter((a) => a.author === name)
 </script>
 
 <template>
