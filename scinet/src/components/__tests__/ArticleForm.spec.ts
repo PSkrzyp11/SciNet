@@ -17,6 +17,7 @@ async function fill(values: {
   author?: string
   category?: string
   content?: string
+  image?: string
 }) {
   for (const [name, value] of Object.entries(values)) {
     await wrapper.find(`[name="${name}"]`).setValue(value)
@@ -95,6 +96,58 @@ describe('ArticleForm', () => {
 
     expect(wrapper.emitted('publish')).toBeUndefined()
     expect(errorTexts()).toEqual([message])
+  })
+
+  it('publikuje artykuł z adresem obrazka', async () => {
+    mountForm()
+
+    await fill({
+      title: 'Tytuł',
+      category: 'Fizyka',
+      content: 'Treść',
+      image: '  https://example.com/obrazek.jpg ',
+    })
+    await submit()
+
+    expect(wrapper.emitted('publish')?.[0]?.[0]).toMatchObject({
+      image: 'https://example.com/obrazek.jpg',
+    })
+  })
+
+  it('obrazek jest opcjonalny', async () => {
+    mountForm()
+
+    await fill({ title: 'Tytuł', category: 'Fizyka', content: 'Treść', image: '   ' })
+    await submit()
+
+    expect(wrapper.emitted('publish')).toHaveLength(1)
+    expect(wrapper.emitted('publish')?.[0]?.[0]).toMatchObject({ image: undefined })
+  })
+
+  it.each([
+    'obrazek.jpg',
+    'ftp://example.com/a.jpg',
+    'javascript:alert(1)',
+    'data:image/png;base64,AA',
+  ])('nie publikuje z adresem obrazka: %s', async (image) => {
+    mountForm()
+
+    await fill({ title: 'Tytuł', category: 'Fizyka', content: 'Treść', image })
+    await submit()
+
+    expect(wrapper.emitted('publish')).toBeUndefined()
+    expect(errorTexts()).toEqual(['Podaj pełny adres zaczynający się od http:// lub https://.'])
+    expect(document.activeElement).toBe(wrapper.find('[name="image"]').element)
+  })
+
+  it('pokazuje błąd adresu obrazka po wyjściu z pola', async () => {
+    mountForm()
+
+    await fill({ image: 'obrazek.jpg' })
+    expect(errorTexts()).toEqual([])
+
+    await wrapper.find('[name="image"]').trigger('blur')
+    expect(errorTexts()).toEqual(['Podaj pełny adres zaczynający się od http:// lub https://.'])
   })
 
   it('nie publikuje bez dziedziny', async () => {

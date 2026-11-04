@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import ArticleImage from '@/components/ArticleImage.vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import { readingTime } from '@/data/articles'
 import { useArticlesStore } from '@/stores/articles'
@@ -32,6 +33,8 @@ const related = computed(() =>
       <span>·</span>
       <span>{{ readingTime(article) }} min czytania</span>
     </div>
+
+    <ArticleImage class="image" :src="article.image" :alt="article.title" />
 
     <p v-for="(paragraph, i) in article.content" :key="i">{{ paragraph }}</p>
 
@@ -105,8 +108,12 @@ p {
   white-space: pre-line;
 }
 
-/* Pierwszy akapit tuż pod autorem i datą jest wprowadzeniem do tekstu */
-.meta + p {
+.image {
+  margin-bottom: 32px;
+}
+
+/* Pierwszy akapit jest wprowadzeniem do tekstu, z obrazkiem i bez niego */
+.article > p:first-of-type {
   font-size: 1.25rem;
   font-weight: 500;
   color: var(--color-text-soft);

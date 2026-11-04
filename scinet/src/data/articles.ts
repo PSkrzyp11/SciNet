@@ -32,7 +32,17 @@ export interface Article {
 }
 
 // Dane z formularza: resztę pól uzupełnia store
-export type ArticleDraft = Pick<Article, 'title' | 'author' | 'category' | 'content'>
+export type ArticleDraft = Pick<Article, 'title' | 'author' | 'category' | 'content' | 'image'>
+
+// Tylko pełne adresy internetowe, bez plików wklejonych jako data: czy javascript:
+export function isImageUrl(text: string) {
+  try {
+    const { protocol } = new URL(text)
+    return protocol === 'http:' || protocol === 'https:'
+  } catch {
+    return false
+  }
+}
 
 // W formularzu akapity oddziela pusta linia
 export function toParagraphs(text: string) {
@@ -102,6 +112,9 @@ export const seedArticles: Article[] = [
     author: 'Anna Nowak',
     category: 'Astronomia',
     date: '2026-10-05',
+    // Ilustracja NASA/CXC/SAO, domena publiczna, Wikimedia Commons
+    image:
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Artist%27s_illustration_showing_material_in_a_disk_that_is_falling_towards_a_supermassive_black_hole.jpg/960px-Artist%27s_illustration_showing_material_in_a_disk_that_is_falling_towards_a_supermassive_black_hole.jpg',
     content: [
       'Czarnej dziury nie da się zobaczyć bezpośrednio, bo nie wypuszcza nawet światła. Widać za to gorącą materię, która krąży wokół niej, oraz „cień”, jaki rzuca na to świecące tło.',
       'Aby uzyskać taki obraz, połączono radioteleskopy z całego świata w jeden wirtualny instrument wielkości Ziemi, nazwany Teleskopem Horyzontu Zdarzeń.',
@@ -117,6 +130,9 @@ export const seedArticles: Article[] = [
     author: 'Tomasz Lewandowski',
     category: 'Ekologia',
     date: '2026-09-29',
+    // Zdjęcie NOAA Marine Debris Program, domena publiczna, Wikimedia Commons
+    image:
+      'https://thumb.wikimedia.org/wikipedia/commons/thumb/3/37/Pre-production_plastic_pellets_%287656726070%29.jpg/960px-Pre-production_plastic_pellets_%287656726070%29.jpg',
     content: [
       'Mikroplastik to drobiny tworzyw sztucznych mniejsze niż 5 mm. Powstają z rozpadu większych odpadów, ale też z prania syntetycznych ubrań czy ścierania opon.',
       'Cząstki te trafiają do rzek i oceanów, gdzie zjadają je ryby i plankton. W ten sposób mikroplastik wraca do nas przez łańcuch pokarmowy.',

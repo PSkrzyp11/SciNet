@@ -37,6 +37,7 @@ describe('BoardView', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.useRealTimers()
   })
 
   it('usuwa artykuł po potwierdzeniu', async () => {
@@ -141,6 +142,30 @@ describe('BoardView', () => {
     expect(titles()).toHaveLength(articles.length + 1)
     expect(titles()[0]).toBe('Nowy artykuł')
     expect(wrapper.find('.card').text()).toContain('Treść nowego artykułu.')
+  })
+
+  it('publikuje artykuł z obrazkiem i bez obrazka', async () => {
+    const { wrapper } = await mountAt('/')
+    const publish = async (title: string, image: string) => {
+      await wrapper.find('.add').trigger('click')
+      await wrapper.find('[name="title"]').setValue(title)
+      await wrapper.find('[name="category"]').setValue('Fizyka')
+      await wrapper.find('[name="content"]').setValue('Treść.')
+      await wrapper.find('[name="image"]').setValue(image)
+      await wrapper.find('.article-form').trigger('submit')
+      await flushPromises()
+    }
+
+    await publish('Z obrazkiem', 'https://example.com/obrazek.jpg')
+    expect(wrapper.find('.card h3').text()).toBe('Z obrazkiem')
+    expect(wrapper.find('.card').find('img').attributes('src')).toBe(
+      'https://example.com/obrazek.jpg',
+    )
+
+    vi.setSystemTime(Date.now() + 1000)
+    await publish('Bez obrazka', '')
+    expect(wrapper.find('.card h3').text()).toBe('Bez obrazka')
+    expect(wrapper.find('.card').find('img').exists()).toBe(false)
   })
 
   it('nowy artykuł nie zmienia kolejności filtrów', async () => {

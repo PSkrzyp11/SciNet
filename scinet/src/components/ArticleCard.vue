@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ArticleImage from '@/components/ArticleImage.vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import { readingTime, type Article } from '@/data/articles'
 
@@ -33,6 +34,7 @@ function confirmDelete() {
         </button>
       </div>
     </div>
+    <ArticleImage :src="article.image" :alt="article.title" />
     <h3>
       <RouterLink :to="`/artykuly/${article.id}`" class="title">{{ article.title }}</RouterLink>
     </h3>

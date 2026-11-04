@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
-import { CATEGORIES, toParagraphs, type ArticleDraft, type Category } from '@/data/articles'
+import {
+  CATEGORIES,
+  isImageUrl,
+  toParagraphs,
+  type ArticleDraft,
+  type Category,
+} from '@/data/articles'
 import { currentUser } from '@/data/authors'
 
-type Field = 'title' | 'author' | 'category' | 'content'
+type Field = 'title' | 'author' | 'category' | 'content' | 'image'
 
 // Formularz nie zna store'a: gotowe dane przekazuje rodzicowi przez emit
 const emit = defineEmits<{ publish: [draft: ArticleDraft]; cancel: [] }>()
@@ -13,8 +19,15 @@ const form = reactive({
   author: currentUser.name,
   category: '' as Category | '',
   content: '',
+  image: '',
 })
-const touched = reactive({ title: false, author: false, category: false, content: false })
+const touched = reactive({
+  title: false,
+  author: false,
+  category: false,
+  content: false,
+  image: false,
+})
 const formElement = ref<HTMLFormElement | null>(null)
 
 const errors = computed<Record<Field, string>>(() => ({
@@ -22,9 +35,14 @@ const errors = computed<Record<Field, string>>(() => ({
   author: form.author.trim() ? '' : 'Podaj autora.',
   category: form.category ? '' : 'Wybierz dziedzinę.',
   content: form.content.trim() ? '' : 'Napisz treść artykułu.',
+  // Obrazek jest opcjonalny, więc sprawdzamy tylko wpisany adres
+  image:
+    form.image.trim() && !isImageUrl(form.image.trim())
+      ? 'Podaj pełny adres zaczynający się od http:// lub https://.'
+      : '',
 }))
 
-// Błąd widać dopiero po próbie publikacji albo po wyczyszczeniu sprawdzonego pola
+// Błąd widać dopiero po wyjściu z wypełnionego pola albo po próbie publikacji
 const visibleError = (field: Field) => (touched[field] ? errors.value[field] : '')
 
 function fieldAttrs(field: Field) {
@@ -41,7 +59,7 @@ function fieldAttrs(field: Field) {
 }
 
 async function submit() {
-  Object.assign(touched, { title: true, author: true, category: true, content: true })
+  Object.assign(touched, { title: true, author: true, category: true, content: true, image: true })
 
   if (!form.category || Object.values(errors.value).some(Boolean)) {
     await nextTick()
@@ -54,6 +72,7 @@ async function submit() {
     author: form.author.trim(),
     category: form.category,
     content: toParagraphs(form.content),
+    image: form.image.trim() || undefined,
   })
 }
 
@@ -117,9 +136,28 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
       <span v-else class="hint">Akapity oddziel pustą linią.</span>
     </div>
 
+    <div class="field">
+      <label>
+        Adres obrazka (opcjonalnie)
+        <input
+          v-model="form.image"
+          type="url"
+          placeholder="https://"
+          v-bind="fieldAttrs('image')"
+        />
+      </label>
+      <span v-if="visibleError('image')" id="article-image-error" class="error">
+        {{ visibleError('image') }}
+      </span>
+      <span v-else class="hint">Podaj adres obrazka z internetu, nie plik z komputera.</span>
+    </div>
+
+    <!-- Bez blur przy wciśnięciu myszy błąd adresu nie przesuwa przycisków w trakcie klikania -->
     <div class="actions">
-      <button type="submit" class="publish">Opublikuj</button>
-      <button type="button" class="cancel" @click="emit('cancel')">Anuluj</button>
+      <button type="submit" class="publish" @mousedown.prevent>Opublikuj</button>
+      <button type="button" class="cancel" @mousedown.prevent @click="emit('cancel')">
+        Anuluj
+      </button>
     </div>
   </form>
 </template>

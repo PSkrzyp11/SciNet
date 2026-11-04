@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES, readingTime, seedArticles, toParagraphs, type Article } from '../articles'
+import {
+  CATEGORIES,
+  isImageUrl,
+  readingTime,
+  seedArticles,
+  toParagraphs,
+  type Article,
+} from '../articles'
 import { authors } from '../authors'
 
 function articleWithWords(count: number): Article {
@@ -53,7 +60,35 @@ describe('toParagraphs', () => {
   })
 })
 
+describe('isImageUrl', () => {
+  it.each(['https://example.com/a.jpg', 'http://example.com/a.png?w=100'])(
+    'przyjmuje adres internetowy: %s',
+    (url) => {
+      expect(isImageUrl(url)).toBe(true)
+    },
+  )
+
+  it.each([
+    '',
+    'obrazek.jpg',
+    'example.com/a.jpg',
+    'https://',
+    'ftp://example.com/a.jpg',
+    'javascript:alert(1)',
+    'data:image/png;base64,AAAA',
+  ])('odrzuca: "%s"', (text) => {
+    expect(isImageUrl(text)).toBe(false)
+  })
+})
+
 describe('przykładowe artykuły', () => {
+  it('są z obrazkami i bez, a adresy obrazków są poprawne', () => {
+    const images = seedArticles.flatMap((a) => (a.image ? [a.image] : []))
+
+    expect(images).toHaveLength(2)
+    expect(images.every(isImageUrl)).toBe(true)
+  })
+
   it('mają unikalne identyfikatory', () => {
     const ids = seedArticles.map((a) => a.id)
 

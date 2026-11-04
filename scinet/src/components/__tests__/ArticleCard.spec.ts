@@ -16,9 +16,9 @@ const article: Article = {
   comments: [],
 }
 
-function mountCard() {
+function mountCard(changes: Partial<Article> = {}) {
   return mount(ArticleCard, {
-    props: { article },
+    props: { article: { ...article, ...changes } },
     global: { plugins: [createPinia()], stubs: { RouterLink: RouterLinkStub } },
   })
 }
@@ -26,6 +26,26 @@ function mountCard() {
 describe('ArticleCard', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+  })
+
+  it('pokazuje obrazek artykułu, który go ma', () => {
+    const img = mountCard({ image: 'https://example.com/obrazek.jpg' }).find('img')
+
+    expect(img.attributes('src')).toBe('https://example.com/obrazek.jpg')
+    expect(img.attributes('alt')).toBe('Tytuł testowy')
+  })
+
+  it('bez obrazka nie zostawia pustej ramki', () => {
+    expect(mountCard().find('img').exists()).toBe(false)
+  })
+
+  it('przy złym adresie obrazka karta zostaje, ale bez ramki', async () => {
+    const wrapper = mountCard({ image: 'https://example.com/nie-ma.jpg' })
+
+    await wrapper.find('img').trigger('error')
+
+    expect(wrapper.find('img').exists()).toBe(false)
+    expect(wrapper.text()).toContain('Tytuł testowy')
   })
 
   it('po potwierdzeniu prosi rodzica o usunięcie artykułu', async () => {
