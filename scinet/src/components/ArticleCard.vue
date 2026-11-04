@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import { readingTime, type Article } from '@/data/articles'
-import { authorName } from '@/data/authors'
 
 defineProps<{ article: Article }>()
 </script>
@@ -15,9 +14,9 @@ defineProps<{ article: Article }>()
     <h3>
       <RouterLink :to="`/artykuly/${article.id}`" class="title">{{ article.title }}</RouterLink>
     </h3>
-    <p>{{ article.excerpt }}</p>
+    <p class="text">{{ article.content.join(' ') }}</p>
     <footer>
-      <span>{{ authorName(article.authorId) }}</span>
+      <span>{{ article.author }}</span>
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
     </footer>
     <div class="bottom">
@@ -83,16 +82,22 @@ h3 {
   border-radius: var(--radius);
 }
 
-p {
+/* Na karcie tylko początek treści, całość jest na stronie artykułu */
+.text {
+  display: -webkit-box;
   margin: 0;
-  flex: 1;
+  overflow: hidden;
   color: var(--color-text-muted);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
 }
 
 footer {
   display: flex;
   justify-content: space-between;
   gap: 8px;
+  margin-top: auto;
   padding-top: 14px;
   border-top: 1px solid var(--color-border);
   font-size: 0.85rem;

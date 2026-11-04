@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import ArticleCard from '@/components/ArticleCard.vue'
-import { articles } from '@/data/articles'
+import { seedArticles } from '@/data/articles'
 import { authors } from '@/data/authors'
 
-const latest = articles.slice(0, 3)
+const latest = seedArticles.slice(0, 3)
 
 // Polska odmiana: 1 artykuł, 2 artykuły, 5 artykułów
 function plural(count: number, one: string, few: string, many: string) {
@@ -13,12 +13,12 @@ function plural(count: number, one: string, few: string, many: string) {
   return lastDigit >= 2 && lastDigit <= 4 && (lastTwo < 12 || lastTwo > 14) ? few : many
 }
 
-const categoryCount = new Set(articles.map((a) => a.category)).size
+const categoryCount = new Set(seedArticles.map((a) => a.category)).size
 
 const stats = [
   {
-    value: articles.length,
-    label: plural(articles.length, 'artykuł', 'artykuły', 'artykułów'),
+    value: seedArticles.length,
+    label: plural(seedArticles.length, 'artykuł', 'artykuły', 'artykułów'),
   },
   {
     value: authors.length,

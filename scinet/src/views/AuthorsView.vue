@@ -1,14 +1,8 @@
 <script setup lang="ts">
-import { articles } from '@/data/articles'
-import { authors, type AuthorId } from '@/data/authors'
+import { seedArticles } from '@/data/articles'
+import { authors, initials } from '@/data/authors'
 
-const initials = (name: string) =>
-  name
-    .split(' ')
-    .map((part) => part[0])
-    .join('')
-
-const articlesBy = (id: AuthorId) => articles.filter((a) => a.authorId === id)
+const articlesBy = (name: string) => seedArticles.filter((a) => a.author === name)
 </script>
 
 <template>
@@ -16,7 +10,7 @@ const articlesBy = (id: AuthorId) => articles.filter((a) => a.authorId === id)
   <p class="lead">Poznaj osoby, które piszą dla SciNet, i zobacz, o czym piszą.</p>
 
   <div class="grid">
-    <div v-for="author in authors" :key="author.id" class="author">
+    <div v-for="author in authors" :key="author.name" class="author">
       <div class="head">
         <div class="avatar" :style="{ background: author.color }">
           {{ initials(author.name) }}
@@ -30,9 +24,9 @@ const articlesBy = (id: AuthorId) => articles.filter((a) => a.authorId === id)
       <p class="bio">{{ author.bio }}</p>
 
       <div class="written">
-        <strong>Artykuły ({{ articlesBy(author.id).length }})</strong>
+        <strong>Artykuły ({{ articlesBy(author.name).length }})</strong>
         <ul>
-          <li v-for="article in articlesBy(author.id)" :key="article.id">
+          <li v-for="article in articlesBy(author.name)" :key="article.id">
             <RouterLink :to="`/artykuly/${article.id}`">{{ article.title }}</RouterLink>
           </li>
         </ul>

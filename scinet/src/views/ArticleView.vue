@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
-import { articles, readingTime } from '@/data/articles'
-import { authorName } from '@/data/authors'
+import { readingTime, seedArticles } from '@/data/articles'
 
 const props = defineProps<{ id: string }>()
 
-const article = computed(() => articles.find((a) => a.id === Number(props.id)))
+const article = computed(() => seedArticles.find((a) => a.id === Number(props.id)))
 
 const related = computed(() =>
-  articles.filter((a) => a.id !== article.value?.id && a.authorId === article.value?.authorId),
+  seedArticles.filter((a) => a.id !== article.value?.id && a.author === article.value?.author),
 )
 </script>
 
@@ -24,14 +23,13 @@ const related = computed(() =>
     <h1>{{ article.title }}</h1>
 
     <div class="meta">
-      <span>{{ authorName(article.authorId) }}</span>
+      <span>{{ article.author }}</span>
       <span>·</span>
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
       <span>·</span>
       <span>{{ readingTime(article) }} min czytania</span>
     </div>
 
-    <p class="excerpt">{{ article.excerpt }}</p>
     <p v-for="(paragraph, i) in article.content" :key="i">{{ paragraph }}</p>
 
     <aside v-if="related.length" class="related">
@@ -96,16 +94,17 @@ h1 {
   color: var(--color-text-muted);
 }
 
-.excerpt {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: var(--color-text-soft);
-}
-
 p {
   margin: 0 0 22px;
   font-size: 1.1rem;
   line-height: 1.8;
+}
+
+/* Pierwszy akapit tuż pod autorem i datą jest wprowadzeniem do tekstu */
+.meta + p {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-text-soft);
 }
 
 .related {

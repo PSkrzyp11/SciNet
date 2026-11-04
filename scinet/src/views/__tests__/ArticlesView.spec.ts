@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import ArticlesView from '../ArticlesView.vue'
-import { articles } from '@/data/articles'
+import { seedArticles as articles } from '@/data/articles'
 
 async function mountAt(url: string) {
   const router = createRouter({
@@ -81,14 +81,20 @@ describe('ArticlesView', () => {
     expect(titles()).toHaveLength(articles.length)
   })
 
-  it('szuka bez względu na wielkość liter, także po autorze', async () => {
+  it('szuka po tytule bez względu na wielkość liter', async () => {
     const { wrapper, router, titles } = await mountAt('/artykuly')
 
-    await wrapper.find('.search').setValue('KASIA')
+    await wrapper.find('.search').setValue('KWANTOWE')
     await flushPromises()
 
-    expect(router.currentRoute.value.query.q).toBe('KASIA')
-    expect(titles().sort()).toEqual(['Matematyka w muzyce', 'Sieci neuronowe od podstaw'])
+    expect(router.currentRoute.value.query.q).toBe('KWANTOWE')
+    expect(titles()).toEqual(['Jak działają komputery kwantowe?'])
+  })
+
+  it.each(['Kasia', 'splątanie'])('nie szuka po autorze ani treści: %s', async (text) => {
+    const { titles } = await mountAt(`/artykuly?q=${encodeURIComponent(text)}`)
+
+    expect(titles()).toEqual([])
   })
 
   it('łączy kategorię z wyszukiwaniem', async () => {
