@@ -11,15 +11,18 @@ import { currentUser } from '@/data/authors'
 
 type Field = 'title' | 'author' | 'category' | 'content' | 'image'
 
+// Z propsem initial formularz służy do edycji istniejącego artykułu
+const props = defineProps<{ initial?: ArticleDraft }>()
+
 // Formularz nie zna store'a: gotowe dane przekazuje rodzicowi przez emit
-const emit = defineEmits<{ publish: [draft: ArticleDraft]; cancel: [] }>()
+const emit = defineEmits<{ save: [draft: ArticleDraft]; cancel: [] }>()
 
 const form = reactive({
-  title: '',
-  author: currentUser.name,
-  category: '' as Category | '',
-  content: '',
-  image: '',
+  title: props.initial?.title ?? '',
+  author: props.initial?.author ?? currentUser.name,
+  category: (props.initial?.category ?? '') as Category | '',
+  content: props.initial?.content.join('\n\n') ?? '',
+  image: props.initial?.image ?? '',
 })
 const touched = reactive({
   title: false,
@@ -67,7 +70,7 @@ async function submit() {
     return
   }
 
-  emit('publish', {
+  emit('save', {
     title: form.title.trim(),
     author: form.author.trim(),
     category: form.category,
@@ -81,7 +84,7 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
 
 <template>
   <form ref="formElement" class="article-form" novalidate @submit.prevent="submit">
-    <h2>Nowy artykuł</h2>
+    <h2 v-if="!initial">Nowy artykuł</h2>
 
     <div class="field">
       <label>
@@ -154,7 +157,9 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
 
     <!-- Bez blur przy wciśnięciu myszy błąd adresu nie przesuwa przycisków w trakcie klikania -->
     <div class="actions">
-      <button type="submit" class="publish" @mousedown.prevent>Opublikuj</button>
+      <button type="submit" class="publish" @mousedown.prevent>
+        {{ initial ? 'Zapisz zmiany' : 'Opublikuj' }}
+      </button>
       <button type="button" class="cancel" @mousedown.prevent @click="emit('cancel')">
         Anuluj
       </button>

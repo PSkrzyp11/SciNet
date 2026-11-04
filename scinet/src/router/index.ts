@@ -15,6 +15,13 @@ const router = createRouter({
       meta: { title: 'Artykuł' },
     },
     {
+      path: '/artykuly/:id/edytuj',
+      name: 'article-edit',
+      component: () => import('@/views/EditArticleView.vue'),
+      props: true,
+      meta: { title: 'Edycja artykułu' },
+    },
+    {
       path: '/autorzy',
       name: 'authors',
       component: () => import('@/views/AuthorsView.vue'),

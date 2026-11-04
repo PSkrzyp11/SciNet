@@ -91,7 +91,7 @@ function publish(draft: ArticleDraft) {
     <div class="content">
       <h1>Tablica</h1>
 
-      <ArticleForm v-if="formOpen" @publish="publish" @cancel="closeForm" />
+      <ArticleForm v-if="formOpen" @save="publish" @cancel="closeForm" />
       <button v-else ref="addButton" type="button" class="add" @click="formOpen = true">
         Dodaj artykuł
       </button>

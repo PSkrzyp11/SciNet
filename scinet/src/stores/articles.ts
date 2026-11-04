@@ -91,6 +91,14 @@ export const useArticlesStore = defineStore('articles', () => {
     articles.value = [article, ...articles.value]
   }
 
+  // Formularz zmienia tylko swoje pola: data, polubienia i komentarze zostają.
+  // Szkic bez obrazka oznacza jego usunięcie, dlatego image jest podane wprost.
+  function update(id: number, draft: ArticleDraft) {
+    articles.value = articles.value.map((article) =>
+      article.id === id ? { ...article, ...draft, image: draft.image } : article,
+    )
+  }
+
   function remove(id: number) {
     articles.value = articles.value.filter((article) => article.id !== id)
   }
@@ -108,5 +116,5 @@ export const useArticlesStore = defineStore('articles', () => {
     )
   }
 
-  return { articles, topLiked, add, remove, toggleLike }
+  return { articles, topLiked, add, update, remove, toggleLike }
 })

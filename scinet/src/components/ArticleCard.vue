@@ -22,9 +22,19 @@ function confirmDelete() {
       <span class="category">{{ article.category }}</span>
       <div class="actions">
         <FavoriteButton :article-id="article.id" />
+        <RouterLink
+          :to="`/artykuly/${article.id}/edytuj`"
+          class="icon-action edit"
+          aria-label="Edytuj artykuł"
+          title="Edytuj artykuł"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M4 20h4L19 9l-4-4L4 16v4zM13 7l4 4" />
+          </svg>
+        </RouterLink>
         <button
           type="button"
-          class="delete"
+          class="icon-action delete"
           aria-label="Usuń artykuł"
           title="Usuń artykuł"
           @click="confirmDelete"
@@ -78,19 +88,20 @@ function confirmDelete() {
 
 .top {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
   gap: 8px;
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  margin-left: auto;
 }
 
-/* Przycisk leży nad linkiem rozciągniętym na całą kartę */
-.delete {
+/* Przyciski leżą nad linkiem rozciągniętym na całą kartę */
+.icon-action {
   position: relative;
   z-index: 1;
   display: inline-flex;
@@ -105,12 +116,17 @@ function confirmDelete() {
     color 0.2s;
 }
 
+.edit:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
 .delete:hover {
   background: var(--color-hover);
   color: var(--color-error);
 }
 
-.delete svg {
+.icon-action svg {
   flex-shrink: 0;
   fill: none;
   stroke: currentColor;
@@ -121,6 +137,7 @@ function confirmDelete() {
 
 .category {
   padding: 3px 12px;
+  white-space: nowrap;
   border-radius: 999px;
   background: var(--color-primary-light);
   color: var(--color-primary);

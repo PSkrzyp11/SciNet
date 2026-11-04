@@ -13,6 +13,7 @@ describe('router', () => {
   it.each([
     ['/', 'home', 'SciNet'],
     ['/artykuly/1', 'article', 'Artykuł | SciNet'],
+    ['/artykuly/1/edytuj', 'article-edit', 'Edycja artykułu | SciNet'],
     ['/autorzy', 'authors', 'Autorzy | SciNet'],
     ['/zapisane', 'favorites', 'Zapisane | SciNet'],
     ['/kontakt', 'contact', 'Kontakt | SciNet'],

@@ -180,6 +180,66 @@ describe('useArticlesStore', () => {
     expect(store.articles.map((a) => a.id)).toEqual(seedArticles.map((a) => a.id))
   })
 
+  it('edycja zmienia pola z formularza, a resztę zostawia', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([article]))
+    const store = reload()
+
+    store.update(100, draft)
+
+    expect(store.articles[0]).toEqual({
+      ...draft,
+      id: article.id,
+      date: article.date,
+      likes: article.likes,
+      liked: article.liked,
+      comments: article.comments,
+    })
+  })
+
+  it('edycja może usunąć obrazek', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([article]))
+    const store = reload()
+
+    store.update(100, { ...draft, image: undefined })
+
+    expect(store.articles[0]?.image).toBeUndefined()
+  })
+
+  it('edycja nie zmienia innych artykułów ani kolejności', () => {
+    const store = reload()
+
+    store.update(2, draft)
+
+    expect(store.articles.map((a) => a.id)).toEqual(seedArticles.map((a) => a.id))
+    expect(store.articles.filter((a) => a.title === draft.title).map((a) => a.id)).toEqual([2])
+  })
+
+  it('zmiany z edycji są na miejscu po odświeżeniu', async () => {
+    const store = reload()
+
+    store.update(2, draft)
+    await nextTick()
+
+    expect(reload().articles.find((a) => a.id === 2)?.title).toBe(draft.title)
+  })
+
+  it('edycja nie zmienia przykładowych danych', () => {
+    const before = seedArticles[1]?.title
+    const store = reload()
+
+    store.update(2, draft)
+
+    expect(seedArticles[1]?.title).toBe(before)
+  })
+
+  it('edycja nieistniejącego artykułu niczego nie zmienia', () => {
+    const store = reload()
+
+    store.update(999, draft)
+
+    expect(store.articles).toEqual(seedArticles)
+  })
+
   it('usuwa wskazany artykuł, a resztę zostawia', () => {
     const store = reload()
 

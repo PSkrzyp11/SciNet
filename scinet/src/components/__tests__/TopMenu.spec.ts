@@ -37,6 +37,7 @@ describe('TopMenu', () => {
   it.each([
     ['/', 'Tablica'],
     ['/artykuly/3', 'Tablica'],
+    ['/artykuly/3/edytuj', 'Tablica'],
     ['/autorzy', 'Autorzy'],
     ['/kontakt', 'Kontakt'],
   ])('na stronie %s podświetla zakładkę %s', async (url, label) => {

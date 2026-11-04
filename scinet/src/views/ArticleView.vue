@@ -30,6 +30,7 @@ const related = computed(() =>
           @toggle="store.toggleLike(article.id)"
         />
         <FavoriteButton :article-id="article.id" with-label />
+        <RouterLink :to="`/artykuly/${article.id}/edytuj`" class="edit">Edytuj</RouterLink>
       </div>
     </div>
     <h1>{{ article.title }}</h1>
@@ -92,6 +93,26 @@ const related = computed(() =>
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.edit {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.edit:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .category {

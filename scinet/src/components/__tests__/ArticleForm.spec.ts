@@ -1,15 +1,25 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { flushPromises, mount, type VueWrapper } from '@vue/test-utils'
 import ArticleForm from '../ArticleForm.vue'
-import { CATEGORIES } from '@/data/articles'
+import { CATEGORIES, type ArticleDraft } from '@/data/articles'
 import { currentUser } from '@/data/authors'
 
 let wrapper: VueWrapper
 
-function mountForm() {
+function mountForm(initial?: ArticleDraft) {
   // Podpięcie do dokumentu jest potrzebne, żeby sprawdzać, gdzie jest kursor
-  wrapper = mount(ArticleForm, { attachTo: document.body })
+  wrapper = mount(ArticleForm, { attachTo: document.body, props: { initial } })
   return wrapper
+}
+
+const value = (name: string) => (wrapper.find(`[name="${name}"]`).element as HTMLInputElement).value
+
+const draft: ArticleDraft = {
+  title: 'Istniejący tytuł',
+  author: 'Jan Kowalski',
+  category: 'Ekologia',
+  content: ['Pierwszy akapit.', 'Drugi akapit.\nNowa linia.'],
+  image: 'https://example.com/obrazek.jpg',
 }
 
 async function fill(values: {
@@ -45,6 +55,52 @@ describe('ArticleForm', () => {
     )
   })
 
+  it('przy nowym artykule ma nagłówek i przycisk publikacji', () => {
+    mountForm()
+
+    expect(wrapper.find('h2').text()).toBe('Nowy artykuł')
+    expect(wrapper.find('.publish').text()).toBe('Opublikuj')
+  })
+
+  it('przy edycji wypełnia pola danymi artykułu', () => {
+    mountForm(draft)
+
+    expect(value('title')).toBe('Istniejący tytuł')
+    expect(value('author')).toBe('Jan Kowalski')
+    expect(value('category')).toBe('Ekologia')
+    expect(value('content')).toBe('Pierwszy akapit.\n\nDrugi akapit.\nNowa linia.')
+    expect(value('image')).toBe('https://example.com/obrazek.jpg')
+    expect(wrapper.find('h2').exists()).toBe(false)
+    expect(wrapper.find('.publish').text()).toBe('Zapisz zmiany')
+  })
+
+  it('zapis bez zmian oddaje te same dane, także podział na akapity', async () => {
+    mountForm(draft)
+
+    await submit()
+
+    expect(wrapper.emitted('save')).toEqual([[draft]])
+  })
+
+  it('przy edycji też sprawdza pola', async () => {
+    mountForm(draft)
+
+    await fill({ title: '' })
+    await submit()
+
+    expect(wrapper.emitted('save')).toBeUndefined()
+    expect(errorTexts()).toEqual(['Podaj tytuł artykułu.'])
+  })
+
+  it('przy edycji pozwala usunąć obrazek', async () => {
+    mountForm(draft)
+
+    await fill({ image: '' })
+    await submit()
+
+    expect(wrapper.emitted('save')?.[0]?.[0]).toMatchObject({ image: undefined })
+  })
+
   it('pozwala wybrać każdą dziedzinę nauki', () => {
     mountForm()
 
@@ -70,7 +126,7 @@ describe('ArticleForm', () => {
     })
     await submit()
 
-    expect(wrapper.emitted('publish')).toEqual([
+    expect(wrapper.emitted('save')).toEqual([
       [
         {
           title: 'Nowy tytuł',
@@ -94,7 +150,7 @@ describe('ArticleForm', () => {
     await fill({ category: 'Fizyka', ...values })
     await submit()
 
-    expect(wrapper.emitted('publish')).toBeUndefined()
+    expect(wrapper.emitted('save')).toBeUndefined()
     expect(errorTexts()).toEqual([message])
   })
 
@@ -109,7 +165,7 @@ describe('ArticleForm', () => {
     })
     await submit()
 
-    expect(wrapper.emitted('publish')?.[0]?.[0]).toMatchObject({
+    expect(wrapper.emitted('save')?.[0]?.[0]).toMatchObject({
       image: 'https://example.com/obrazek.jpg',
     })
   })
@@ -120,8 +176,8 @@ describe('ArticleForm', () => {
     await fill({ title: 'Tytuł', category: 'Fizyka', content: 'Treść', image: '   ' })
     await submit()
 
-    expect(wrapper.emitted('publish')).toHaveLength(1)
-    expect(wrapper.emitted('publish')?.[0]?.[0]).toMatchObject({ image: undefined })
+    expect(wrapper.emitted('save')).toHaveLength(1)
+    expect(wrapper.emitted('save')?.[0]?.[0]).toMatchObject({ image: undefined })
   })
 
   it.each([
@@ -135,7 +191,7 @@ describe('ArticleForm', () => {
     await fill({ title: 'Tytuł', category: 'Fizyka', content: 'Treść', image })
     await submit()
 
-    expect(wrapper.emitted('publish')).toBeUndefined()
+    expect(wrapper.emitted('save')).toBeUndefined()
     expect(errorTexts()).toEqual(['Podaj pełny adres zaczynający się od http:// lub https://.'])
     expect(document.activeElement).toBe(wrapper.find('[name="image"]').element)
   })
@@ -156,7 +212,7 @@ describe('ArticleForm', () => {
     await fill({ title: 'Tytuł', content: 'Treść' })
     await submit()
 
-    expect(wrapper.emitted('publish')).toBeUndefined()
+    expect(wrapper.emitted('save')).toBeUndefined()
     expect(errorTexts()).toEqual(['Wybierz dziedzinę.'])
   })
 
@@ -187,6 +243,6 @@ describe('ArticleForm', () => {
     await wrapper.find('.cancel').trigger('click')
 
     expect(wrapper.emitted('cancel')).toHaveLength(1)
-    expect(wrapper.emitted('publish')).toBeUndefined()
+    expect(wrapper.emitted('save')).toBeUndefined()
   })
 })

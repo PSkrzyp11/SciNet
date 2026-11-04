@@ -41,6 +41,12 @@ describe('ArticleView', () => {
     expect(like.attributes('aria-pressed')).toBe('false')
   })
 
+  it('ma link do edycji artykułu', () => {
+    const links = mountArticle('4').findAllComponents(RouterLinkStub)
+
+    expect(links.map((link) => link.props('to'))).toContain('/artykuly/4/edytuj')
+  })
+
   it('pokazuje obrazek artykułu, który go ma', () => {
     const withImage = seedArticles.find((a) => a.image)
     const wrapper = mountArticle(String(withImage?.id))

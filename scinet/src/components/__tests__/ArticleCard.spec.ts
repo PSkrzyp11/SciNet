@@ -87,9 +87,9 @@ describe('ArticleCard', () => {
     expect(text).toContain('Pierwszy akapit. Drugi akapit.')
   })
 
-  it('prowadzi do strony artykułu', () => {
-    const link = mountCard().findComponent(RouterLinkStub)
+  it('prowadzi do strony artykułu i do jego edycji', () => {
+    const links = mountCard().findAllComponents(RouterLinkStub)
 
-    expect(link.props('to')).toBe('/artykuly/7')
+    expect(links.map((link) => link.props('to'))).toEqual(['/artykuly/7/edytuj', '/artykuly/7'])
   })
 })
