@@ -8,6 +8,14 @@ export interface Article {
   content: string[]
 }
 
+const WORDS_PER_MINUTE = 200
+
+// Szacowany czas czytania w minutach (co najmniej 1)
+export function readingTime(article: Article) {
+  const words = article.content.join(' ').trim().split(/\s+/).length
+  return Math.max(1, Math.round(words / WORDS_PER_MINUTE))
+}
+
 export const articles: Article[] = [
   {
     id: 1,

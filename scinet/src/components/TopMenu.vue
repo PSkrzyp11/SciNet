@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { useFavoritesStore } from '@/stores/favorites'
 
 const route = useRoute()
+const favorites = useFavoritesStore()
 
 const links = [
   { to: '/', label: 'Start' },
   { to: '/artykuly', label: 'Artykuły' },
   { to: '/autorzy', label: 'Autorzy' },
+  { to: '/zapisane', label: 'Zapisane' },
   { to: '/kontakt', label: 'Kontakt' },
 ]
 
@@ -27,6 +30,9 @@ const isActive = (to: string) =>
         :class="{ active: isActive(link.to) }"
       >
         {{ link.label }}
+        <span v-if="link.to === '/zapisane' && favorites.count" class="badge">
+          {{ favorites.count }}
+        </span>
       </RouterLink>
     </nav>
   </header>
@@ -79,6 +85,20 @@ nav a {
 nav a:hover {
   background: #f3f4f6;
   color: var(--color-text);
+}
+
+.badge {
+  display: inline-block;
+  min-width: 22px;
+  margin-left: 4px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
 }
 
 nav a.active {

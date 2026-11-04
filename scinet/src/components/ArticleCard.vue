@@ -1,24 +1,34 @@
 <script setup lang="ts">
-import type { Article } from '@/data/articles'
+import FavoriteButton from '@/components/FavoriteButton.vue'
+import { readingTime, type Article } from '@/data/articles'
 
 defineProps<{ article: Article }>()
 </script>
 
 <template>
-  <RouterLink :to="`/artykuly/${article.id}`" class="card">
-    <span class="category">{{ article.category }}</span>
-    <h3>{{ article.title }}</h3>
+  <article class="card">
+    <div class="top">
+      <span class="category">{{ article.category }}</span>
+      <FavoriteButton :article-id="article.id" />
+    </div>
+    <h3>
+      <RouterLink :to="`/artykuly/${article.id}`" class="title">{{ article.title }}</RouterLink>
+    </h3>
     <p>{{ article.excerpt }}</p>
     <footer>
       <span>{{ article.author }}</span>
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
     </footer>
-    <span class="more">Czytaj dalej →</span>
-  </RouterLink>
+    <div class="bottom">
+      <span class="more">Czytaj dalej →</span>
+      <span class="time">{{ readingTime(article) }} min czytania</span>
+    </div>
+  </article>
 </template>
 
 <style scoped>
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -26,8 +36,6 @@ defineProps<{ article: Article }>()
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  color: inherit;
-  text-decoration: none;
   transition:
     transform 0.2s,
     box-shadow 0.2s,
@@ -40,8 +48,14 @@ defineProps<{ article: Article }>()
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07);
 }
 
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .category {
-  align-self: flex-start;
   padding: 3px 12px;
   border-radius: 999px;
   background: var(--color-primary-light);
@@ -53,6 +67,19 @@ defineProps<{ article: Article }>()
 h3 {
   margin: 4px 0 0;
   font-size: 1.3rem;
+}
+
+.title {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Tytuł jest linkiem, a ta warstwa rozciąga go na całą kartę */
+.title::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
 }
 
 p {
@@ -67,6 +94,19 @@ footer {
   gap: 8px;
   padding-top: 14px;
   border-top: 1px solid var(--color-border);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.bottom {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.time {
   font-size: 0.85rem;
   color: var(--color-text-muted);
 }

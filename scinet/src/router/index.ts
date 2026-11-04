@@ -25,6 +25,12 @@ const router = createRouter({
       meta: { title: 'Autorzy' },
     },
     {
+      path: '/zapisane',
+      name: 'favorites',
+      component: () => import('@/views/FavoritesView.vue'),
+      meta: { title: 'Zapisane' },
+    },
+    {
       path: '/kontakt',
       name: 'contact',
       component: () => import('@/views/ContactView.vue'),

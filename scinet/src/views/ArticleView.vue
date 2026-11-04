@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { articles } from '@/data/articles'
+import FavoriteButton from '@/components/FavoriteButton.vue'
+import { articles, readingTime } from '@/data/articles'
 
 const props = defineProps<{ id: string }>()
 
@@ -15,13 +16,18 @@ const related = computed(() =>
   <article v-if="article" class="article">
     <RouterLink to="/artykuly" class="back">← Wszystkie artykuły</RouterLink>
 
-    <span class="category">{{ article.category }}</span>
+    <div class="top">
+      <span class="category">{{ article.category }}</span>
+      <FavoriteButton :article-id="article.id" with-label />
+    </div>
     <h1>{{ article.title }}</h1>
 
     <div class="meta">
       <span>{{ article.author }}</span>
       <span>·</span>
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
+      <span>·</span>
+      <span>{{ readingTime(article) }} min czytania</span>
     </div>
 
     <p class="excerpt">{{ article.excerpt }}</p>
@@ -59,6 +65,14 @@ const related = computed(() =>
   text-decoration: none;
 }
 
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .category {
   display: inline-block;
   padding: 4px 14px;
@@ -75,6 +89,7 @@ h1 {
 
 .meta {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 32px;
   color: var(--color-text-muted);

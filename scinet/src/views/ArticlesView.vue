@@ -1,22 +1,31 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import ArticleCard from '@/components/ArticleCard.vue'
-import { articles } from '@/data/articles'
+import { articles, type Article } from '@/data/articles'
+
+const sorters = {
+  newest: (a: Article, b: Article) => b.date.localeCompare(a.date),
+  oldest: (a: Article, b: Article) => a.date.localeCompare(b.date),
+  title: (a: Article, b: Article) => a.title.localeCompare(b.title, 'pl'),
+}
 
 const categories = ['Wszystkie', ...new Set(articles.map((a) => a.category))]
 const selected = ref('Wszystkie')
 const search = ref('')
+const sort = ref<keyof typeof sorters>('newest')
 
 const filtered = computed(() => {
   const query = search.value.trim().toLowerCase()
 
-  return articles.filter((a) => {
-    const inCategory = selected.value === 'Wszystkie' || a.category === selected.value
-    const matches =
-      !query ||
-      [a.title, a.excerpt, a.author].some((text) => text.toLowerCase().includes(query))
-    return inCategory && matches
-  })
+  return articles
+    .filter((a) => {
+      const inCategory = selected.value === 'Wszystkie' || a.category === selected.value
+      const matches =
+        !query ||
+        [a.title, a.excerpt, a.author].some((text) => text.toLowerCase().includes(query))
+      return inCategory && matches
+    })
+    .sort(sorters[sort.value])
 })
 
 function reset() {
@@ -41,7 +50,17 @@ function reset() {
     </button>
   </div>
 
-  <p class="count">Znaleziono: {{ filtered.length }}</p>
+  <div class="toolbar">
+    <p class="count">Znaleziono: {{ filtered.length }}</p>
+    <label class="sort">
+      Sortuj:
+      <select v-model="sort">
+        <option value="newest">Najnowsze</option>
+        <option value="oldest">Najstarsze</option>
+        <option value="title">A–Z</option>
+      </select>
+    </label>
+  </div>
 
   <div v-if="filtered.length" class="grid">
     <ArticleCard v-for="article in filtered" :key="article.id" :article="article" />
@@ -107,8 +126,34 @@ h1 {
   color: #fff;
 }
 
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.sort select {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
 .count {
-  margin: 0 0 20px;
+  margin: 0;
   color: var(--color-text-muted);
   font-size: 0.95rem;
 }
