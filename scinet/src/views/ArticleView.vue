@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import ArticleImage from '@/components/ArticleImage.vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
+import LikeButton from '@/components/LikeButton.vue'
 import { readingTime } from '@/data/articles'
 import { useArticlesStore } from '@/stores/articles'
 
@@ -22,7 +23,14 @@ const related = computed(() =>
 
     <div class="top">
       <span class="category">{{ article.category }}</span>
-      <FavoriteButton :article-id="article.id" with-label />
+      <div class="actions">
+        <LikeButton
+          :count="article.likes"
+          :liked="article.liked"
+          @toggle="store.toggleLike(article.id)"
+        />
+        <FavoriteButton :article-id="article.id" with-label />
+      </div>
     </div>
     <h1>{{ article.title }}</h1>
 
@@ -76,6 +84,12 @@ const related = computed(() =>
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .category {

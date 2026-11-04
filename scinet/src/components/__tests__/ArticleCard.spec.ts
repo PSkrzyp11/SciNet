@@ -28,6 +28,17 @@ describe('ArticleCard', () => {
     vi.restoreAllMocks()
   })
 
+  it('pokazuje polubienia i zgłasza kliknięcie rodzicowi', async () => {
+    const wrapper = mountCard({ likes: 7, liked: true })
+
+    expect(wrapper.find('.like .count').text()).toBe('7')
+    expect(wrapper.find('.like').attributes('aria-pressed')).toBe('true')
+
+    await wrapper.find('.like').trigger('click')
+
+    expect(wrapper.emitted('like')).toHaveLength(1)
+  })
+
   it('pokazuje obrazek artykułu, który go ma', () => {
     const img = mountCard({ image: 'https://example.com/obrazek.jpg' }).find('img')
 

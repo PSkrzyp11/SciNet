@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import ArticleImage from '@/components/ArticleImage.vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
+import LikeButton from '@/components/LikeButton.vue'
 import { readingTime, type Article } from '@/data/articles'
 
 const props = defineProps<{ article: Article }>()
 
-// Karta tylko pyta o potwierdzenie, a samo usunięcie należy do rodzica
-const emit = defineEmits<{ delete: [] }>()
+// Karta tylko zgłasza zdarzenia, a dane w store zmienia rodzic
+const emit = defineEmits<{ delete: []; like: [] }>()
 
 function confirmDelete() {
   if (window.confirm(`Usunąć artykuł „${props.article.title}”? Tej operacji nie da się cofnąć.`)) {
@@ -44,6 +45,7 @@ function confirmDelete() {
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
     </footer>
     <div class="bottom">
+      <LikeButton :count="article.likes" :liked="article.liked" @toggle="emit('like')" />
       <span class="more">Czytaj dalej →</span>
       <span class="time">{{ readingTime(article) }} min czytania</span>
     </div>
@@ -166,7 +168,7 @@ footer {
 
 .bottom {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;

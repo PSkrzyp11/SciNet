@@ -125,6 +125,7 @@ function publish(draft: ArticleDraft) {
           :key="article.id"
           :article="article"
           @delete="store.remove(article.id)"
+          @like="store.toggleLike(article.id)"
         />
       </div>
 

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount, RouterLinkStub } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import FavoritesView from '../FavoritesView.vue'
+import { seedArticles } from '@/data/articles'
 
 function mountView() {
   const wrapper = mount(FavoritesView, {
@@ -27,6 +28,16 @@ describe('FavoritesView', () => {
     const { titles } = mountView()
 
     expect(titles()).toEqual(['CRISPR w praktyce'])
+  })
+
+  it('pozwala polubić zapisany artykuł', async () => {
+    localStorage.setItem('scinet-favorites', '[2]')
+    const startLikes = seedArticles.find((a) => a.id === 2)?.likes ?? 0
+    const { wrapper } = mountView()
+
+    await wrapper.find('.like').trigger('click')
+
+    expect(wrapper.find('.like .count').text()).toBe(String(startLikes + 1))
   })
 
   it('po usunięciu artykułu znika on z listy i z tablicy', async () => {

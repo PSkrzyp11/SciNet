@@ -40,6 +40,23 @@ describe('BoardView', () => {
     vi.useRealTimers()
   })
 
+  it('polubienie zmienia licznik na karcie i zostaje po odświeżeniu', async () => {
+    const startLikes = articles[0]?.likes ?? 0
+    const { wrapper } = await mountAt('/')
+    const like = wrapper.find('.card .like')
+
+    await like.trigger('click')
+    await wrapper.vm.$nextTick()
+
+    expect(like.find('.count').text()).toBe(String(startLikes + 1))
+    expect(like.attributes('aria-pressed')).toBe('true')
+
+    const reloaded = await mountAt('/')
+    const likeAfterReload = reloaded.wrapper.find('.card .like')
+    expect(likeAfterReload.find('.count').text()).toBe(String(startLikes + 1))
+    expect(likeAfterReload.attributes('aria-pressed')).toBe('true')
+  })
+
   it('usuwa artykuł po potwierdzeniu', async () => {
     vi.spyOn(window, 'confirm').mockReturnValue(true)
     const { wrapper, titles } = await mountAt('/')

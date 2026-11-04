@@ -79,6 +79,74 @@ describe('useArticlesStore', () => {
     expect(reload().articles[0]?.title).toBe('Nowy artykuł')
   })
 
+  it('polubienie zwiększa licznik, a drugie kliknięcie je cofa', () => {
+    const store = reload()
+    const startLikes = seedArticles[0]?.likes ?? 0
+    const first = () => store.articles[0]
+
+    store.toggleLike(1)
+    expect(first()?.likes).toBe(startLikes + 1)
+    expect(first()?.liked).toBe(true)
+
+    store.toggleLike(1)
+    expect(first()?.likes).toBe(startLikes)
+    expect(first()?.liked).toBe(false)
+  })
+
+  it('polubienie zmienia tylko wskazany artykuł i nie zmienia kolejności', () => {
+    const store = reload()
+
+    store.toggleLike(2)
+
+    expect(store.articles.map((a) => a.id)).toEqual(seedArticles.map((a) => a.id))
+    expect(store.articles.filter((a) => a.liked).map((a) => a.id)).toEqual([2])
+    expect(store.articles[0]?.likes).toBe(seedArticles[0]?.likes)
+  })
+
+  it('polubienia są na miejscu po odświeżeniu', async () => {
+    const store = reload()
+    const startLikes = seedArticles[0]?.likes ?? 0
+
+    store.toggleLike(1)
+    await nextTick()
+
+    const saved = reload().articles[0]
+    expect(saved?.likes).toBe(startLikes + 1)
+    expect(saved?.liked).toBe(true)
+  })
+
+  it('cofnięcie polubienia też jest na miejscu po odświeżeniu', async () => {
+    const store = reload()
+    const startLikes = seedArticles[0]?.likes ?? 0
+
+    store.toggleLike(1)
+    await nextTick()
+    store.toggleLike(1)
+    await nextTick()
+
+    const saved = reload().articles[0]
+    expect(saved?.likes).toBe(startLikes)
+    expect(saved?.liked).toBe(false)
+  })
+
+  it('polubienie nie zmienia przykładowych danych', () => {
+    const startLikes = seedArticles[0]?.likes
+    const store = reload()
+
+    store.toggleLike(1)
+
+    expect(seedArticles[0]?.likes).toBe(startLikes)
+    expect(seedArticles[0]?.liked).toBe(false)
+  })
+
+  it('polubienie nieistniejącego artykułu niczego nie zmienia', () => {
+    const store = reload()
+
+    store.toggleLike(999)
+
+    expect(store.articles).toEqual(seedArticles)
+  })
+
   it('usuwa wskazany artykuł, a resztę zostawia', () => {
     const store = reload()
 

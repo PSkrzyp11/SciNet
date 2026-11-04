@@ -86,5 +86,18 @@ export const useArticlesStore = defineStore('articles', () => {
     articles.value = articles.value.filter((article) => article.id !== id)
   }
 
-  return { articles, add, remove }
+  // Jak w serwisach społecznościowych: drugie kliknięcie cofa polubienie
+  function toggleLike(id: number) {
+    articles.value = articles.value.map((article) =>
+      article.id === id
+        ? {
+            ...article,
+            liked: !article.liked,
+            likes: article.likes + (article.liked ? -1 : 1),
+          }
+        : article,
+    )
+  }
+
+  return { articles, add, remove, toggleLike }
 })

@@ -24,6 +24,23 @@ describe('ArticleView', () => {
     expect(wrapper.findAll('.article > p').map((p) => p.text())).toEqual(first?.content)
   })
 
+  it('pozwala polubić artykuł i cofnąć polubienie', async () => {
+    const [first] = seedArticles
+    const startLikes = first?.likes ?? 0
+    const wrapper = mountArticle(String(first?.id))
+    const like = wrapper.find('.like')
+
+    expect(like.find('.count').text()).toBe(String(startLikes))
+
+    await like.trigger('click')
+    expect(like.find('.count').text()).toBe(String(startLikes + 1))
+    expect(like.attributes('aria-pressed')).toBe('true')
+
+    await like.trigger('click')
+    expect(like.find('.count').text()).toBe(String(startLikes))
+    expect(like.attributes('aria-pressed')).toBe('false')
+  })
+
   it('pokazuje obrazek artykułu, który go ma', () => {
     const withImage = seedArticles.find((a) => a.image)
     const wrapper = mountArticle(String(withImage?.id))
