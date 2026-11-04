@@ -101,6 +101,8 @@ p {
   margin: 0 0 22px;
   font-size: 1.1rem;
   line-height: 1.8;
+  /* Pojedynczy Enter wpisany w formularzu jest nową linią w akapicie */
+  white-space: pre-line;
 }
 
 /* Pierwszy akapit tuż pod autorem i datą jest wprowadzeniem do tekstu */

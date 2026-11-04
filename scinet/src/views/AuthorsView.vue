@@ -1,10 +1,29 @@
 <script setup lang="ts">
-import { authors, initials } from '@/data/authors'
+import { computed } from 'vue'
+import { authors, initials, type Author } from '@/data/authors'
 import { useArticlesStore } from '@/stores/articles'
 
 const store = useArticlesStore()
 
 const articlesBy = (name: string) => store.articles.filter((a) => a.author === name)
+
+// Autorzy z listy mają opis, a osoby wpisane w formularzu dostają kartę bez opisu
+const allAuthors = computed<Author[]>(() => {
+  const known = authors.map((author) => author.name)
+  const others = [...new Set(store.articles.map((a) => a.author))].filter(
+    (name) => !known.includes(name),
+  )
+
+  return [
+    ...authors,
+    ...others.map((name) => ({
+      name,
+      field: 'Społeczność SciNet',
+      color: 'var(--color-button)',
+      bio: '',
+    })),
+  ]
+})
 </script>
 
 <template>
@@ -12,7 +31,7 @@ const articlesBy = (name: string) => store.articles.filter((a) => a.author === n
   <p class="lead">Poznaj osoby, które piszą dla SciNet, i zobacz, o czym piszą.</p>
 
   <div class="grid">
-    <div v-for="author in authors" :key="author.name" class="author">
+    <div v-for="author in allAuthors" :key="author.name" class="author">
       <div class="head">
         <div class="avatar" :style="{ background: author.color }">
           {{ initials(author.name) }}
@@ -23,7 +42,7 @@ const articlesBy = (name: string) => store.articles.filter((a) => a.author === n
         </div>
       </div>
 
-      <p class="bio">{{ author.bio }}</p>
+      <p v-if="author.bio" class="bio">{{ author.bio }}</p>
 
       <div class="written">
         <strong>Artykuły ({{ articlesBy(author.name).length }})</strong>
@@ -93,6 +112,7 @@ h3 {
 }
 
 .written {
+  margin-top: auto;
   padding-top: 16px;
   border-top: 1px solid var(--color-border);
 }

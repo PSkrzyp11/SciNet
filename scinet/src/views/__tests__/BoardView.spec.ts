@@ -35,6 +35,61 @@ describe('BoardView', () => {
     localStorage.clear()
   })
 
+  it('formularz otwiera się przyciskiem i zamyka bez publikacji', async () => {
+    const { wrapper, titles } = await mountAt('/')
+
+    expect(wrapper.find('.article-form').exists()).toBe(false)
+
+    await wrapper.find('.add').trigger('click')
+    expect(wrapper.find('.article-form').exists()).toBe(true)
+    expect(wrapper.find('.add').exists()).toBe(false)
+
+    await wrapper.find('.cancel').trigger('click')
+    expect(wrapper.find('.article-form').exists()).toBe(false)
+    expect(wrapper.find('.add').exists()).toBe(true)
+    expect(titles()).toHaveLength(articles.length)
+  })
+
+  it('nowy artykuł pojawia się na górze, także przy włączonych filtrach', async () => {
+    const { wrapper, router, titles } = await mountAt('/?kategoria=Biologia&q=crispr')
+    await wrapper.find('.sort select').setValue('title')
+
+    await wrapper.find('.add').trigger('click')
+    await wrapper.find('[name="title"]').setValue('Nowy artykuł')
+    await wrapper.find('[name="category"]').setValue('Ekologia')
+    await wrapper.find('[name="content"]').setValue('Treść nowego artykułu.')
+    await wrapper.find('.article-form').trigger('submit')
+    await flushPromises()
+
+    expect(router.currentRoute.value.query).toEqual({})
+    expect(wrapper.find('.article-form').exists()).toBe(false)
+    expect(titles()).toHaveLength(articles.length + 1)
+    expect(titles()[0]).toBe('Nowy artykuł')
+    expect(wrapper.find('.card').text()).toContain('Treść nowego artykułu.')
+  })
+
+  it('nowy artykuł nie zmienia kolejności filtrów', async () => {
+    const { wrapper, store } = await mountAt('/')
+    const filterNames = () => wrapper.findAll('.filters button').map((b) => b.text())
+    const before = filterNames()
+
+    store.add({ title: 'Nowy', author: 'Jan', category: 'Ekologia', content: ['Treść.'] })
+    await wrapper.vm.$nextTick()
+
+    expect(filterNames()).toEqual(before)
+  })
+
+  it('nie publikuje artykułu bez tytułu ani treści', async () => {
+    const { wrapper, titles } = await mountAt('/')
+
+    await wrapper.find('.add').trigger('click')
+    await wrapper.find('.article-form').trigger('submit')
+    await flushPromises()
+
+    expect(wrapper.find('.article-form').exists()).toBe(true)
+    expect(titles()).toHaveLength(articles.length)
+  })
+
   it('pokazuje wszystkie artykuły, od najnowszego', async () => {
     const { wrapper, titles, filter } = await mountAt('/')
 

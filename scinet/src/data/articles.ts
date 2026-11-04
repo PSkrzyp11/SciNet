@@ -31,6 +31,17 @@ export interface Article {
   comments: ArticleComment[]
 }
 
+// Dane z formularza: resztę pól uzupełnia store
+export type ArticleDraft = Pick<Article, 'title' | 'author' | 'category' | 'content'>
+
+// W formularzu akapity oddziela pusta linia
+export function toParagraphs(text: string) {
+  return text
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+}
+
 const WORDS_PER_MINUTE = 200
 
 // Szacowany czas czytania w minutach (co najmniej 1)

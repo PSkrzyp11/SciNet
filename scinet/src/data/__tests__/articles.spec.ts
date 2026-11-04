@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { CATEGORIES, readingTime, seedArticles, type Article } from '../articles'
+import { CATEGORIES, readingTime, seedArticles, toParagraphs, type Article } from '../articles'
 import { authors } from '../authors'
 
 function articleWithWords(count: number): Article {
@@ -31,6 +31,25 @@ describe('readingTime', () => {
     article.content.push(Array(300).fill('słowo').join(' '))
 
     expect(readingTime(article)).toBe(3)
+  })
+})
+
+describe('toParagraphs', () => {
+  it('dzieli tekst po pustych liniach', () => {
+    expect(toParagraphs('Pierwszy.\n\nDrugi.\n \n\nTrzeci.')).toEqual([
+      'Pierwszy.',
+      'Drugi.',
+      'Trzeci.',
+    ])
+  })
+
+  it('pojedynczy Enter nie zaczyna nowego akapitu', () => {
+    expect(toParagraphs('Linia pierwsza\nlinia druga')).toEqual(['Linia pierwsza\nlinia druga'])
+  })
+
+  it('usuwa spacje z brzegów i puste akapity', () => {
+    expect(toParagraphs('  Tekst  \n\n   \n\n')).toEqual(['Tekst'])
+    expect(toParagraphs('   ')).toEqual([])
   })
 })
 

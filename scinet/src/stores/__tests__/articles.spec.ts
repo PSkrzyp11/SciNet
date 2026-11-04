@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { useArticlesStore } from '../articles'
-import { seedArticles, type Article } from '@/data/articles'
+import { seedArticles, type Article, type ArticleDraft } from '@/data/articles'
 
 const STORAGE_KEY = 'scinet-articles'
 
@@ -25,10 +25,67 @@ function reload() {
   return useArticlesStore()
 }
 
+const draft: ArticleDraft = {
+  title: 'Nowy artykuł',
+  author: 'Jan Kowalski',
+  category: 'Ekologia',
+  content: ['Treść.'],
+}
+
 describe('useArticlesStore', () => {
   beforeEach(() => {
     localStorage.clear()
     vi.restoreAllMocks()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('dodaje artykuł na początek listy i uzupełnia pozostałe pola', () => {
+    vi.setSystemTime(new Date('2026-11-04T12:00:00.000Z'))
+    const store = reload()
+
+    store.add(draft)
+
+    expect(store.articles).toHaveLength(seedArticles.length + 1)
+    expect(store.articles[0]).toEqual({
+      ...draft,
+      id: Date.now(),
+      date: '2026-11-04T12:00:00.000Z',
+      likes: 0,
+      liked: false,
+      comments: [],
+    })
+  })
+
+  it('nadaje kolejnym artykułom różne identyfikatory', () => {
+    const store = reload()
+
+    vi.setSystemTime(new Date('2026-11-04T12:00:00.000Z'))
+    store.add(draft)
+    vi.setSystemTime(new Date('2026-11-04T12:00:01.000Z'))
+    store.add(draft)
+
+    expect(new Set(store.articles.map((a) => a.id)).size).toBe(store.articles.length)
+  })
+
+  it('dodany artykuł jest na miejscu po odświeżeniu', async () => {
+    const store = reload()
+
+    store.add(draft)
+    await nextTick()
+
+    expect(reload().articles[0]?.title).toBe('Nowy artykuł')
+  })
+
+  it('dodanie artykułu nie zmienia przykładowych danych', () => {
+    const before = seedArticles.length
+    const store = reload()
+
+    store.add(draft)
+
+    expect(seedArticles).toHaveLength(before)
   })
 
   it('przy pierwszym uruchomieniu pokazuje przykładowe artykuły', () => {

@@ -1,6 +1,12 @@
 import { ref, watch } from 'vue'
 import { defineStore } from 'pinia'
-import { CATEGORIES, seedArticles, type Article, type ArticleComment } from '@/data/articles'
+import {
+  CATEGORIES,
+  seedArticles,
+  type Article,
+  type ArticleComment,
+  type ArticleDraft,
+} from '@/data/articles'
 
 const STORAGE_KEY = 'scinet-articles'
 
@@ -63,5 +69,18 @@ export const useArticlesStore = defineStore('articles', () => {
   // Każda zmiana musi podmienić całą tablicę, bo tylko wtedy watch ją zauważy
   watch(articles, save)
 
-  return { articles }
+  function add(draft: ArticleDraft) {
+    const article: Article = {
+      ...draft,
+      // Czas się nie powtarza, więc nowy artykuł nie przejmie zakładki po usuniętym
+      id: Date.now(),
+      date: new Date().toISOString(),
+      likes: 0,
+      liked: false,
+      comments: [],
+    }
+    articles.value = [article, ...articles.value]
+  }
+
+  return { articles, add }
 })

@@ -5,13 +5,16 @@ export interface Author {
   bio: string
 }
 
+// Portal nie ma kont, więc korzysta z niego przykładowa użytkowniczka
+export const currentUser: Author = {
+  name: 'Anna Nowak',
+  field: 'Fizyka i astronomia',
+  color: '#4f46e5',
+  bio: 'Fizyczka teoretyczna. Pisze o kosmosie i mechanice kwantowej tak, żeby dało się to zrozumieć przy porannej kawie.',
+}
+
 export const authors: Author[] = [
-  {
-    name: 'Anna Nowak',
-    field: 'Fizyka i astronomia',
-    color: '#4f46e5',
-    bio: 'Fizyczka teoretyczna. Pisze o kosmosie i mechanice kwantowej tak, żeby dało się to zrozumieć przy porannej kawie.',
-  },
+  currentUser,
   {
     name: 'Marek Wiśniewski',
     field: 'Biologia molekularna',
@@ -32,8 +35,12 @@ export const authors: Author[] = [
   },
 ]
 
+// Imię autora może być dowolnym tekstem wpisanym w formularzu
 export const initials = (name: string) =>
   name
-    .split(' ')
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
     .map((part) => part[0])
     .join('')
+    .toUpperCase()

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
-import type { Article } from '@/data/articles'
+import ArticleForm from '@/components/ArticleForm.vue'
+import { CATEGORIES, type Article, type ArticleDraft } from '@/data/articles'
 import { useArticlesStore } from '@/stores/articles'
 
 const sorters = {
@@ -12,7 +13,11 @@ const sorters = {
 }
 
 const store = useArticlesStore()
-const categories = computed(() => ['Wszystkie', ...new Set(store.articles.map((a) => a.category))])
+// Stała kolejność: nowy artykuł nie przestawia przycisków filtrów
+const categories = computed(() => [
+  'Wszystkie',
+  ...CATEGORIES.filter((category) => store.articles.some((a) => a.category === category)),
+])
 const route = useRoute()
 const router = useRouter()
 
@@ -56,11 +61,33 @@ const filtered = computed(() => {
 function reset() {
   updateQuery({ q: undefined, kategoria: undefined })
 }
+
+const formOpen = ref(false)
+const addButton = ref<HTMLButtonElement | null>(null)
+
+async function closeForm() {
+  formOpen.value = false
+  await nextTick()
+  addButton.value?.focus()
+}
+
+function publish(draft: ArticleDraft) {
+  store.add(draft)
+  // Nowy artykuł ma być od razu na górze, niezależnie od filtrów i sortowania
+  sort.value = 'newest'
+  reset()
+  closeForm()
+}
 </script>
 
 <template>
   <div class="board">
     <h1>Tablica</h1>
+
+    <ArticleForm v-if="formOpen" @publish="publish" @cancel="closeForm" />
+    <button v-else ref="addButton" type="button" class="add" @click="formOpen = true">
+      Dodaj artykuł
+    </button>
 
     <input v-model="search" type="search" class="search" placeholder="Szukaj po tytule…" />
 
@@ -107,6 +134,23 @@ function reset() {
 h1 {
   margin: 48px 0 28px;
   text-align: center;
+}
+
+.add {
+  display: block;
+  margin: 0 auto 24px;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 12px;
+  background: var(--color-button);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add:hover {
+  background: var(--color-button-hover);
 }
 
 .search {
