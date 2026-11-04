@@ -25,6 +25,8 @@
   --color-success-border: #a7f3d0;
   --color-success-text: #065f46;
 
+  --color-error: #b91c1c;
+
   --radius: 14px;
   --max-width: 1100px;
 
@@ -59,6 +61,8 @@
   --color-success-bg: #064e3b;
   --color-success-border: #065f46;
   --color-success-text: #a7f3d0;
+
+  --color-error: #fca5a5;
 }
 
 *,

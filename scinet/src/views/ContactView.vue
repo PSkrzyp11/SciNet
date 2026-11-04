@@ -1,14 +1,48 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { computed, nextTick, reactive, ref } from 'vue'
+
+type Field = 'name' | 'email' | 'message'
 
 const form = reactive({ name: '', email: '', message: '' })
+const touched = reactive({ name: false, email: false, message: false })
 const sent = ref(false)
+const formElement = ref<HTMLFormElement | null>(null)
 
-function submit() {
+const errors = computed<Record<Field, string>>(() => ({
+  name: form.name.trim().length < 2 ? 'Podaj imię (co najmniej 2 znaki).' : '',
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
+    ? ''
+    : 'Podaj poprawny adres e-mail.',
+  message: form.message.trim().length < 10 ? 'Napisz wiadomość (co najmniej 10 znaków).' : '',
+}))
+
+// Błąd widać dopiero po wyjściu z wypełnionego pola albo po próbie wysłania
+const visibleError = (field: Field) => (touched[field] ? errors.value[field] : '')
+
+function fieldAttrs(field: Field) {
+  const invalid = Boolean(visibleError(field))
+  return {
+    class: { invalid },
+    'aria-invalid': invalid || undefined,
+    'aria-describedby': invalid ? `${field}-error` : undefined,
+    onBlur: () => {
+      if (form[field].trim()) touched[field] = true
+    },
+  }
+}
+
+async function submit() {
+  Object.assign(touched, { name: true, email: true, message: true })
+
+  if (Object.values(errors.value).some(Boolean)) {
+    await nextTick()
+    formElement.value?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus()
+    return
+  }
+
   sent.value = true
-  form.name = ''
-  form.email = ''
-  form.message = ''
+  Object.assign(form, { name: '', email: '', message: '' })
+  Object.assign(touched, { name: false, email: false, message: false })
 }
 
 const info = [
@@ -52,20 +86,41 @@ const faq = [
         <button class="link" @click="sent = false">Napisz kolejną wiadomość</button>
       </div>
 
-      <form v-else @submit.prevent="submit">
-        <label>
-          Imię
-          <input v-model="form.name" type="text" required />
-        </label>
-        <label>
-          E-mail
-          <input v-model="form.email" type="email" required />
-        </label>
-        <label>
-          Wiadomość
-          <textarea v-model="form.message" rows="6" required></textarea>
-        </label>
-        <button type="submit" class="btn">Wyślij</button>
+      <form v-else ref="formElement" novalidate @submit.prevent="submit">
+        <div class="field">
+          <label>
+            Imię
+            <input v-model="form.name" type="text" required v-bind="fieldAttrs('name')" />
+          </label>
+          <span v-if="visibleError('name')" id="name-error" class="error">
+            {{ visibleError('name') }}
+          </span>
+        </div>
+        <div class="field">
+          <label>
+            E-mail
+            <input v-model="form.email" type="email" required v-bind="fieldAttrs('email')" />
+          </label>
+          <span v-if="visibleError('email')" id="email-error" class="error">
+            {{ visibleError('email') }}
+          </span>
+        </div>
+        <div class="field">
+          <label>
+            Wiadomość
+            <textarea
+              v-model="form.message"
+              rows="6"
+              required
+              v-bind="fieldAttrs('message')"
+            ></textarea>
+          </label>
+          <span v-if="visibleError('message')" id="message-error" class="error">
+            {{ visibleError('message') }}
+          </span>
+        </div>
+        <!-- Bez blur przy wciśnięciu myszy błąd nie przesuwa przycisku w trakcie klikania -->
+        <button type="submit" class="btn" @mousedown.prevent>Wyślij</button>
       </form>
 
       <aside class="info">
@@ -155,6 +210,22 @@ textarea:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+input.invalid,
+textarea.invalid {
+  border-color: var(--color-error);
+}
+
+.error {
+  color: var(--color-error);
+  font-size: 0.9rem;
 }
 
 .btn {
