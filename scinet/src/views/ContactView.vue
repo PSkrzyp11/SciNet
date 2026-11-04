@@ -10,9 +10,7 @@ const formElement = ref<HTMLFormElement | null>(null)
 
 const errors = computed<Record<Field, string>>(() => ({
   name: form.name.trim().length < 2 ? 'Podaj imię (co najmniej 2 znaki).' : '',
-  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())
-    ? ''
-    : 'Podaj poprawny adres e-mail.',
+  email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()) ? '' : 'Podaj poprawny adres e-mail.',
   message: form.message.trim().length < 10 ? 'Napisz wiadomość (co najmniej 10 znaków).' : '',
 }))
 
@@ -53,9 +51,14 @@ const info = [
 
 const faq = [
   {
-    question: 'Jak mogę zostać autorem?',
+    question: 'Jak opublikować artykuł?',
     answer:
-      'Napisz do nas przez formularz, dołącz krótki opis siebie i pomysł na pierwszy artykuł. Odezwiemy się z dalszymi krokami.',
+      'Kliknij „Dodaj artykuł” na tablicy, wpisz tytuł, autora i treść, a jeśli chcesz, dodaj też adres obrazka. Artykuł od razu pojawi się na górze tablicy.',
+  },
+  {
+    question: 'Gdzie zapisują się moje artykuły?',
+    answer:
+      'W Twojej przeglądarce. Artykuły, polubienia i komentarze zostają po odświeżeniu strony, ale nie zobaczysz ich na innym urządzeniu.',
   },
   {
     question: 'Czy mogę cytować artykuły z SciNet?',
@@ -65,7 +68,7 @@ const faq = [
   {
     question: 'Znalazłem błąd w artykule. Co zrobić?',
     answer:
-      'Daj nam znać, podając tytuł artykułu i fragment z błędem. Każde zgłoszenie sprawdzamy razem z autorem.',
+      'Otwórz artykuł i kliknij „Edytuj”, żeby go poprawić. Możesz też dodać komentarz z informacją o błędzie.',
   },
   {
     question: 'Czy SciNet jest płatny?',
@@ -77,7 +80,7 @@ const faq = [
 <template>
   <div class="contact">
     <h1>Kontakt</h1>
-    <p class="lead">Masz pytanie albo pomysł na artykuł? Napisz do nas.</p>
+    <p class="lead">Masz pytanie albo pomysł na portal? Napisz do nas.</p>
 
     <div class="columns">
       <div v-if="sent" class="success">

@@ -4,7 +4,7 @@
 
 **Nauka podana po ludzku.**
 
-Serwis z artykułami popularnonaukowymi: czytaj, wyszukuj i zapisuj teksty z różnych dziedzin nauki.
+Portal społecznościowy dla ludzi nauki: tablica artykułów, które można publikować, poprawiać, polubić, komentować i zapisywać.
 
 ![Vue 3](https://img.shields.io/badge/Vue-3.5-42b883?logo=vuedotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?logo=typescript&logoColor=white)
@@ -15,17 +15,22 @@ Serwis z artykułami popularnonaukowymi: czytaj, wyszukuj i zapisuj teksty z ró
 
 ## Funkcje
 
-- **Tablica:** artykuły od najnowszego, wyszukiwanie po tytule, filtrowanie po kategorii i sortowanie. Kategoria i wyszukiwana fraza zapisują się w adresie, więc wynikami można się podzielić linkiem.
-- **Strona artykułu:** pełna treść, autor, data i szacowany czas czytania.
-- **Zapisane:** ulubione artykuły z licznikiem w menu, przechowywane w przeglądarce.
-- **Autorzy:** krótkie opisy i listy napisanych tekstów.
+- **Tablica:** artykuły od najnowszego, wyszukiwanie po tytule, filtrowanie po dziedzinie nauki i sortowanie. Dziedzina i wyszukiwana fraza zapisują się w adresie, więc wynikami można się podzielić linkiem.
+- **Publikowanie:** formularz z walidacją, który przyjmuje tytuł, autora, dziedzinę, treść i opcjonalnie adres obrazka.
+- **Edycja i usuwanie:** każdy artykuł można poprawić albo usunąć, a usunięty nie wraca po odświeżeniu.
+- **Polubienia:** przycisk „Lubię to” z licznikiem, a drugie kliknięcie cofa polubienie.
+- **Komentarze:** lista i formularz pod każdym artykułem oraz licznik na karcie.
+- **Panele boczne:** wizytówka użytkownika i najczęściej polubione artykuły.
+- **Zapisane:** zakładki z licznikiem w menu i osobną podstroną.
+- **Autorzy:** krótkie opisy i listy tekstów, także osób wpisanych w formularzu.
 - **Kontakt:** formularz z walidacją, dane kontaktowe i najczęstsze pytania.
+- **Każdy ekran:** trzy kolumny na komputerze, dwie na tablecie i jedna na telefonie, bez przewijania na boki.
 - **Tryb ciemny:** dopasowuje się do ustawień systemu i zapamiętuje Twój wybór.
-- **Widok na telefonie:** układ dopasowany do ekranu i rozwijane menu.
-- **Dopracowane szczegóły:** płynne przejścia między stronami, strona 404 i osobny tytuł karty dla każdej podstrony.
+
+Portal działa w całości w przeglądarce, bez serwera i bazy danych. Dane zapisują się w `localStorage`, więc zostają po odświeżeniu strony, ale nie przenoszą się na inne urządzenia.
 
 > [!NOTE]
-> To projekt do nauki. Artykuły, autorzy i dane kontaktowe są przykładowe, a formularz kontaktowy nie wysyła jeszcze wiadomości.
+> To projekt na zakończenie kursu Vue. Przykładowe artykuły, autorzy i dane kontaktowe są zmyślone, a formularz kontaktowy nie wysyła wiadomości.
 
 ## Technologie
 
@@ -71,21 +76,27 @@ Uruchamiaj je w folderze `scinet`.
 
 ```text
 scinet/src/
-├── components/   # elementy wielokrotnego użytku: menu, stopka, karta artykułu
-├── data/         # przykładowe artykuły i autorzy
+├── components/   # karta artykułu, formularz, komentarze, panele, menu
+├── data/         # model danych, przykładowe artykuły i autorzy
 ├── router/       # adresy podstron i tytuły kart
-├── stores/       # stan aplikacji: zapisane artykuły i motyw
-├── views/        # całe podstrony
+├── stores/       # stan aplikacji: artykuły, zakładki i motyw
+├── views/        # całe podstrony, w tym tablica
 ├── App.vue       # główny układ strony
 ├── main.ts       # punkt startowy aplikacji
 └── style.css     # style globalne i kolory obu motywów
 ```
 
-Nowy artykuł wystarczy dopisać w `scinet/src/data/articles.ts`. Tablica, filtry i strona Autorzy uwzględnią go automatycznie. Nową kategorię trzeba najpierw dodać do listy `CATEGORIES`.
+Komponenty dostają dane przez propsy, a zmiany zgłaszają przez emity. Dane w store'ach zmieniają dopiero widoki.
+
+### Przykładowe dane
+
+Przykładowe artykuły z `scinet/src/data/articles.ts` wczytują się tylko przy pierwszym uruchomieniu. Później aplikacja korzysta z danych zapisanych w przeglądarce, więc po zmianie tego pliku trzeba usunąć klucz `scinet-articles` z `localStorage`. Nową dziedzinę nauki dodaje się do listy `CATEGORIES`.
+
+Obrazki przykładowych artykułów są w domenie publicznej i pochodzą z Wikimedia Commons: [ilustracja NASA/CXC/SAO](https://commons.wikimedia.org/wiki/File:Artist%27s_illustration_showing_material_in_a_disk_that_is_falling_towards_a_supermassive_black_hole.jpg) i [zdjęcie NOAA Marine Debris Program](https://commons.wikimedia.org/wiki/File:Pre-production_plastic_pellets_(7656726070).jpg).
 
 ## Plany
 
 - [x] Testy automatyczne (Vitest)
+- [x] Publikowanie, edycja, usuwanie i komentarze
+- [x] Polubienia, panele boczne i widok na każdy ekran
 - [ ] Publikacja aplikacji w internecie
-- [ ] Artykuły pobierane z API i działający formularz kontaktowy
-- [ ] Konta użytkowników i komentarze
