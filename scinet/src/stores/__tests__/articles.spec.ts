@@ -79,6 +79,45 @@ describe('useArticlesStore', () => {
     expect(reload().articles[0]?.title).toBe('Nowy artykuł')
   })
 
+  it('usuwa wskazany artykuł, a resztę zostawia', () => {
+    const store = reload()
+
+    store.remove(1)
+
+    expect(store.articles.map((a) => a.id)).toEqual(
+      seedArticles.filter((a) => a.id !== 1).map((a) => a.id),
+    )
+  })
+
+  it('usunięty artykuł nie wraca po odświeżeniu', async () => {
+    const store = reload()
+
+    store.remove(1)
+    await nextTick()
+
+    const ids = reload().articles.map((a) => a.id)
+    expect(ids).not.toContain(1)
+    expect(ids).toHaveLength(seedArticles.length - 1)
+  })
+
+  it('po usunięciu wszystkich artykułów tablica zostaje pusta po odświeżeniu', async () => {
+    const store = reload()
+
+    for (const { id } of seedArticles) store.remove(id)
+    await nextTick()
+
+    expect(reload().articles).toEqual([])
+  })
+
+  it('usunięcie nie zmienia przykładowych danych', () => {
+    const before = seedArticles.length
+    const store = reload()
+
+    store.remove(1)
+
+    expect(seedArticles).toHaveLength(before)
+  })
+
   it('dodanie artykułu nie zmienia przykładowych danych', () => {
     const before = seedArticles.length
     const store = reload()

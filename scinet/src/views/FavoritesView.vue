@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import ArticleCard from '@/components/ArticleCard.vue'
+import { useArticlesStore } from '@/stores/articles'
 import { useFavoritesStore } from '@/stores/favorites'
 
+const store = useArticlesStore()
 const favorites = useFavoritesStore()
 </script>
 
@@ -10,7 +12,12 @@ const favorites = useFavoritesStore()
   <p class="lead">Artykuły, do których chcesz wrócić. Lista jest zapisana w tej przeglądarce.</p>
 
   <div v-if="favorites.count" class="grid">
-    <ArticleCard v-for="article in favorites.savedArticles" :key="article.id" :article="article" />
+    <ArticleCard
+      v-for="article in favorites.savedArticles"
+      :key="article.id"
+      :article="article"
+      @delete="store.remove(article.id)"
+    />
   </div>
 
   <div v-else class="empty">

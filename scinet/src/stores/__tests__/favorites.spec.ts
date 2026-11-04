@@ -1,8 +1,9 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
+import { useArticlesStore } from '../articles'
 import { useFavoritesStore } from '../favorites'
-import { seedArticles } from '@/data/articles'
+import { seedArticles, type ArticleDraft } from '@/data/articles'
 
 const STORAGE_KEY = 'scinet-favorites'
 
@@ -11,6 +12,45 @@ describe('useFavoritesStore', () => {
     localStorage.clear()
     vi.restoreAllMocks()
     setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('usunięty artykuł znika z zapisanych', () => {
+    const favorites = useFavoritesStore()
+    favorites.toggle(1)
+
+    useArticlesStore().remove(1)
+
+    expect(favorites.count).toBe(0)
+    expect(favorites.savedArticles).toEqual([])
+  })
+
+  it('nowy artykuł nie przejmuje zakładki po usuniętym', () => {
+    const articles = useArticlesStore()
+    const favorites = useFavoritesStore()
+    const draft: ArticleDraft = {
+      title: 'Nowy',
+      author: 'Jan',
+      category: 'Fizyka',
+      content: ['Treść.'],
+    }
+    const newestId = () => articles.articles[0]?.id ?? 0
+
+    vi.setSystemTime(new Date('2026-11-04T12:00:00.000Z'))
+    articles.add(draft)
+    const removedId = newestId()
+    favorites.toggle(removedId)
+    articles.remove(removedId)
+
+    vi.setSystemTime(new Date('2026-11-04T12:00:01.000Z'))
+    articles.add(draft)
+
+    expect(newestId()).not.toBe(removedId)
+    expect(favorites.isFavorite(newestId())).toBe(false)
+    expect(favorites.count).toBe(0)
   })
 
   it('na starcie jest pusty', () => {

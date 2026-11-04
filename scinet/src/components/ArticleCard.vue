@@ -2,14 +2,36 @@
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import { readingTime, type Article } from '@/data/articles'
 
-defineProps<{ article: Article }>()
+const props = defineProps<{ article: Article }>()
+
+// Karta tylko pyta o potwierdzenie, a samo usunięcie należy do rodzica
+const emit = defineEmits<{ delete: [] }>()
+
+function confirmDelete() {
+  if (window.confirm(`Usunąć artykuł „${props.article.title}”? Tej operacji nie da się cofnąć.`)) {
+    emit('delete')
+  }
+}
 </script>
 
 <template>
   <article class="card">
     <div class="top">
       <span class="category">{{ article.category }}</span>
-      <FavoriteButton :article-id="article.id" />
+      <div class="actions">
+        <FavoriteButton :article-id="article.id" />
+        <button
+          type="button"
+          class="delete"
+          aria-label="Usuń artykuł"
+          title="Usuń artykuł"
+          @click="confirmDelete"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6" />
+          </svg>
+        </button>
+      </div>
     </div>
     <h3>
       <RouterLink :to="`/artykuly/${article.id}`" class="title">{{ article.title }}</RouterLink>
@@ -53,6 +75,42 @@ defineProps<{ article: Article }>()
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Przycisk leży nad linkiem rozciągniętym na całą kartę */
+.delete {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  padding: 6px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.delete:hover {
+  background: var(--color-hover);
+  color: var(--color-error);
+}
+
+.delete svg {
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .category {

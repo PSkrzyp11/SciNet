@@ -82,5 +82,9 @@ export const useArticlesStore = defineStore('articles', () => {
     articles.value = [article, ...articles.value]
   }
 
-  return { articles, add }
+  function remove(id: number) {
+    articles.value = articles.value.filter((article) => article.id !== id)
+  }
+
+  return { articles, add, remove }
 })

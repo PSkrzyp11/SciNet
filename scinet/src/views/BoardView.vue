@@ -89,39 +89,50 @@ function publish(draft: ArticleDraft) {
       Dodaj artykuł
     </button>
 
-    <input v-model="search" type="search" class="search" placeholder="Szukaj po tytule…" />
-
-    <div class="filters">
-      <button
-        v-for="category in categories"
-        :key="category"
-        :class="{ active: category === selected }"
-        @click="selected = category"
-      >
-        {{ category }}
-      </button>
+    <div v-if="!store.articles.length" class="empty board-empty">
+      <p>Tablica jest pusta. Opublikuj pierwszy artykuł przyciskiem powyżej.</p>
     </div>
 
-    <div class="toolbar">
-      <p class="count">Znaleziono: {{ filtered.length }}</p>
-      <label class="sort">
-        Sortuj:
-        <select v-model="sort">
-          <option value="newest">Najnowsze</option>
-          <option value="oldest">Najstarsze</option>
-          <option value="title">A–Z</option>
-        </select>
-      </label>
-    </div>
+    <template v-else>
+      <input v-model="search" type="search" class="search" placeholder="Szukaj po tytule…" />
 
-    <div v-if="filtered.length" class="feed">
-      <ArticleCard v-for="article in filtered" :key="article.id" :article="article" />
-    </div>
+      <div class="filters">
+        <button
+          v-for="category in categories"
+          :key="category"
+          :class="{ active: category === selected }"
+          @click="selected = category"
+        >
+          {{ category }}
+        </button>
+      </div>
 
-    <div v-else class="empty">
-      <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
-      <button class="reset" @click="reset">Wyczyść filtry</button>
-    </div>
+      <div class="toolbar">
+        <p class="count">Znaleziono: {{ filtered.length }}</p>
+        <label class="sort">
+          Sortuj:
+          <select v-model="sort">
+            <option value="newest">Najnowsze</option>
+            <option value="oldest">Najstarsze</option>
+            <option value="title">A–Z</option>
+          </select>
+        </label>
+      </div>
+
+      <div v-if="filtered.length" class="feed">
+        <ArticleCard
+          v-for="article in filtered"
+          :key="article.id"
+          :article="article"
+          @delete="store.remove(article.id)"
+        />
+      </div>
+
+      <div v-else class="empty">
+        <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
+        <button class="reset" @click="reset">Wyczyść filtry</button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -250,6 +261,10 @@ h1 {
 
 .empty p {
   margin: 0 0 16px;
+}
+
+.board-empty p {
+  margin: 0;
 }
 
 .reset {

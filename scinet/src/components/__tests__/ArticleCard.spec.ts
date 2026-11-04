@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mount, RouterLinkStub } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import ArticleCard from '../ArticleCard.vue'
@@ -24,6 +24,29 @@ function mountCard() {
 }
 
 describe('ArticleCard', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('po potwierdzeniu prosi rodzica o usunięcie artykułu', async () => {
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const wrapper = mountCard()
+
+    await wrapper.find('.delete').trigger('click')
+
+    expect(confirm.mock.calls[0]?.[0]).toContain('Tytuł testowy')
+    expect(wrapper.emitted('delete')).toHaveLength(1)
+  })
+
+  it('bez potwierdzenia nie usuwa artykułu', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(false)
+    const wrapper = mountCard()
+
+    await wrapper.find('.delete').trigger('click')
+
+    expect(wrapper.emitted('delete')).toBeUndefined()
+  })
+
   it('pokazuje tytuł, autora, datę i treść', () => {
     const text = mountCard().text()
 

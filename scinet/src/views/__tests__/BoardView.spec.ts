@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
@@ -33,6 +33,81 @@ async function mountAt(url: string) {
 describe('BoardView', () => {
   beforeEach(() => {
     localStorage.clear()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  it('usuwa artykuł po potwierdzeniu', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const { wrapper, titles } = await mountAt('/')
+
+    await wrapper.find('.card .delete').trigger('click')
+
+    expect(titles()).toHaveLength(articles.length - 1)
+    expect(titles()).not.toContain('Jak działają komputery kwantowe?')
+    expect(wrapper.find('.count').text()).toBe(`Znaleziono: ${articles.length - 1}`)
+  })
+
+  it('zostawia artykuł, gdy usuwanie zostanie anulowane', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(false)
+    const { wrapper, titles } = await mountAt('/')
+
+    await wrapper.find('.card .delete').trigger('click')
+
+    expect(titles()).toHaveLength(articles.length)
+  })
+
+  it('pokazuje osobny komunikat, gdy tablica jest pusta', async () => {
+    localStorage.setItem('scinet-articles', '[]')
+
+    const { wrapper } = await mountAt('/')
+
+    expect(wrapper.find('.board-empty').text()).toContain('Tablica jest pusta')
+    expect(wrapper.find('.add').exists()).toBe(true)
+    expect(wrapper.find('.search').exists()).toBe(false)
+    expect(wrapper.find('.filters').exists()).toBe(false)
+    expect(wrapper.find('.reset').exists()).toBe(false)
+  })
+
+  it('po usunięciu ostatniego artykułu pokazuje pustą tablicę', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const [first] = articles
+    localStorage.setItem('scinet-articles', JSON.stringify([first]))
+    const { wrapper } = await mountAt('/')
+
+    await wrapper.find('.card .delete').trigger('click')
+
+    expect(wrapper.find('.board-empty').exists()).toBe(true)
+  })
+
+  it('na pustą tablicę można dodać pierwszy artykuł', async () => {
+    localStorage.setItem('scinet-articles', '[]')
+    const { wrapper, titles } = await mountAt('/')
+
+    await wrapper.find('.add').trigger('click')
+    await wrapper.find('[name="title"]').setValue('Pierwszy artykuł')
+    await wrapper.find('[name="category"]').setValue('Fizyka')
+    await wrapper.find('[name="content"]').setValue('Treść.')
+    await wrapper.find('.article-form').trigger('submit')
+    await flushPromises()
+
+    expect(titles()).toEqual(['Pierwszy artykuł'])
+    expect(wrapper.find('.board-empty').exists()).toBe(false)
+  })
+
+  it('po usunięciu ostatniego artykułu w dziedzinie filtr wraca do wszystkich', async () => {
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    const { wrapper, titles, filter } = await mountAt('/?kategoria=Biologia')
+
+    expect(titles()).toEqual(['CRISPR w praktyce'])
+
+    await wrapper.find('.card .delete').trigger('click')
+
+    expect(titles()).toHaveLength(articles.length - 1)
+    expect(filter('Wszystkie').classes()).toContain('active')
+    expect(wrapper.findAll('.filters button').map((b) => b.text())).not.toContain('Biologia')
   })
 
   it('formularz otwiera się przyciskiem i zamyka bez publikacji', async () => {
