@@ -1,13 +1,33 @@
 <script setup lang="ts">
 import ArticleCard from '@/components/ArticleCard.vue'
 import { articles } from '@/data/articles'
+import { authors } from '@/data/authors'
 
 const latest = articles.slice(0, 3)
 
+// Polska odmiana: 1 artykuł, 2 artykuły, 5 artykułów
+function plural(count: number, one: string, few: string, many: string) {
+  if (count === 1) return one
+  const lastDigit = count % 10
+  const lastTwo = count % 100
+  return lastDigit >= 2 && lastDigit <= 4 && (lastTwo < 12 || lastTwo > 14) ? few : many
+}
+
+const categoryCount = new Set(articles.map((a) => a.category)).size
+
 const stats = [
-  { value: '120+', label: 'artykułów' },
-  { value: '35', label: 'autorów' },
-  { value: '8', label: 'dziedzin nauki' },
+  {
+    value: articles.length,
+    label: plural(articles.length, 'artykuł', 'artykuły', 'artykułów'),
+  },
+  {
+    value: authors.length,
+    label: plural(authors.length, 'autor', 'autorzy', 'autorów'),
+  },
+  {
+    value: categoryCount,
+    label: plural(categoryCount, 'dziedzina nauki', 'dziedziny nauki', 'dziedzin nauki'),
+  },
 ]
 </script>
 
