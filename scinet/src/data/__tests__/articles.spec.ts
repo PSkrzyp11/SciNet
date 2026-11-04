@@ -82,6 +82,17 @@ describe('isImageUrl', () => {
 })
 
 describe('przykładowe artykuły', () => {
+  it('mają komentarze z unikalnymi identyfikatorami i datą po publikacji', () => {
+    for (const article of seedArticles) {
+      const ids = article.comments.map((c) => c.id)
+
+      expect(new Set(ids).size).toBe(ids.length)
+      for (const comment of article.comments) {
+        expect(comment.date > article.date).toBe(true)
+      }
+    }
+  })
+
   it('są z obrazkami i bez, a adresy obrazków są poprawne', () => {
     const images = seedArticles.flatMap((a) => (a.image ? [a.image] : []))
 

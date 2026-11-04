@@ -6,6 +6,7 @@ import {
   type Article,
   type ArticleComment,
   type ArticleDraft,
+  type CommentDraft,
 } from '@/data/articles'
 
 const STORAGE_KEY = 'scinet-articles'
@@ -116,5 +117,16 @@ export const useArticlesStore = defineStore('articles', () => {
     )
   }
 
-  return { articles, topLiked, add, update, remove, toggleLike }
+  function addComment(articleId: number, draft: CommentDraft) {
+    const comment: ArticleComment = {
+      ...draft,
+      id: Date.now(),
+      date: new Date().toISOString(),
+    }
+    articles.value = articles.value.map((article) =>
+      article.id === articleId ? { ...article, comments: [...article.comments, comment] } : article,
+    )
+  }
+
+  return { articles, topLiked, add, update, remove, toggleLike, addComment }
 })

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { mount, RouterLinkStub } from '@vue/test-utils'
+import { flushPromises, mount, RouterLinkStub } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import ArticleView from '../ArticleView.vue'
 import { seedArticles } from '@/data/articles'
@@ -39,6 +39,33 @@ describe('ArticleView', () => {
     await like.trigger('click')
     expect(like.find('.count').text()).toBe(String(startLikes))
     expect(like.attributes('aria-pressed')).toBe('false')
+  })
+
+  it('pokazuje komentarze i pozwala dodać nowy', async () => {
+    const [first] = seedArticles
+    const startCount = first?.comments.length ?? 0
+    const wrapper = mountArticle(String(first?.id))
+
+    expect(wrapper.findAll('.comments li')).toHaveLength(startCount)
+
+    await wrapper.find('.comments [name="text"]').setValue('Nowy komentarz')
+    await wrapper.find('.comments form').trigger('submit')
+    await flushPromises()
+
+    const items = wrapper.findAll('.comments li')
+    expect(items).toHaveLength(startCount + 1)
+    expect(items[items.length - 1]?.text()).toContain('Nowy komentarz')
+    expect(wrapper.find('.comments h2').text()).toBe(`Komentarze (${startCount + 1})`)
+  })
+
+  it('komentarz zostaje po odświeżeniu strony', async () => {
+    const wrapper = mountArticle('2')
+
+    await wrapper.find('.comments [name="text"]').setValue('Zostaję po odświeżeniu')
+    await wrapper.find('.comments form').trigger('submit')
+    await flushPromises()
+
+    expect(mountArticle('2').find('.comments li').text()).toContain('Zostaję po odświeżeniu')
   })
 
   it('ma link do edycji artykułu', () => {

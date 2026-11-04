@@ -39,6 +39,16 @@ describe('ArticleCard', () => {
     expect(wrapper.emitted('like')).toHaveLength(1)
   })
 
+  it('pokazuje liczbę komentarzy', () => {
+    const comment = { id: 1, author: 'Ola', text: 'Komentarz', date: '2026-03-10' }
+
+    expect(mountCard().find('.comment-count').text()).toBe('0')
+
+    const count = mountCard({ comments: [comment, { ...comment, id: 2 }] }).find('.comment-count')
+    expect(count.text()).toBe('2')
+    expect(count.attributes('aria-label')).toBe('Komentarze: 2')
+  })
+
   it('pokazuje obrazek artykułu, który go ma', () => {
     const img = mountCard({ image: 'https://example.com/obrazek.jpg' }).find('img')
 

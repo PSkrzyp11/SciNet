@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import ArticleImage from '@/components/ArticleImage.vue'
+import CommentSection from '@/components/CommentSection.vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import LikeButton from '@/components/LikeButton.vue'
 import { readingTime } from '@/data/articles'
@@ -46,6 +47,8 @@ const related = computed(() =>
     <ArticleImage class="image" :src="article.image" :alt="article.title" />
 
     <p v-for="(paragraph, i) in article.content" :key="i">{{ paragraph }}</p>
+
+    <CommentSection :comments="article.comments" @add="store.addComment(article.id, $event)" />
 
     <aside v-if="related.length" class="related">
       <h2>Więcej od autora</h2>

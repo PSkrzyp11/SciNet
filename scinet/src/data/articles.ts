@@ -31,8 +31,9 @@ export interface Article {
   comments: ArticleComment[]
 }
 
-// Dane z formularza: resztę pól uzupełnia store
+// Dane z formularzy: resztę pól uzupełnia store
 export type ArticleDraft = Pick<Article, 'title' | 'author' | 'category' | 'content' | 'image'>
+export type CommentDraft = Pick<ArticleComment, 'author' | 'text'>
 
 // Tylko pełne adresy internetowe, bez plików wklejonych jako data: czy javascript:
 export function isImageUrl(text: string) {
@@ -74,7 +75,20 @@ export const seedArticles: Article[] = [
     ],
     likes: 24,
     liked: false,
-    comments: [],
+    comments: [
+      {
+        id: 1,
+        author: 'Marek Wiśniewski',
+        text: 'Świetne wyjaśnienie splątania. Czy planujesz tekst o korekcji błędów?',
+        date: '2026-10-29T09:30:00.000Z',
+      },
+      {
+        id: 2,
+        author: 'Kasia Zielińska',
+        text: 'Przyda się moim uczniom, dzięki!',
+        date: '2026-10-30T17:15:00.000Z',
+      },
+    ],
   },
   {
     id: 2,

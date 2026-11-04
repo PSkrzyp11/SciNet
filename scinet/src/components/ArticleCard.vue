@@ -55,7 +55,20 @@ function confirmDelete() {
       <span>{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
     </footer>
     <div class="bottom">
-      <LikeButton :count="article.likes" :liked="article.liked" @toggle="emit('like')" />
+      <div class="reactions">
+        <LikeButton :count="article.likes" :liked="article.liked" @toggle="emit('like')" />
+        <span
+          class="comment-count"
+          role="img"
+          :aria-label="`Komentarze: ${article.comments.length}`"
+          :title="`Komentarze: ${article.comments.length}`"
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M4 5h16v11H9l-5 4V5z" />
+          </svg>
+          {{ article.comments.length }}
+        </span>
+      </div>
       <span class="more">Czytaj dalej →</span>
       <span class="time">{{ readingTime(article) }} min czytania</span>
     </div>
@@ -195,6 +208,30 @@ footer span:last-child {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.reactions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.comment-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.comment-count svg {
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
 }
 
 .time {

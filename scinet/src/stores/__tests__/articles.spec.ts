@@ -180,6 +180,69 @@ describe('useArticlesStore', () => {
     expect(store.articles.map((a) => a.id)).toEqual(seedArticles.map((a) => a.id))
   })
 
+  it('dodaje komentarz na koniec listy i uzupełnia datę', () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([article]))
+    vi.setSystemTime(new Date('2026-11-04T12:00:00.000Z'))
+    const store = reload()
+
+    store.addComment(100, { author: 'Jan', text: 'Nowy komentarz' })
+
+    expect(store.articles[0]?.comments).toEqual([
+      ...article.comments,
+      { id: Date.now(), author: 'Jan', text: 'Nowy komentarz', date: '2026-11-04T12:00:00.000Z' },
+    ])
+  })
+
+  it('komentarz trafia tylko pod wskazany artykuł', () => {
+    const store = reload()
+
+    store.addComment(2, { author: 'Jan', text: 'Komentarz' })
+
+    const counts = store.articles.map((a) => a.comments.length)
+    expect(counts).toEqual(
+      seedArticles.map((a) => (a.id === 2 ? a.comments.length + 1 : a.comments.length)),
+    )
+  })
+
+  it('komentarze są na miejscu po odświeżeniu', async () => {
+    const store = reload()
+
+    store.addComment(2, { author: 'Jan', text: 'Zostaję' })
+    await nextTick()
+
+    expect(
+      reload()
+        .articles.find((a) => a.id === 2)
+        ?.comments.map((c) => c.text),
+    ).toEqual(['Zostaję'])
+  })
+
+  it('komentarz nie zmienia przykładowych danych', () => {
+    const before = seedArticles[1]?.comments.length
+    const store = reload()
+
+    store.addComment(2, { author: 'Jan', text: 'Komentarz' })
+
+    expect(seedArticles[1]?.comments).toHaveLength(before ?? 0)
+  })
+
+  it('komentarz do nieistniejącego artykułu niczego nie zmienia', () => {
+    const store = reload()
+
+    store.addComment(999, { author: 'Jan', text: 'Komentarz' })
+
+    expect(store.articles).toEqual(seedArticles)
+  })
+
+  it('edycja artykułu zostawia dodane komentarze', () => {
+    const store = reload()
+
+    store.addComment(2, { author: 'Jan', text: 'Zostaję' })
+    store.update(2, draft)
+
+    expect(store.articles.find((a) => a.id === 2)?.comments.map((c) => c.text)).toEqual(['Zostaję'])
+  })
+
   it('edycja zmienia pola z formularza, a resztę zostawia', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([article]))
     const store = reload()
