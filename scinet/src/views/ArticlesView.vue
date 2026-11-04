@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import { articles, type Article } from '@/data/articles'
 
@@ -10,8 +11,32 @@ const sorters = {
 }
 
 const categories = ['Wszystkie', ...new Set(articles.map((a) => a.category))]
-const selected = ref('Wszystkie')
-const search = ref('')
+const route = useRoute()
+const router = useRouter()
+
+function queryParam(name: string) {
+  const value = route.query[name]
+  return typeof value === 'string' ? value : ''
+}
+
+function updateQuery(changes: Record<string, string | undefined>) {
+  router.replace({ query: { ...route.query, ...changes } })
+}
+
+// Kategoria i wyszukiwanie są trzymane w adresie, np. /artykuly?kategoria=Fizyka&q=kwant
+const selected = computed({
+  get: () => {
+    const category = queryParam('kategoria')
+    return categories.includes(category) ? category : 'Wszystkie'
+  },
+  set: (category) => updateQuery({ kategoria: category === 'Wszystkie' ? undefined : category }),
+})
+
+const search = computed({
+  get: () => queryParam('q'),
+  set: (text) => updateQuery({ q: text || undefined }),
+})
+
 const sort = ref<keyof typeof sorters>('newest')
 
 const filtered = computed(() => {
@@ -29,8 +54,7 @@ const filtered = computed(() => {
 })
 
 function reset() {
-  search.value = ''
-  selected.value = 'Wszystkie'
+  updateQuery({ q: undefined, kategoria: undefined })
 }
 </script>
 

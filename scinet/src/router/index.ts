@@ -43,7 +43,8 @@ const router = createRouter({
       meta: { title: 'Nie znaleziono strony' },
     },
   ],
-  scrollBehavior: () => ({ top: 0 }),
+  // Zmiana samych parametrów (np. pisanie w wyszukiwarce) nie przewija strony
+  scrollBehavior: (to, from) => (to.path === from.path ? false : { top: 0 }),
 })
 
 router.afterEach((to) => {
