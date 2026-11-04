@@ -78,7 +78,6 @@ const isActive = (to: string) =>
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
   padding: 16px 32px;
@@ -152,7 +151,7 @@ nav a.active .badge {
 
 .menu-toggle {
   display: none;
-  padding: 8px;
+  padding: 9px;
   border: 1px solid #fff;
   border-radius: 10px;
   background: none;

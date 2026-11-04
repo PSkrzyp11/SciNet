@@ -48,6 +48,15 @@ const saved = computed(() => favorites.isFavorite(props.articleId))
   color: var(--color-primary);
 }
 
+/* Na ekranach dotykowych przycisk ma wygodne 44 px */
+@media (pointer: coarse) {
+  .favorite {
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
 .favorite.with-label {
   padding: 6px 14px;
   border-color: var(--color-border);

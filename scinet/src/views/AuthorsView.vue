@@ -103,7 +103,6 @@ h3 {
 
 .bio {
   margin: 0;
-  flex: 1;
 }
 
 .written {

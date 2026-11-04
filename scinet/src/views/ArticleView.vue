@@ -79,7 +79,8 @@ const related = computed(() =>
 .back {
   display: block;
   width: fit-content;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
+  padding: 8px 0;
   font-weight: 600;
   text-decoration: none;
 }
@@ -111,6 +112,13 @@ const related = computed(() =>
   transition:
     background 0.2s,
     color 0.2s;
+}
+
+/* Na ekranach dotykowych przycisk ma wygodne 44 px */
+@media (pointer: coarse) {
+  .edit {
+    min-height: 44px;
+  }
 }
 
 .edit:hover {

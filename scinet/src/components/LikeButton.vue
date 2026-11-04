@@ -46,6 +46,13 @@ const emit = defineEmits<{ toggle: [] }>()
     color 0.2s;
 }
 
+/* Na ekranach dotykowych przycisk ma wygodne 44 px */
+@media (pointer: coarse) {
+  .like {
+    min-height: 44px;
+  }
+}
+
 .like:hover {
   background: var(--color-primary-light);
   color: var(--color-primary);

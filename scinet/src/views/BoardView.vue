@@ -294,7 +294,7 @@ h1 {
 }
 
 .sort select {
-  padding: 8px 12px;
+  padding: 9px 12px;
   border: 1px solid var(--color-input-border);
   border-radius: 10px;
   background: var(--color-surface);

@@ -49,7 +49,8 @@ function save(draft: ArticleDraft) {
 .back {
   display: block;
   width: fit-content;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
+  padding: 8px 0;
   font-weight: 600;
   text-decoration: none;
 }

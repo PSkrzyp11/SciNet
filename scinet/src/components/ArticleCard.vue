@@ -139,6 +139,16 @@ function confirmDelete() {
   color: var(--color-error);
 }
 
+/* Na ekranach dotykowych przyciski mają wygodne 44 px */
+@media (pointer: coarse) {
+  .icon-action {
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
 .icon-action svg {
   flex-shrink: 0;
   fill: none;

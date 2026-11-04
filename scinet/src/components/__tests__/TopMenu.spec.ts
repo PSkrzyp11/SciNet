@@ -77,6 +77,15 @@ describe('TopMenu', () => {
     expect(wrapper.find('nav').classes()).not.toContain('open')
   })
 
+  it('zamyka menu po kliknięciu linku', async () => {
+    const { wrapper } = await mountAt('/')
+
+    await wrapper.find('.menu-toggle').trigger('click')
+    await wrapper.find('nav a').trigger('click')
+
+    expect(wrapper.find('nav').classes()).not.toContain('open')
+  })
+
   it('jedynym przyciskiem w menu jest rozwijanie na telefonie', async () => {
     const { wrapper } = await mountAt('/')
 
