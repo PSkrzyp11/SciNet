@@ -22,7 +22,8 @@ const stats = [
   },
   {
     value: authors.length,
-    label: plural(authors.length, 'autor', 'autorzy', 'autorów'),
+    // Przy liczbie mówimy „czterech autorów”, nie „cztery autorzy”
+    label: plural(authors.length, 'autor', 'autorów', 'autorów'),
   },
   {
     value: categoryCount,
