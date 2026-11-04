@@ -147,6 +147,39 @@ describe('useArticlesStore', () => {
     expect(store.articles).toEqual(seedArticles)
   })
 
+  it('topLiked to pięć najczęściej polubionych artykułów', () => {
+    const store = reload()
+
+    expect(store.topLiked.map((a) => a.likes)).toEqual([42, 31, 24, 18, 12])
+  })
+
+  it('topLiked reaguje na polubienia i usuwanie', () => {
+    const store = reload()
+
+    store.toggleLike(1)
+    expect(store.topLiked.find((a) => a.id === 1)?.likes).toBe(25)
+
+    store.remove(4)
+    expect(store.topLiked.map((a) => a.id)).toEqual([3, 1, 2, 5, 6])
+  })
+
+  it('topLiked pomija artykuły bez polubień, a przy remisie wyżej stawia nowszy', () => {
+    const older = { ...article, id: 1, likes: 5, date: '2026-01-01' }
+    const newer = { ...article, id: 2, likes: 5, date: '2026-02-01' }
+    const none = { ...article, id: 3, likes: 0 }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([older, newer, none]))
+
+    expect(reload().topLiked.map((a) => a.id)).toEqual([2, 1])
+  })
+
+  it('topLiked nie zmienia kolejności artykułów', () => {
+    const store = reload()
+
+    void store.topLiked
+
+    expect(store.articles.map((a) => a.id)).toEqual(seedArticles.map((a) => a.id))
+  })
+
   it('usuwa wskazany artykuł, a resztę zostawia', () => {
     const store = reload()
 

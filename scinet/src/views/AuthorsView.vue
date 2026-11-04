@@ -59,14 +59,8 @@ const allAuthors = computed<Author[]>(() => {
 <style scoped>
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr));
   gap: 24px;
-}
-
-@media (max-width: 500px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 .author {
@@ -74,6 +68,8 @@ const allAuthors = computed<Author[]>(() => {
   flex-direction: column;
   gap: 16px;
   padding: 32px;
+  /* Długie imię bez spacji wpisane w formularzu nie rozpycha strony */
+  overflow-wrap: anywhere;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);

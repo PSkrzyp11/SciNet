@@ -169,7 +169,7 @@ h1,
 
 @media (max-width: 760px) {
   .columns {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -198,6 +198,7 @@ label {
 
 input,
 textarea {
+  width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--color-input-border);
   border-radius: 10px;

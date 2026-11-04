@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import {
   CATEGORIES,
@@ -9,6 +9,7 @@ import {
 } from '@/data/articles'
 
 const STORAGE_KEY = 'scinet-articles'
+const TOP_LIKED_COUNT = 5
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null
@@ -69,6 +70,14 @@ export const useArticlesStore = defineStore('articles', () => {
   // Każda zmiana musi podmienić całą tablicę, bo tylko wtedy watch ją zauważy
   watch(articles, save)
 
+  // Przy równej liczbie polubień wyżej jest nowszy artykuł
+  const topLiked = computed(() =>
+    articles.value
+      .filter((article) => article.likes > 0)
+      .sort((a, b) => b.likes - a.likes || b.date.localeCompare(a.date))
+      .slice(0, TOP_LIKED_COUNT),
+  )
+
   function add(draft: ArticleDraft) {
     const article: Article = {
       ...draft,
@@ -99,5 +108,5 @@ export const useArticlesStore = defineStore('articles', () => {
     )
   }
 
-  return { articles, add, remove, toggleLike }
+  return { articles, topLiked, add, remove, toggleLike }
 })

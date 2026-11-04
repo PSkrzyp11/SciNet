@@ -40,6 +40,47 @@ describe('BoardView', () => {
     vi.useRealTimers()
   })
 
+  it('wizytówka pokazuje artykuły i polubienia użytkownika', async () => {
+    const { wrapper } = await mountAt('/')
+    const stats = () => wrapper.findAll('.user-card dd').map((value) => value.text())
+
+    expect(wrapper.find('.user-card h2').text()).toBe('Anna Nowak')
+    expect(stats()).toEqual(['2', '66'])
+
+    await wrapper.find('.card .like').trigger('click')
+
+    expect(stats()).toEqual(['2', '67'])
+  })
+
+  it('panel pokazuje najczęściej polubione i zmienia się po polubieniu', async () => {
+    const { wrapper, store } = await mountAt('/')
+    const panelTitles = () => wrapper.findAll('.top-liked li a').map((a) => a.text())
+
+    expect(panelTitles()).toHaveLength(5)
+    expect(panelTitles()[0]).toBe('Czarne dziury na zdjęciach')
+
+    store.remove(4)
+    await wrapper.vm.$nextTick()
+
+    expect(panelTitles()[0]).toBe('Sieci neuronowe od podstaw')
+  })
+
+  it('panel nie zależy od filtrów tablicy', async () => {
+    const { wrapper } = await mountAt('/?kategoria=Biologia')
+
+    expect(wrapper.findAll('.card')).toHaveLength(1)
+    expect(wrapper.findAll('.top-liked li')).toHaveLength(5)
+  })
+
+  it('na pustej tablicy panele nadal działają', async () => {
+    localStorage.setItem('scinet-articles', '[]')
+
+    const { wrapper } = await mountAt('/')
+
+    expect(wrapper.findAll('.user-card dd').map((value) => value.text())).toEqual(['0', '0'])
+    expect(wrapper.find('.top-liked .empty').exists()).toBe(true)
+  })
+
   it('polubienie zmienia licznik na karcie i zostaje po odświeżeniu', async () => {
     const startLikes = articles[0]?.likes ?? 0
     const { wrapper } = await mountAt('/')

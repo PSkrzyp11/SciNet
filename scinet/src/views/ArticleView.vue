@@ -68,6 +68,8 @@ const related = computed(() =>
   max-width: 740px;
   margin: 0 auto;
   padding-top: 40px;
+  /* Długi tekst bez spacji wpisany w formularzu nie rozpycha strony */
+  overflow-wrap: anywhere;
 }
 
 .back {

@@ -62,6 +62,8 @@ function confirmDelete() {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  /* Długi tekst bez spacji wpisany w formularzu nie rozpycha strony */
+  overflow-wrap: anywhere;
   transition:
     transform 0.2s,
     box-shadow 0.2s,
@@ -164,6 +166,10 @@ footer {
   border-top: 1px solid var(--color-border);
   font-size: 0.85rem;
   color: var(--color-text-muted);
+}
+
+footer span:last-child {
+  flex-shrink: 0;
 }
 
 .bottom {

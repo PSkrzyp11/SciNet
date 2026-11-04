@@ -3,7 +3,10 @@ import { computed, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ArticleForm from '@/components/ArticleForm.vue'
+import TopLikedPanel from '@/components/TopLikedPanel.vue'
+import UserCard from '@/components/UserCard.vue'
 import { CATEGORIES, type Article, type ArticleDraft } from '@/data/articles'
+import { currentUser } from '@/data/authors'
 import { useArticlesStore } from '@/stores/articles'
 
 const sorters = {
@@ -62,6 +65,9 @@ function reset() {
   updateQuery({ q: undefined, kategoria: undefined })
 }
 
+const userArticles = computed(() => store.articles.filter((a) => a.author === currentUser.name))
+const userLikes = computed(() => userArticles.value.reduce((sum, a) => sum + a.likes, 0))
+
 const formOpen = ref(false)
 const addButton = ref<HTMLButtonElement | null>(null)
 
@@ -82,69 +88,126 @@ function publish(draft: ArticleDraft) {
 
 <template>
   <div class="board">
-    <h1>Tablica</h1>
+    <div class="content">
+      <h1>Tablica</h1>
 
-    <ArticleForm v-if="formOpen" @publish="publish" @cancel="closeForm" />
-    <button v-else ref="addButton" type="button" class="add" @click="formOpen = true">
-      Dodaj artykuł
-    </button>
+      <ArticleForm v-if="formOpen" @publish="publish" @cancel="closeForm" />
+      <button v-else ref="addButton" type="button" class="add" @click="formOpen = true">
+        Dodaj artykuł
+      </button>
 
-    <div v-if="!store.articles.length" class="empty board-empty">
-      <p>Tablica jest pusta. Opublikuj pierwszy artykuł przyciskiem powyżej.</p>
+      <div v-if="!store.articles.length" class="empty board-empty">
+        <p>Tablica jest pusta. Opublikuj pierwszy artykuł przyciskiem powyżej.</p>
+      </div>
+
+      <template v-else>
+        <input v-model="search" type="search" class="search" placeholder="Szukaj po tytule…" />
+
+        <div class="filters">
+          <button
+            v-for="category in categories"
+            :key="category"
+            :class="{ active: category === selected }"
+            @click="selected = category"
+          >
+            {{ category }}
+          </button>
+        </div>
+
+        <div class="toolbar">
+          <p class="count">Znaleziono: {{ filtered.length }}</p>
+          <label class="sort">
+            Sortuj:
+            <select v-model="sort">
+              <option value="newest">Najnowsze</option>
+              <option value="oldest">Najstarsze</option>
+              <option value="title">A–Z</option>
+            </select>
+          </label>
+        </div>
+
+        <div v-if="filtered.length" class="feed">
+          <ArticleCard
+            v-for="article in filtered"
+            :key="article.id"
+            :article="article"
+            @delete="store.remove(article.id)"
+            @like="store.toggleLike(article.id)"
+          />
+        </div>
+
+        <div v-else class="empty">
+          <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
+          <button class="reset" @click="reset">Wyczyść filtry</button>
+        </div>
+      </template>
     </div>
 
-    <template v-else>
-      <input v-model="search" type="search" class="search" placeholder="Szukaj po tytule…" />
-
-      <div class="filters">
-        <button
-          v-for="category in categories"
-          :key="category"
-          :class="{ active: category === selected }"
-          @click="selected = category"
-        >
-          {{ category }}
-        </button>
-      </div>
-
-      <div class="toolbar">
-        <p class="count">Znaleziono: {{ filtered.length }}</p>
-        <label class="sort">
-          Sortuj:
-          <select v-model="sort">
-            <option value="newest">Najnowsze</option>
-            <option value="oldest">Najstarsze</option>
-            <option value="title">A–Z</option>
-          </select>
-        </label>
-      </div>
-
-      <div v-if="filtered.length" class="feed">
-        <ArticleCard
-          v-for="article in filtered"
-          :key="article.id"
-          :article="article"
-          @delete="store.remove(article.id)"
-          @like="store.toggleLike(article.id)"
-        />
-      </div>
-
-      <div v-else class="empty">
-        <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
-        <button class="reset" @click="reset">Wyczyść filtry</button>
-      </div>
-    </template>
+    <!-- Panele są w kodzie po tablicy, więc na telefonie to ona jest pierwsza -->
+    <UserCard
+      class="profile"
+      :user="currentUser"
+      :article-count="userArticles.length"
+      :like-count="userLikes"
+    />
+    <TopLikedPanel class="popular" :articles="store.topLiked" />
   </div>
 </template>
 
 <style scoped>
+/* Telefon: jedna kolumna, najpierw tablica, a pod nią panele */
 .board {
-  max-width: 720px;
-  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    'content'
+    'profile'
+    'popular';
+  gap: 24px;
+  padding-top: 32px;
+}
+
+.content {
+  grid-area: content;
+}
+
+.profile {
+  grid-area: profile;
+}
+
+.popular {
+  grid-area: popular;
+}
+
+/* Tablet: tablica i kolumna z panelami */
+@media (min-width: 760px) {
+  .board {
+    grid-template-columns: 250px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'profile content'
+      'popular content';
+    align-items: start;
+  }
+}
+
+/* Komputer: panele po obu stronach tablicy, widoczne także po przewinięciu */
+@media (min-width: 1100px) {
+  .board {
+    grid-template-columns: 240px minmax(0, 1fr) 270px;
+    grid-template-rows: auto;
+    grid-template-areas: 'profile content popular';
+  }
+
+  .profile,
+  .popular {
+    position: sticky;
+    top: 100px;
+  }
 }
 
 h1 {
-  margin: 48px 0 28px;
+  margin: 0 0 28px;
   text-align: center;
 }
 
