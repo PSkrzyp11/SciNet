@@ -1,9 +1,27 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useFavoritesStore } from '@/stores/favorites'
 
 const route = useRoute()
 const favorites = useFavoritesStore()
+
+const open = ref(false)
+const toggleButton = ref<HTMLButtonElement | null>(null)
+
+// Menu zamyka się po przejściu na inną stronę (także przez logo albo przycisk „wstecz”)
+watch(
+  () => route.fullPath,
+  () => {
+    open.value = false
+  },
+)
+
+function closeOnEscape() {
+  if (!open.value) return
+  open.value = false
+  toggleButton.value?.focus()
+}
 
 const links = [
   { to: '/', label: 'Start' },
@@ -19,15 +37,31 @@ const isActive = (to: string) =>
 </script>
 
 <template>
-  <header class="top-menu">
+  <header class="top-menu" @keydown.esc="closeOnEscape">
     <RouterLink to="/" class="logo">Sci<span>Net</span></RouterLink>
 
-    <nav>
+    <button
+      ref="toggleButton"
+      type="button"
+      class="menu-toggle"
+      aria-controls="main-menu"
+      :aria-expanded="open"
+      aria-label="Menu"
+      @click="open = !open"
+    >
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+        <path v-if="open" d="M6 6l12 12M18 6L6 18" />
+        <path v-else d="M4 7h16M4 12h16M4 17h16" />
+      </svg>
+    </button>
+
+    <nav id="main-menu" :class="{ open }">
       <RouterLink
         v-for="link in links"
         :key="link.to"
         :to="link.to"
         :class="{ active: isActive(link.to) }"
+        @click="open = false"
       >
         {{ link.label }}
         <span v-if="link.to === '/zapisane' && favorites.count" class="badge">
@@ -104,5 +138,47 @@ nav a:hover {
 nav a.active {
   background: var(--color-primary-light);
   color: var(--color-primary);
+}
+
+.menu-toggle {
+  display: none;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: none;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.menu-toggle svg {
+  display: block;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+@media (max-width: 760px) {
+  .top-menu {
+    padding: 12px 20px;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  nav {
+    display: none;
+    flex-basis: 100%;
+    flex-direction: column;
+  }
+
+  nav.open {
+    display: flex;
+  }
+
+  nav a {
+    padding: 12px 14px;
+  }
 }
 </style>
