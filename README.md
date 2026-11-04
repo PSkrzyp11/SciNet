@@ -15,7 +15,7 @@ Serwis z artykułami popularnonaukowymi: czytaj, wyszukuj i zapisuj teksty z ró
 
 ## Funkcje
 
-- **Artykuły:** wyszukiwanie, filtrowanie po kategorii i sortowanie. Kategoria i wyszukiwana fraza zapisują się w adresie, więc wynikami można się podzielić linkiem.
+- **Tablica:** artykuły od najnowszego, wyszukiwanie po tytule, filtrowanie po kategorii i sortowanie. Kategoria i wyszukiwana fraza zapisują się w adresie, więc wynikami można się podzielić linkiem.
 - **Strona artykułu:** pełna treść, autor, data i szacowany czas czytania.
 - **Zapisane:** ulubione artykuły z licznikiem w menu, przechowywane w przeglądarce.
 - **Autorzy:** krótkie opisy i listy napisanych tekstów.
@@ -81,7 +81,7 @@ scinet/src/
 └── style.css     # style globalne i kolory obu motywów
 ```
 
-Nowy artykuł wystarczy dopisać w `scinet/src/data/articles.ts`. Lista, filtry, statystyki i strona Autorzy uwzględnią go automatycznie. Nową kategorię trzeba najpierw dodać do listy `CATEGORIES`.
+Nowy artykuł wystarczy dopisać w `scinet/src/data/articles.ts`. Tablica, filtry i strona Autorzy uwzględnią go automatycznie. Nową kategorię trzeba najpierw dodać do listy `CATEGORIES`.
 
 ## Plany
 

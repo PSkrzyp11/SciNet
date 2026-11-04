@@ -25,7 +25,7 @@ function updateQuery(changes: Record<string, string | undefined>) {
   router.replace({ query: { ...route.query, ...changes } })
 }
 
-// Kategoria i wyszukiwanie są trzymane w adresie, np. /artykuly?kategoria=Fizyka&q=kwant
+// Kategoria i wyszukiwanie są trzymane w adresie, np. /?kategoria=Fizyka&q=kwant
 const selected = computed({
   get: () => {
     const category = queryParam('kategoria')
@@ -59,46 +59,53 @@ function reset() {
 </script>
 
 <template>
-  <h1>Artykuły</h1>
+  <div class="board">
+    <h1>Tablica</h1>
 
-  <input v-model="search" type="search" class="search" placeholder="Szukaj po tytule…" />
+    <input v-model="search" type="search" class="search" placeholder="Szukaj po tytule…" />
 
-  <div class="filters">
-    <button
-      v-for="category in categories"
-      :key="category"
-      :class="{ active: category === selected }"
-      @click="selected = category"
-    >
-      {{ category }}
-    </button>
-  </div>
+    <div class="filters">
+      <button
+        v-for="category in categories"
+        :key="category"
+        :class="{ active: category === selected }"
+        @click="selected = category"
+      >
+        {{ category }}
+      </button>
+    </div>
 
-  <div class="toolbar">
-    <p class="count">Znaleziono: {{ filtered.length }}</p>
-    <label class="sort">
-      Sortuj:
-      <select v-model="sort">
-        <option value="newest">Najnowsze</option>
-        <option value="oldest">Najstarsze</option>
-        <option value="title">A–Z</option>
-      </select>
-    </label>
-  </div>
+    <div class="toolbar">
+      <p class="count">Znaleziono: {{ filtered.length }}</p>
+      <label class="sort">
+        Sortuj:
+        <select v-model="sort">
+          <option value="newest">Najnowsze</option>
+          <option value="oldest">Najstarsze</option>
+          <option value="title">A–Z</option>
+        </select>
+      </label>
+    </div>
 
-  <div v-if="filtered.length" class="grid">
-    <ArticleCard v-for="article in filtered" :key="article.id" :article="article" />
-  </div>
+    <div v-if="filtered.length" class="feed">
+      <ArticleCard v-for="article in filtered" :key="article.id" :article="article" />
+    </div>
 
-  <div v-else class="empty">
-    <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
-    <button class="reset" @click="reset">Wyczyść filtry</button>
+    <div v-else class="empty">
+      <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
+      <button class="reset" @click="reset">Wyczyść filtry</button>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.board {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
 h1 {
-  margin: 80px 0 32px;
+  margin: 48px 0 28px;
   text-align: center;
 }
 
@@ -182,9 +189,9 @@ h1 {
   font-size: 0.95rem;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+.feed {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
 }
 

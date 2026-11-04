@@ -15,7 +15,7 @@ const favorites = useFavoritesStore()
 
   <div v-else class="empty">
     <p>Nie masz jeszcze zapisanych artykułów.</p>
-    <RouterLink to="/artykuly" class="btn">Przeglądaj artykuły</RouterLink>
+    <RouterLink to="/" class="btn">Przeglądaj artykuły</RouterLink>
   </div>
 </template>
 

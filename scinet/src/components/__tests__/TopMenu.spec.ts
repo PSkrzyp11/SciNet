@@ -23,10 +23,21 @@ describe('TopMenu', () => {
     delete document.documentElement.dataset.theme
   })
 
+  it('pokazuje zakładki portalu', async () => {
+    const { wrapper } = await mountAt('/')
+
+    expect(wrapper.findAll('nav a').map((a) => a.text())).toEqual([
+      'Tablica',
+      'Autorzy',
+      'Zapisane',
+      'Kontakt',
+    ])
+  })
+
   it.each([
-    ['/', 'Start'],
-    ['/artykuly', 'Artykuły'],
-    ['/artykuly/3', 'Artykuły'],
+    ['/', 'Tablica'],
+    ['/artykuly/3', 'Tablica'],
+    ['/autorzy', 'Autorzy'],
     ['/kontakt', 'Kontakt'],
   ])('na stronie %s podświetla zakładkę %s', async (url, label) => {
     const { wrapper } = await mountAt(url)

@@ -26,16 +26,15 @@ function closeOnEscape() {
 }
 
 const links = [
-  { to: '/', label: 'Start' },
-  { to: '/artykuly', label: 'Artykuły' },
+  { to: '/', label: 'Tablica' },
   { to: '/autorzy', label: 'Autorzy' },
   { to: '/zapisane', label: 'Zapisane' },
   { to: '/kontakt', label: 'Kontakt' },
 ]
 
-// Podstrona artykułu (/artykuly/3) też podświetla zakładkę „Artykuły”
+// Strona artykułu (/artykuly/3) też podświetla zakładkę „Tablica”
 const isActive = (to: string) =>
-  route.path === to || (to !== '/' && route.path.startsWith(`${to}/`))
+  route.path === to || (to === '/' && route.path.startsWith('/artykuly/'))
 </script>
 
 <template>

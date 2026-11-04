@@ -3,7 +3,7 @@
     <span class="code">404</span>
     <h1>Nie ma takiej strony</h1>
     <p class="lead">Adres jest nieprawidłowy albo strona została przeniesiona.</p>
-    <RouterLink to="/" class="btn">Wróć na stronę główną</RouterLink>
+    <RouterLink to="/" class="btn">Wróć na tablicę</RouterLink>
   </section>
 </template>
 

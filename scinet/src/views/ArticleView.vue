@@ -17,7 +17,7 @@ const related = computed(() =>
 
 <template>
   <article v-if="article" class="article">
-    <RouterLink to="/artykuly" class="back">← Wszystkie artykuły</RouterLink>
+    <RouterLink to="/" class="back">← Wróć na tablicę</RouterLink>
 
     <div class="top">
       <span class="category">{{ article.category }}</span>
@@ -48,7 +48,7 @@ const related = computed(() =>
   <div v-else class="not-found">
     <h1>Nie ma takiego artykułu</h1>
     <p class="lead">Mógł zostać usunięty albo link jest nieprawidłowy.</p>
-    <RouterLink to="/artykuly">← Wróć do listy artykułów</RouterLink>
+    <RouterLink to="/">← Wróć na tablicę</RouterLink>
   </div>
 </template>
 

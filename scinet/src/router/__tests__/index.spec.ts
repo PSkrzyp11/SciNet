@@ -12,7 +12,6 @@ describe('router', () => {
 
   it.each([
     ['/', 'home', 'SciNet'],
-    ['/artykuly', 'articles', 'Artykuły | SciNet'],
     ['/artykuly/1', 'article', 'Artykuł | SciNet'],
     ['/autorzy', 'authors', 'Autorzy | SciNet'],
     ['/zapisane', 'favorites', 'Zapisane | SciNet'],
@@ -23,6 +22,14 @@ describe('router', () => {
 
     expect(router.currentRoute.value.name).toBe(name)
     expect(document.title).toBe(title)
+  })
+
+  it('przekierowuje /artykuly na tablicę i zachowuje filtry', async () => {
+    await router.push('/artykuly?kategoria=Fizyka&q=kwant')
+
+    expect(router.currentRoute.value.name).toBe('home')
+    expect(router.currentRoute.value.query).toEqual({ kategoria: 'Fizyka', q: 'kwant' })
+    expect(document.title).toBe('SciNet')
   })
 
   it('przewija na górę po przejściu na inną stronę', async () => {
@@ -37,11 +44,11 @@ describe('router', () => {
   })
 
   it('nie przewija po zmianie samych parametrów adresu', async () => {
-    await router.push('/artykuly')
+    await router.push('/')
     await flushPromises()
     scrollTo.mockClear()
 
-    await router.push('/artykuly?q=kwant')
+    await router.push('/?q=kwant')
     await flushPromises()
 
     expect(scrollTo).not.toHaveBeenCalled()

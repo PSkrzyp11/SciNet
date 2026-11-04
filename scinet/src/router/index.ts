@@ -1,16 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+import BoardView from '@/views/BoardView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'home', component: HomeView },
-    {
-      path: '/artykuly',
-      name: 'articles',
-      component: () => import('@/views/ArticlesView.vue'),
-      meta: { title: 'Artykuły' },
-    },
+    { path: '/', name: 'home', component: BoardView },
+    // Stare linki do listy artykułów prowadzą teraz na tablicę, razem z filtrami
+    { path: '/artykuly', redirect: (to) => ({ path: '/', query: to.query }) },
     {
       path: '/artykuly/:id',
       name: 'article',
