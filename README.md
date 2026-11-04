@@ -25,7 +25,7 @@ Portal społecznościowy dla ludzi nauki: tablica artykułów, które można pub
 - **Autorzy:** krótkie opisy i listy tekstów, także osób wpisanych w formularzu.
 - **Kontakt:** formularz z walidacją, dane kontaktowe i najczęstsze pytania.
 - **Każdy ekran:** trzy kolumny na komputerze, dwie na tablecie i jedna na telefonie, bez przewijania na boki.
-- **Tryb ciemny:** dopasowuje się do ustawień systemu i zapamiętuje Twój wybór.
+- **Kolory:** jeden motyw w barwach royal purple, biel i sunglow gold.
 
 Portal działa w całości w przeglądarce, bez serwera i bazy danych. Dane zapisują się w `localStorage`, więc zostają po odświeżeniu strony, ale nie przenoszą się na inne urządzenia.
 
@@ -79,11 +79,11 @@ scinet/src/
 ├── components/   # karta artykułu, formularz, komentarze, panele, menu
 ├── data/         # model danych, przykładowe artykuły i autorzy
 ├── router/       # adresy podstron i tytuły kart
-├── stores/       # stan aplikacji: artykuły, zakładki i motyw
+├── stores/       # stan aplikacji: artykuły i zakładki
 ├── views/        # całe podstrony, w tym tablica
 ├── App.vue       # główny układ strony
 ├── main.ts       # punkt startowy aplikacji
-└── style.css     # style globalne i kolory obu motywów
+└── style.css     # style globalne i kolory
 ```
 
 Komponenty dostają dane przez propsy, a zmiany zgłaszają przez emity. Dane w store'ach zmieniają dopiero widoki.

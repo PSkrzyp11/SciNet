@@ -217,15 +217,15 @@ h1 {
   padding: 14px 32px;
   border: none;
   border-radius: 12px;
-  background: var(--color-button);
-  color: #fff;
-  font-weight: 600;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.2s;
 }
 
 .add:hover {
-  background: var(--color-button-hover);
+  background: var(--color-accent-hover);
 }
 
 .search {
@@ -259,7 +259,7 @@ h1 {
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: var(--color-surface);
-  color: var(--color-nav);
+  color: var(--color-text-soft);
   cursor: pointer;
   transition:
     background 0.2s,
@@ -267,12 +267,12 @@ h1 {
 }
 
 .filters button:hover {
-  background: var(--color-hover);
+  background: var(--color-primary-light);
 }
 
 .filters button.active {
-  border-color: var(--color-button);
-  background: var(--color-button);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
   color: #fff;
 }
 
@@ -335,7 +335,7 @@ h1 {
   padding: 10px 22px;
   border: none;
   border-radius: 10px;
-  background: var(--color-button);
+  background: var(--color-primary);
   color: #fff;
   font-weight: 600;
   cursor: pointer;

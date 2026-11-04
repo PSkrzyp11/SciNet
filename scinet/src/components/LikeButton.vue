@@ -52,9 +52,14 @@ const emit = defineEmits<{ toggle: [] }>()
 }
 
 .like.liked {
-  border-color: var(--color-primary);
-  background: var(--color-primary-light);
-  color: var(--color-primary);
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.like.liked:hover {
+  border-color: var(--color-accent-hover);
+  background: var(--color-accent-hover);
 }
 
 svg {

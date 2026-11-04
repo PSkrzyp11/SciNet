@@ -19,7 +19,6 @@ const allAuthors = computed<Author[]>(() => {
     ...others.map((name) => ({
       name,
       field: 'Społeczność SciNet',
-      color: 'var(--color-button)',
       bio: '',
     })),
   ]
@@ -33,9 +32,7 @@ const allAuthors = computed<Author[]>(() => {
   <div class="grid">
     <div v-for="author in allAuthors" :key="author.name" class="author">
       <div class="head">
-        <div class="avatar" :style="{ background: author.color }">
-          {{ initials(author.name) }}
-        </div>
+        <div class="avatar">{{ initials(author.name) }}</div>
         <div>
           <h3>{{ author.name }}</h3>
           <span class="field">{{ author.field }}</span>
@@ -87,7 +84,9 @@ const allAuthors = computed<Author[]>(() => {
   flex-shrink: 0;
   width: 76px;
   height: 76px;
+  border: 3px solid var(--color-accent);
   border-radius: 50%;
+  background: var(--color-primary);
   color: #fff;
   font-size: 1.5rem;
   font-weight: 700;

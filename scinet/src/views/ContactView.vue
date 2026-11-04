@@ -237,20 +237,20 @@ textarea.invalid {
   padding: 14px 32px;
   border: none;
   border-radius: 12px;
-  background: var(--color-button);
+  background: var(--color-primary);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
 }
 
 .btn:hover {
-  background: var(--color-button-hover);
+  background: var(--color-primary-hover);
 }
 
 .success {
-  background: var(--color-success-bg);
-  border-color: var(--color-success-border);
-  color: var(--color-success-text);
+  background: var(--color-accent-light);
+  border-color: var(--color-accent);
+  color: var(--color-text);
 }
 
 .success p {
@@ -267,7 +267,7 @@ textarea.invalid {
 }
 
 .info {
-  background: var(--color-panel);
+  background: var(--color-primary-light);
   border-color: var(--color-primary-border);
 }
 

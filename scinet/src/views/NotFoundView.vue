@@ -33,7 +33,7 @@ h1 {
   display: inline-block;
   padding: 14px 28px;
   border-radius: 12px;
-  background: var(--color-button);
+  background: var(--color-primary);
   color: #fff;
   font-weight: 600;
   text-decoration: none;
@@ -41,6 +41,6 @@ h1 {
 }
 
 .btn:hover {
-  background: var(--color-button-hover);
+  background: var(--color-primary-hover);
 }
 </style>

@@ -33,6 +33,6 @@ watch(
   aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: 10px;
-  background: var(--color-hover);
+  background: var(--color-primary-light);
 }
 </style>

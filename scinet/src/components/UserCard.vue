@@ -6,7 +6,7 @@ defineProps<{ user: Author; articleCount: number; likeCount: number }>()
 
 <template>
   <section class="user-card" aria-label="Wizytówka użytkownika">
-    <div class="avatar" :style="{ background: user.color }">{{ initials(user.name) }}</div>
+    <div class="avatar">{{ initials(user.name) }}</div>
     <h2>{{ user.name }}</h2>
     <p class="field">{{ user.field }}</p>
     <p class="bio">{{ user.bio }}</p>
@@ -38,7 +38,9 @@ defineProps<{ user: Author; articleCount: number; likeCount: number }>()
   width: 68px;
   height: 68px;
   margin: 0 auto 12px;
+  border: 3px solid var(--color-accent);
   border-radius: 50%;
+  background: var(--color-primary);
   color: #fff;
   font-size: 1.35rem;
   font-weight: 700;

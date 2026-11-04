@@ -6,19 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="SciNet: portal społecznościowy dla ludzi nauki. Publikuj artykuły, komentuj je i zapisuj teksty z różnych dziedzin.">
     <title>SciNet</title>
-    <script>
-      // Ustawia motyw przed wyświetleniem strony, żeby nie mignęła jasnym tłem
-      (function () {
-        var theme
-        try {
-          theme = localStorage.getItem('scinet-theme')
-        } catch (e) {}
-        if (theme !== 'light' && theme !== 'dark') {
-          theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        }
-        document.documentElement.dataset.theme = theme
-      })()
-    </script>
   </head>
   <body>
     <div id="app"></div>

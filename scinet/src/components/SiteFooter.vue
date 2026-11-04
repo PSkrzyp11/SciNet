@@ -13,9 +13,9 @@
   gap: 8px;
   margin-top: 80px;
   padding: 28px 32px;
-  border-top: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
+  border-top: 3px solid var(--color-accent);
+  background: var(--color-primary);
+  color: #fff;
   font-size: 0.9rem;
 }
 </style>

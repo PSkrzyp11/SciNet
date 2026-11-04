@@ -62,7 +62,10 @@ a:hover {
 
 .count {
   flex-shrink: 0;
-  color: var(--color-text-muted);
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   font-size: 0.85rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;

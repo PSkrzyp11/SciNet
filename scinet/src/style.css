@@ -1,31 +1,33 @@
 /* Globalne style aplikacji SciNet */
 
+/* Jeden motyw: royal purple, biel i sunglow gold */
 :root {
-  --color-primary: #4f46e5;
-  --color-primary-light: #eef2ff;
-  --color-primary-border: #c7d2fe;
+  color-scheme: light;
 
-  --color-button: #4f46e5;
-  --color-button-hover: #4338ca;
+  /* Royal purple */
+  --color-primary: #7851a9;
+  --color-primary-hover: #5f3f8a;
+  --color-primary-light: #f3edfa;
+  --color-primary-border: #d9c9ec;
 
-  --color-text: #1f2937;
-  --color-text-soft: #374151;
-  --color-text-muted: #6b7280;
-  --color-nav: #4b5563;
-  --color-border: #e5e7eb;
-  --color-input-border: #d1d5db;
+  /* Sunglow gold: złoty tekst jest nieczytelny, więc tylko jako tło z ciemnym napisem */
+  --color-accent: #ffcc33;
+  --color-accent-hover: #f5bd14;
+  --color-accent-light: #fff6d6;
+  --color-on-accent: #2f1b4d;
 
-  --color-bg: #f9fafb;
+  /* Teksty to bardzo ciemne odcienie fioletu */
+  --color-text: #2f1b4d;
+  --color-text-soft: #46306a;
+  --color-text-muted: #66527f;
+  --color-border: #e6dcf2;
+  --color-input-border: #9a83b8;
+
+  --color-bg: #faf7fd;
   --color-surface: #ffffff;
-  --color-hover: #f3f4f6;
-  --color-input-bg: #ffffff;
-  --color-panel: #eef2ff;
 
-  --color-success-bg: #ecfdf5;
-  --color-success-border: #a7f3d0;
-  --color-success-text: #065f46;
-
-  --color-error: #b91c1c;
+  /* Czerwień zostaje, bo błąd musi wyglądać jak błąd */
+  --color-error: #b3261e;
 
   --radius: 14px;
   --max-width: 1200px;
@@ -41,33 +43,6 @@
   color: var(--color-text);
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-
-  --color-primary: #a5b4fc;
-  --color-primary-light: #312e81;
-  --color-primary-border: #4338ca;
-
-  --color-text: #f3f4f6;
-  --color-text-soft: #d1d5db;
-  --color-text-muted: #9ca3af;
-  --color-nav: #d1d5db;
-  --color-border: #374151;
-  --color-input-border: #4b5563;
-
-  --color-bg: #111827;
-  --color-surface: #1f2937;
-  --color-hover: #374151;
-  --color-input-bg: #111827;
-  --color-panel: #1e1b4b;
-
-  --color-success-bg: #064e3b;
-  --color-success-border: #065f46;
-  --color-success-text: #a7f3d0;
-
-  --color-error: #fca5a5;
 }
 
 *,
@@ -140,7 +115,7 @@ select {
 input,
 textarea,
 select {
-  background-color: var(--color-input-bg);
+  background-color: var(--color-surface);
   color: var(--color-text);
 }
 

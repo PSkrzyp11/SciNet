@@ -20,7 +20,6 @@ async function mountAt(url: string) {
 describe('TopMenu', () => {
   beforeEach(() => {
     localStorage.clear()
-    delete document.documentElement.dataset.theme
   })
 
   it('pokazuje zakładki portalu', async () => {
@@ -78,15 +77,9 @@ describe('TopMenu', () => {
     expect(wrapper.find('nav').classes()).not.toContain('open')
   })
 
-  it('przełącza motyw i zmienia opis przycisku', async () => {
+  it('jedynym przyciskiem w menu jest rozwijanie na telefonie', async () => {
     const { wrapper } = await mountAt('/')
-    const button = wrapper.find('.actions .icon-button')
 
-    expect(button.attributes('aria-label')).toBe('Włącz tryb ciemny')
-
-    await button.trigger('click')
-
-    expect(document.documentElement.dataset.theme).toBe('dark')
-    expect(button.attributes('aria-label')).toBe('Włącz tryb jasny')
+    expect(wrapper.findAll('button').map((b) => b.attributes('aria-label'))).toEqual(['Menu'])
   })
 })

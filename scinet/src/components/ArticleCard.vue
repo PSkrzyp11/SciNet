@@ -96,7 +96,7 @@ function confirmDelete() {
 .card:hover {
   transform: translateY(-3px);
   border-color: var(--color-primary);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 10px 28px rgba(120, 81, 169, 0.18);
 }
 
 .top {
@@ -135,7 +135,7 @@ function confirmDelete() {
 }
 
 .delete:hover {
-  background: var(--color-hover);
+  background: var(--color-primary-light);
   color: var(--color-error);
 }
 

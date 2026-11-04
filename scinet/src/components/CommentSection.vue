@@ -201,7 +201,7 @@ textarea.invalid {
   padding: 12px 24px;
   border: none;
   border-radius: 12px;
-  background: var(--color-button);
+  background: var(--color-primary);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -209,6 +209,6 @@ textarea.invalid {
 }
 
 .add-comment:hover {
-  background: var(--color-button-hover);
+  background: var(--color-primary-hover);
 }
 </style>

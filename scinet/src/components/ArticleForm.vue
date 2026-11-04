@@ -264,13 +264,13 @@ textarea.invalid {
 }
 
 .publish {
-  border: 1px solid var(--color-button);
-  background: var(--color-button);
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
   color: #fff;
 }
 
 .publish:hover {
-  background: var(--color-button-hover);
+  background: var(--color-primary-hover);
 }
 
 .cancel {
@@ -280,6 +280,6 @@ textarea.invalid {
 }
 
 .cancel:hover {
-  background: var(--color-hover);
+  background: var(--color-primary-light);
 }
 </style>

@@ -68,6 +68,6 @@ svg {
 }
 
 .saved svg {
-  fill: currentColor;
+  fill: var(--color-accent);
 }
 </style>

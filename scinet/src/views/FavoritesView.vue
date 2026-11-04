@@ -51,13 +51,13 @@ const favorites = useFavoritesStore()
   display: inline-block;
   padding: 10px 22px;
   border-radius: 10px;
-  background: var(--color-button);
+  background: var(--color-primary);
   color: #fff;
   font-weight: 600;
   text-decoration: none;
 }
 
 .btn:hover {
-  background: var(--color-button-hover);
+  background: var(--color-primary-hover);
 }
 </style>
