@@ -36,6 +36,7 @@ Serwis z artykułami popularnonaukowymi: czytaj, wyszukuj i zapisuj teksty z ró
 | Routing | [Vue Router](https://router.vuejs.org/) |
 | Stan aplikacji | [Pinia](https://pinia.vuejs.org/) |
 | Budowanie | [Vite](https://vite.dev/) |
+| Testy | [Vitest](https://vitest.dev/), [Vue Test Utils](https://test-utils.vuejs.org/) |
 | Jakość kodu | ESLint, Oxlint, Prettier |
 
 ## Uruchomienie
@@ -60,6 +61,8 @@ Uruchamiaj je w folderze `scinet`.
 | `npm run dev` | serwer deweloperski |
 | `npm run build` | sprawdzenie typów i wersja produkcyjna |
 | `npm run preview` | podgląd wersji produkcyjnej |
+| `npm test` | jednorazowe uruchomienie testów |
+| `npm run test:watch` | testy uruchamiane przy każdej zmianie |
 | `npm run type-check` | samo sprawdzenie typów |
 | `npm run lint` | sprawdzenie i poprawa kodu |
 | `npm run format` | formatowanie kodu |
@@ -82,7 +85,7 @@ Nowy artykuł wystarczy dopisać w `scinet/src/data/articles.ts`. Lista, filtry,
 
 ## Plany
 
-- [ ] Testy automatyczne (Vitest)
+- [x] Testy automatyczne (Vitest)
 - [ ] Publikacja aplikacji w internecie
 - [ ] Artykuły pobierane z API i działający formularz kontaktowy
 - [ ] Konta użytkowników i komentarze
