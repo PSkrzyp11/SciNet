@@ -30,7 +30,7 @@ const favorites = useFavoritesStore()
   padding: 48px 24px;
   text-align: center;
   background: var(--color-surface);
-  border: 1px dashed #d1d5db;
+  border: 1px dashed var(--color-input-border);
   border-radius: var(--radius);
   color: var(--color-text-muted);
 }
@@ -43,13 +43,13 @@ const favorites = useFavoritesStore()
   display: inline-block;
   padding: 10px 22px;
   border-radius: 10px;
-  background: var(--color-primary);
+  background: var(--color-button);
   color: #fff;
   font-weight: 600;
   text-decoration: none;
 }
 
 .btn:hover {
-  background: var(--color-primary-dark);
+  background: var(--color-button-hover);
 }
 </style>

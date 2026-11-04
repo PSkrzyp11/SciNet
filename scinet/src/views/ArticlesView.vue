@@ -108,7 +108,7 @@ h1 {
   max-width: 560px;
   padding: 14px 18px;
   margin: 0 auto 20px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-input-border);
   border-radius: 12px;
   background: var(--color-surface);
   transition: border-color 0.2s;
@@ -133,7 +133,7 @@ h1 {
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: var(--color-surface);
-  color: #4b5563;
+  color: var(--color-nav);
   cursor: pointer;
   transition:
     background 0.2s,
@@ -141,12 +141,12 @@ h1 {
 }
 
 .filters button:hover {
-  background: #f3f4f6;
+  background: var(--color-hover);
 }
 
 .filters button.active {
-  border-color: var(--color-primary);
-  background: var(--color-primary);
+  border-color: var(--color-button);
+  background: var(--color-button);
   color: #fff;
 }
 
@@ -169,7 +169,7 @@ h1 {
 
 .sort select {
   padding: 8px 12px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-input-border);
   border-radius: 10px;
   background: var(--color-surface);
   color: var(--color-text);
@@ -192,7 +192,7 @@ h1 {
   padding: 48px 24px;
   text-align: center;
   background: var(--color-surface);
-  border: 1px dashed #d1d5db;
+  border: 1px dashed var(--color-input-border);
   border-radius: var(--radius);
   color: var(--color-text-muted);
 }
@@ -205,7 +205,7 @@ h1 {
   padding: 10px 22px;
   border: none;
   border-radius: 10px;
-  background: var(--color-primary);
+  background: var(--color-button);
   color: #fff;
   font-weight: 600;
   cursor: pointer;

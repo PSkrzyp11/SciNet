@@ -98,7 +98,7 @@ h1 {
 .excerpt {
   font-size: 1.25rem;
   font-weight: 500;
-  color: #374151;
+  color: var(--color-text-soft);
 }
 
 p {

@@ -137,14 +137,14 @@ label {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  color: #374151;
+  color: var(--color-text-soft);
   font-weight: 500;
 }
 
 input,
 textarea {
   padding: 12px 14px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-input-border);
   border-radius: 10px;
   resize: vertical;
   transition: border-color 0.2s;
@@ -162,20 +162,20 @@ textarea:focus {
   padding: 14px 32px;
   border: none;
   border-radius: 12px;
-  background: var(--color-primary);
+  background: var(--color-button);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
 }
 
 .btn:hover {
-  background: var(--color-primary-dark);
+  background: var(--color-button-hover);
 }
 
 .success {
-  background: #ecfdf5;
-  border-color: #a7f3d0;
-  color: #065f46;
+  background: var(--color-success-bg);
+  border-color: var(--color-success-border);
+  color: var(--color-success-text);
 }
 
 .success p {
@@ -192,8 +192,8 @@ textarea:focus {
 }
 
 .info {
-  background: var(--color-primary-light);
-  border-color: #c7d2fe;
+  background: var(--color-panel);
+  border-color: var(--color-primary-border);
 }
 
 .info h2 {

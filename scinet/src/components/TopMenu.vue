@@ -2,9 +2,11 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useFavoritesStore } from '@/stores/favorites'
+import { useThemeStore } from '@/stores/theme'
 
 const route = useRoute()
 const favorites = useFavoritesStore()
+const theme = useThemeStore()
 
 const open = ref(false)
 const toggleButton = ref<HTMLButtonElement | null>(null)
@@ -40,20 +42,40 @@ const isActive = (to: string) =>
   <header class="top-menu" @keydown.esc="closeOnEscape">
     <RouterLink to="/" class="logo">Sci<span>Net</span></RouterLink>
 
-    <button
-      ref="toggleButton"
-      type="button"
-      class="menu-toggle"
-      aria-controls="main-menu"
-      :aria-expanded="open"
-      aria-label="Menu"
-      @click="open = !open"
-    >
-      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-        <path v-if="open" d="M6 6l12 12M18 6L6 18" />
-        <path v-else d="M4 7h16M4 12h16M4 17h16" />
-      </svg>
-    </button>
+    <div class="actions">
+      <button
+        type="button"
+        class="icon-button"
+        :aria-label="theme.isDark ? 'Włącz tryb jasny' : 'Włącz tryb ciemny'"
+        :title="theme.isDark ? 'Włącz tryb jasny' : 'Włącz tryb ciemny'"
+        @click="theme.toggle()"
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <template v-if="theme.isDark">
+            <circle cx="12" cy="12" r="4" />
+            <path
+              d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+            />
+          </template>
+          <path v-else d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+        </svg>
+      </button>
+
+      <button
+        ref="toggleButton"
+        type="button"
+        class="icon-button menu-toggle"
+        aria-controls="main-menu"
+        :aria-expanded="open"
+        aria-label="Menu"
+        @click="open = !open"
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path v-if="open" d="M6 6l12 12M18 6L6 18" />
+          <path v-else d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </button>
+    </div>
 
     <nav id="main-menu" :class="{ open }">
       <RouterLink
@@ -89,6 +111,7 @@ const isActive = (to: string) =>
 }
 
 .logo {
+  margin-right: auto;
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-text);
@@ -108,7 +131,7 @@ nav {
 nav a {
   padding: 10px 18px;
   border-radius: 10px;
-  color: #4b5563;
+  color: var(--color-nav);
   text-decoration: none;
   font-weight: 500;
   transition:
@@ -117,7 +140,7 @@ nav a {
 }
 
 nav a:hover {
-  background: #f3f4f6;
+  background: var(--color-hover);
   color: var(--color-text);
 }
 
@@ -127,7 +150,7 @@ nav a:hover {
   margin-left: 4px;
   padding: 0 6px;
   border-radius: 999px;
-  background: var(--color-primary);
+  background: var(--color-button);
   color: #fff;
   font-size: 0.75rem;
   font-weight: 700;
@@ -140,27 +163,46 @@ nav a.active {
   color: var(--color-primary);
 }
 
-.menu-toggle {
-  display: none;
-  padding: 10px;
+.actions {
+  display: flex;
+  gap: 8px;
+  order: 1;
+}
+
+.icon-button {
+  padding: 8px;
   border: 1px solid var(--color-border);
   border-radius: 10px;
   background: none;
   color: var(--color-text);
   cursor: pointer;
+  transition: background 0.2s;
 }
 
-.menu-toggle svg {
+.icon-button:hover {
+  background: var(--color-hover);
+}
+
+.icon-button svg {
   display: block;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-@media (max-width: 760px) {
+.menu-toggle {
+  display: none;
+}
+
+@media (max-width: 860px) {
   .top-menu {
     padding: 12px 20px;
+  }
+
+  .actions {
+    order: 0;
   }
 
   .menu-toggle {

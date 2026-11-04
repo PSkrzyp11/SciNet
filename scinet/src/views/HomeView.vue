@@ -82,7 +82,7 @@ const stats = [
   display: inline-block;
   padding: 16px 32px;
   border-radius: 12px;
-  background: var(--color-primary);
+  background: var(--color-button);
   color: #fff;
   font-weight: 600;
   text-decoration: none;
@@ -90,7 +90,7 @@ const stats = [
 }
 
 .btn:hover {
-  background: var(--color-primary-dark);
+  background: var(--color-button-hover);
 }
 
 .stats {
