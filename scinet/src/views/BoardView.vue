@@ -231,14 +231,25 @@ function publish(draft: ArticleDraft) {
   }
 }
 
-/* Komputer: dziedziny po lewej, tablica w środku, panele po prawej */
+/* Komputer: dziedziny przy lewej krawędzi, panele przy prawej, tablica pośrodku */
 @media (min-width: 1100px) {
   .board {
-    grid-template-columns: 210px minmax(0, 1fr) 260px;
+    grid-template-columns: 230px minmax(0, 1fr) 280px;
     grid-template-rows: auto 1fr;
     grid-template-areas:
       'filters top side'
       'filters results side';
+    column-gap: 32px;
+    /* Razem z marginesem strony daje to 32 px, tyle co logo i menu w nagłówku */
+    padding-inline: 12px;
+  }
+
+  /* Na bardzo szerokich ekranach artykuły nie rozciągają się ponad wygodną szerokość */
+  .top,
+  .results {
+    justify-self: center;
+    width: 100%;
+    max-width: 760px;
   }
 
   .filters,

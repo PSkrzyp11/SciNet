@@ -69,6 +69,11 @@ main {
   padding: 0 20px 24px;
 }
 
+/* Tablica korzysta z całej szerokości: panele boczne leżą przy krawędziach okna */
+main:has(.board) {
+  max-width: none;
+}
+
 h1,
 h2,
 h3 {
