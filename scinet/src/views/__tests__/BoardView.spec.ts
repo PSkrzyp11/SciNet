@@ -22,7 +22,7 @@ async function mountAt(url: string) {
 
   const titles = () => wrapper.findAll('.card h3').map((title) => title.text())
   const filter = (name: string) => {
-    const button = wrapper.findAll('.filters button').find((b) => b.text() === name)
+    const button = wrapper.findAll('.filters button').find((b) => b.find('.label').text() === name)
     if (!button) throw new Error(`Brak filtra: ${name}`)
     return button
   }
@@ -166,7 +166,9 @@ describe('BoardView', () => {
 
     expect(titles()).toHaveLength(articles.length - 1)
     expect(filter('Wszystkie').classes()).toContain('active')
-    expect(wrapper.findAll('.filters button').map((b) => b.text())).not.toContain('Biologia')
+    expect(wrapper.findAll('.filters button').map((b) => b.find('.label').text())).not.toContain(
+      'Biologia',
+    )
   })
 
   it('pole dodawania ma czytelną nazwę dla czytników ekranu', async () => {
@@ -174,6 +176,34 @@ describe('BoardView', () => {
 
     expect(wrapper.find('.add').attributes('aria-label')).toBe('Dodaj artykuł')
     expect(wrapper.find('.add .avatar').text()).toBe('AN')
+  })
+
+  it('przy każdej dziedzinie pokazuje liczbę artykułów', async () => {
+    const [first] = articles
+    localStorage.setItem(
+      'scinet-articles',
+      JSON.stringify([
+        { ...first, id: 1, category: 'Fizyka' },
+        { ...first, id: 2, category: 'Fizyka' },
+        { ...first, id: 3, category: 'Ekologia' },
+      ]),
+    )
+    const { wrapper } = await mountAt('/?q=nic-takiego')
+
+    const counts = wrapper
+      .findAll('.filters button')
+      .map((b) => `${b.find('.label').text()} ${b.find('.n').text()}`)
+
+    // Liczby dotyczą wszystkich artykułów, a nie tylko wyników wyszukiwania
+    expect(counts).toEqual(['Wszystkie 3', 'Fizyka 2', 'Ekologia 1'])
+  })
+
+  it('dziedziny są nawigacją z nagłówkiem', async () => {
+    const { wrapper } = await mountAt('/')
+
+    const nav = wrapper.find('nav.filters')
+    expect(nav.attributes('aria-label')).toBe('Dziedziny nauki')
+    expect(nav.find('h2').text()).toBe('Dziedziny')
   })
 
   it('aktywny filtr jest oznaczony dla czytników ekranu', async () => {
@@ -242,7 +272,7 @@ describe('BoardView', () => {
 
   it('nowy artykuł nie zmienia kolejności filtrów', async () => {
     const { wrapper, store } = await mountAt('/')
-    const filterNames = () => wrapper.findAll('.filters button').map((b) => b.text())
+    const filterNames = () => wrapper.findAll('.filters button').map((b) => b.find('.label').text())
     const before = filterNames()
 
     store.add({ title: 'Nowy', author: 'Jan', category: 'Ekologia', content: ['Treść.'] })
@@ -282,7 +312,7 @@ describe('BoardView', () => {
     const { wrapper, titles } = await mountAt('/')
 
     expect(titles()).toEqual(['Zapisany artykuł'])
-    expect(wrapper.findAll('.filters button').map((b) => b.text())).toEqual([
+    expect(wrapper.findAll('.filters button').map((b) => b.find('.label').text())).toEqual([
       'Wszystkie',
       'Ekologia',
     ])

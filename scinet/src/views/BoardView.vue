@@ -22,6 +22,12 @@ const categories = computed(() => [
   'Wszystkie',
   ...CATEGORIES.filter((category) => store.articles.some((a) => a.category === category)),
 ])
+// Liczba artykułów w każdej dziedzinie, pokazywana przy filtrach
+const categoryCount = (category: string) =>
+  category === 'Wszystkie'
+    ? store.articles.length
+    : store.articles.filter((a) => a.category === category).length
+
 const route = useRoute()
 const router = useRouter()
 
@@ -89,7 +95,7 @@ function publish(draft: ArticleDraft) {
 
 <template>
   <div class="board">
-    <div class="content">
+    <div class="top">
       <header class="board-head">
         <h1>Tablica</h1>
         <p v-if="store.articles.length" class="count">Znaleziono: {{ filtered.length }}</p>
@@ -109,68 +115,68 @@ function publish(draft: ArticleDraft) {
         <span class="add-cta" aria-hidden="true">Dodaj</span>
       </button>
 
+      <div v-if="store.articles.length" class="controls">
+        <label class="search-field">
+          <span class="visually-hidden">Szukaj po tytule</span>
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-4-4" />
+          </svg>
+          <input v-model="search" type="search" class="search" placeholder="Szukaj tytułu…" />
+        </label>
+        <label class="sort">
+          <span class="visually-hidden">Sortuj</span>
+          <select v-model="sort">
+            <option value="newest">Najnowsze</option>
+            <option value="oldest">Najstarsze</option>
+            <option value="title">A–Z</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <!-- Na komputerze to menu po lewej, na telefonie przewijany rząd nad artykułami -->
+    <nav v-if="store.articles.length" class="filters" aria-label="Dziedziny nauki">
+      <h2 class="filters-title">Dziedziny</h2>
+      <button
+        v-for="category in categories"
+        :key="category"
+        type="button"
+        :class="{ active: category === selected }"
+        :aria-pressed="category === selected"
+        @click="selected = category"
+      >
+        <span class="label">{{ category }}</span>
+        <span class="n">{{ categoryCount(category) }}</span>
+      </button>
+    </nav>
+
+    <div class="results">
       <div v-if="!store.articles.length" class="empty board-empty">
         <p>Tablica jest pusta. Opublikuj pierwszy artykuł przyciskiem powyżej.</p>
       </div>
 
-      <template v-else>
-        <div class="controls">
-          <label class="search-field">
-            <span class="visually-hidden">Szukaj po tytule</span>
-            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-              <circle cx="11" cy="11" r="7" />
-              <path d="M20 20l-4-4" />
-            </svg>
-            <input v-model="search" type="search" class="search" placeholder="Szukaj tytułu…" />
-          </label>
-          <label class="sort">
-            <span class="visually-hidden">Sortuj</span>
-            <select v-model="sort">
-              <option value="newest">Najnowsze</option>
-              <option value="oldest">Najstarsze</option>
-              <option value="title">A–Z</option>
-            </select>
-          </label>
-        </div>
+      <div v-else-if="filtered.length" class="feed">
+        <ArticleCard
+          v-for="article in filtered"
+          :key="article.id"
+          :article="article"
+          @delete="store.remove(article.id)"
+          @like="store.toggleLike(article.id)"
+        />
+      </div>
 
-        <div class="filters" role="group" aria-label="Dziedziny nauki">
-          <button
-            v-for="category in categories"
-            :key="category"
-            type="button"
-            :class="{ active: category === selected }"
-            :aria-pressed="category === selected"
-            @click="selected = category"
-          >
-            {{ category }}
-          </button>
-        </div>
-
-        <div v-if="filtered.length" class="feed">
-          <ArticleCard
-            v-for="article in filtered"
-            :key="article.id"
-            :article="article"
-            @delete="store.remove(article.id)"
-            @like="store.toggleLike(article.id)"
-          />
-        </div>
-
-        <div v-else class="empty">
-          <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
-          <button type="button" class="reset" @click="reset">Wyczyść filtry</button>
-        </div>
-      </template>
+      <div v-else class="empty">
+        <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
+        <button type="button" class="reset" @click="reset">Wyczyść filtry</button>
+      </div>
     </div>
 
     <!-- Panele są w kodzie po tablicy, więc na telefonie to ona jest pierwsza -->
-    <UserCard
-      class="profile"
-      :user="currentUser"
-      :article-count="userArticles.length"
-      :like-count="userLikes"
-    />
-    <TopLikedPanel class="popular" :articles="store.topLiked" />
+    <aside class="side">
+      <UserCard :user="currentUser" :article-count="userArticles.length" :like-count="userLikes" />
+      <TopLikedPanel :articles="store.topLiked" />
+    </aside>
   </div>
 </template>
 
@@ -180,60 +186,76 @@ function publish(draft: ArticleDraft) {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
-    'content'
-    'profile'
-    'popular';
-  gap: 24px;
+    'top'
+    'filters'
+    'results'
+    'side';
+  gap: 16px 24px;
   padding-top: 28px;
 }
 
-.content {
-  grid-area: content;
+.top {
+  grid-area: top;
 }
 
-.profile {
-  grid-area: profile;
+.filters {
+  grid-area: filters;
 }
 
-.popular {
-  grid-area: popular;
+.results {
+  grid-area: results;
 }
 
-/* Tablet: tablica i kolumna z panelami */
+.side {
+  grid-area: side;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+/* Tablet: tablica i kolumna z panelami po prawej */
 @media (min-width: 760px) {
   .board {
-    grid-template-columns: 250px minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
+    grid-template-columns: minmax(0, 1fr) 260px;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
-      'profile content'
-      'popular content';
+      'top side'
+      'filters side'
+      'results side';
     align-items: start;
+  }
+
+  .side {
+    margin-top: 0;
   }
 }
 
-/* Komputer: panele po obu stronach tablicy, widoczne także po przewinięciu */
+/* Komputer: dziedziny po lewej, tablica w środku, panele po prawej */
 @media (min-width: 1100px) {
   .board {
-    grid-template-columns: 240px minmax(0, 1fr) 270px;
-    grid-template-rows: auto;
-    grid-template-areas: 'profile content popular';
+    grid-template-columns: 210px minmax(0, 1fr) 260px;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      'filters top side'
+      'filters results side';
   }
 
-  .profile,
-  .popular {
+  .filters,
+  .side {
     position: sticky;
     top: 100px;
   }
 }
 
-/* Elementy tablicy mają jeden wspólny odstęp zamiast osobnych marginesów */
-.content {
+/* Elementy górnej części mają jeden wspólny odstęp zamiast osobnych marginesów */
+.top {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.content > .article-form {
+.top > .article-form {
   margin-bottom: 0;
 }
 
@@ -356,27 +378,15 @@ h1 {
   gap: 8px;
 }
 
-/* Na telefonie filtry są jednym przewijanym rzędem zamiast trzech wierszy */
-@media (max-width: 759px) {
-  .filters {
-    flex-wrap: nowrap;
-    margin-inline: -20px;
-    padding: 2px 20px 4px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .filters::-webkit-scrollbar {
-    display: none;
-  }
-
-  .add-hint {
-    font-size: 0.95rem;
-  }
+.filters-title {
+  display: none;
 }
 
 .filters button {
+  display: inline-flex;
   flex-shrink: 0;
+  align-items: center;
+  gap: 8px;
   padding: 8px 16px;
   border: 1px solid var(--color-border);
   border-radius: 999px;
@@ -396,6 +406,83 @@ h1 {
   border-color: var(--color-primary);
   background: var(--color-primary);
   color: #fff;
+}
+
+.n {
+  min-width: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.active .n {
+  background: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+/* Na telefonie dziedziny są jednym przewijanym rzędem zamiast kilku wierszy */
+@media (max-width: 759px) {
+  .filters {
+    flex-wrap: nowrap;
+    margin-inline: -20px;
+    padding: 2px 20px 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .add-hint {
+    font-size: 0.95rem;
+  }
+}
+
+/* Na komputerze dziedziny są pionowym menu z liczbą artykułów */
+@media (min-width: 1100px) {
+  .filters {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 2px;
+    padding: 16px 12px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+  }
+
+  .filters-title {
+    display: block;
+    margin: 0 8px 8px;
+    font-size: 1.15rem;
+  }
+
+  .filters button {
+    justify-content: space-between;
+    padding: 9px 10px 9px 12px;
+    border: none;
+    border-radius: 10px;
+    background: none;
+    text-align: left;
+  }
+
+  .filters button.active {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    font-weight: 700;
+    box-shadow: inset 3px 0 0 var(--color-primary);
+  }
+
+  .active .n {
+    background: var(--color-primary);
+    color: #fff;
+  }
 }
 
 .feed {
