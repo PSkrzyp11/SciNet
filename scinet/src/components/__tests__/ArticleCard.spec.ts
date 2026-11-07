@@ -28,6 +28,87 @@ describe('ArticleCard', () => {
     vi.restoreAllMocks()
   })
 
+  describe('menu „Więcej opcji”', () => {
+    const isOpen = (wrapper: ReturnType<typeof mountCard>) =>
+      wrapper.find('.menu-toggle').attributes('aria-expanded') === 'true'
+
+    it('otwiera się przyciskiem i zamyka drugim kliknięciem', async () => {
+      const wrapper = mountCard()
+
+      const listHidden = () =>
+        (wrapper.find('.menu-list').element as HTMLElement).style.display === 'none'
+
+      expect(isOpen(wrapper)).toBe(false)
+      expect(listHidden()).toBe(true)
+
+      await wrapper.find('.menu-toggle').trigger('click')
+      expect(isOpen(wrapper)).toBe(true)
+      expect(listHidden()).toBe(false)
+
+      await wrapper.find('.menu-toggle').trigger('click')
+      expect(isOpen(wrapper)).toBe(false)
+    })
+
+    it('zamyka się klawiszem Esc i oddaje kursor przyciskowi', async () => {
+      const wrapper = mount(ArticleCard, {
+        props: { article },
+        attachTo: document.body,
+        global: { plugins: [createPinia()], stubs: { RouterLink: RouterLinkStub } },
+      })
+
+      await wrapper.find('.menu-toggle').trigger('click')
+      await wrapper.find('.menu-item.delete').trigger('keydown', { key: 'Escape' })
+
+      expect(isOpen(wrapper)).toBe(false)
+      expect(document.activeElement).toBe(wrapper.find('.menu-toggle').element)
+      wrapper.unmount()
+    })
+
+    it('zamyka się po kliknięciu poza menu', async () => {
+      const wrapper = mountCard()
+
+      await wrapper.find('.menu-toggle').trigger('click')
+      document.body.dispatchEvent(new Event('pointerdown', { bubbles: true }))
+      await wrapper.vm.$nextTick()
+
+      expect(isOpen(wrapper)).toBe(false)
+    })
+
+    it('kliknięcie w samo menu go nie zamyka', async () => {
+      const wrapper = mount(ArticleCard, {
+        props: { article },
+        attachTo: document.body,
+        global: { plugins: [createPinia()], stubs: { RouterLink: RouterLinkStub } },
+      })
+
+      await wrapper.find('.menu-toggle').trigger('click')
+      wrapper.find('.menu-list').element.dispatchEvent(new Event('pointerdown', { bubbles: true }))
+      await wrapper.vm.$nextTick()
+
+      expect(isOpen(wrapper)).toBe(true)
+      wrapper.unmount()
+    })
+
+    it('przy usuwaniu najpierw zamyka menu', async () => {
+      vi.spyOn(window, 'confirm').mockReturnValue(false)
+      const wrapper = mountCard()
+
+      await wrapper.find('.menu-toggle').trigger('click')
+      await wrapper.find('.menu-item.delete').trigger('click')
+
+      expect(isOpen(wrapper)).toBe(false)
+      expect(wrapper.emitted('delete')).toBeUndefined()
+    })
+  })
+
+  it('pokazuje awatar autora i czas czytania', () => {
+    const wrapper = mountCard()
+
+    expect(wrapper.find('.avatar').text()).toBe('JK')
+    expect(wrapper.find('.meta').text()).toContain('1 min czytania')
+    expect(wrapper.find('time').attributes('datetime')).toBe('2026-03-09')
+  })
+
   it('pokazuje polubienia i zgłasza kliknięcie rodzicowi', async () => {
     const wrapper = mountCard({ likes: 7, liked: true })
 

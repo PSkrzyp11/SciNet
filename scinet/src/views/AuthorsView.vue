@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { authors, initials, type Author } from '@/data/authors'
+import AuthorAvatar from '@/components/AuthorAvatar.vue'
+import { authors, type Author } from '@/data/authors'
 import { useArticlesStore } from '@/stores/articles'
 
 const store = useArticlesStore()
@@ -32,7 +33,7 @@ const allAuthors = computed<Author[]>(() => {
   <div class="grid">
     <div v-for="author in allAuthors" :key="author.name" class="author">
       <div class="head">
-        <div class="avatar">{{ initials(author.name) }}</div>
+        <AuthorAvatar :name="author.name" :size="76" />
         <div>
           <h3>{{ author.name }}</h3>
           <span class="field">{{ author.field }}</span>
@@ -76,20 +77,6 @@ const allAuthors = computed<Author[]>(() => {
   display: flex;
   align-items: center;
   gap: 18px;
-}
-
-.avatar {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 76px;
-  height: 76px;
-  border: 3px solid var(--color-accent);
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: #fff;
-  font-size: 1.5rem;
-  font-weight: 700;
 }
 
 h3 {

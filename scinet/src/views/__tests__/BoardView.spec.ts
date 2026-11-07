@@ -169,6 +169,20 @@ describe('BoardView', () => {
     expect(wrapper.findAll('.filters button').map((b) => b.text())).not.toContain('Biologia')
   })
 
+  it('pole dodawania ma czytelną nazwę dla czytników ekranu', async () => {
+    const { wrapper } = await mountAt('/')
+
+    expect(wrapper.find('.add').attributes('aria-label')).toBe('Dodaj artykuł')
+    expect(wrapper.find('.add .avatar').text()).toBe('AN')
+  })
+
+  it('aktywny filtr jest oznaczony dla czytników ekranu', async () => {
+    const { filter } = await mountAt('/?kategoria=Fizyka')
+
+    expect(filter('Fizyka').attributes('aria-pressed')).toBe('true')
+    expect(filter('Wszystkie').attributes('aria-pressed')).toBe('false')
+  })
+
   it('formularz otwiera się przyciskiem i zamyka bez publikacji', async () => {
     const { wrapper, titles } = await mountAt('/')
 

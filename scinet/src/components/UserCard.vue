@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { initials, type Author } from '@/data/authors'
+import AuthorAvatar from '@/components/AuthorAvatar.vue'
+import type { Author } from '@/data/authors'
 
 defineProps<{ user: Author; articleCount: number; likeCount: number }>()
 </script>
 
 <template>
   <section class="user-card" aria-label="Wizytówka użytkownika">
-    <div class="avatar">{{ initials(user.name) }}</div>
+    <AuthorAvatar class="photo" :name="user.name" :size="68" />
     <h2>{{ user.name }}</h2>
     <p class="field">{{ user.field }}</p>
     <p class="bio">{{ user.bio }}</p>
@@ -32,18 +33,8 @@ defineProps<{ user: Author; articleCount: number; likeCount: number }>()
   text-align: center;
 }
 
-.avatar {
-  display: grid;
-  place-items: center;
-  width: 68px;
-  height: 68px;
-  margin: 0 auto 12px;
-  border: 3px solid var(--color-accent);
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: #fff;
-  font-size: 1.35rem;
-  font-weight: 700;
+.photo {
+  margin-bottom: 12px;
 }
 
 h2 {
