@@ -24,9 +24,20 @@ const style = computed(() => ({
   flex-shrink: 0;
   border: solid var(--color-accent);
   border-radius: 50%;
-  background: var(--color-primary);
+  background: radial-gradient(
+    circle at 30% 25%,
+    #8453c2 0%,
+    var(--color-primary) 65%,
+    #432073 100%
+  );
   color: #fff;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-weight: 650;
+  letter-spacing: -0.02em;
   line-height: 1;
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.28),
+    var(--shadow-xs);
+  user-select: none;
 }
 </style>

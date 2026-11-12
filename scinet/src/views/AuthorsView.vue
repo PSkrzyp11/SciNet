@@ -27,14 +27,22 @@ const allAuthors = computed<Author[]>(() => {
 </script>
 
 <template>
-  <h1>Autorzy</h1>
-  <p class="lead">Poznaj osoby, które piszą dla SciNet, i zobacz, o czym piszą.</p>
+  <header class="page-head">
+    <span class="eyebrow">Zespół i społeczność</span>
+    <h1>Autorzy</h1>
+    <p class="lead">Poznaj osoby, które piszą dla SciNet, i zobacz, o czym piszą.</p>
+  </header>
 
   <div class="grid">
-    <div v-for="author in allAuthors" :key="author.name" class="author">
+    <div
+      v-for="(author, index) in allAuthors"
+      :key="author.name"
+      class="author"
+      :style="{ '--stagger': index }"
+    >
       <div class="head">
         <AuthorAvatar :name="author.name" :size="76" />
-        <div>
+        <div class="identity">
           <h3>{{ author.name }}</h3>
           <span class="field">{{ author.field }}</span>
         </div>
@@ -55,68 +63,153 @@ const allAuthors = computed<Author[]>(() => {
 </template>
 
 <style scoped>
+.page-head {
+  margin-top: var(--space-8);
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-primary);
+}
+
+h1 {
+  margin-top: 0;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(420px, 100%), 1fr));
-  gap: 24px;
+  gap: var(--space-6);
 }
 
 .author {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 32px;
+  gap: var(--space-4);
+  padding: var(--space-7);
   /* Długie imię bez spacji wpisane w formularzu nie rozpycha strony */
   overflow-wrap: anywhere;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-xs);
+  animation: author-rise var(--duration-slow) var(--ease-out) both;
+  animation-delay: calc(min(var(--stagger, 0), 8) * 60ms);
+  transition:
+    transform var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out);
+}
+
+@keyframes author-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.author:hover {
+  border-color: var(--color-primary-border);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 560px) {
+  .author {
+    padding: var(--space-5);
+  }
 }
 
 .head {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: var(--space-4);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
 }
 
 h3 {
-  margin: 0 0 2px;
-  font-size: 1.35rem;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
 }
 
 .field {
-  color: var(--color-text-muted);
+  display: inline-block;
+  padding: 3px 11px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-primary-border);
+  color: var(--color-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
 }
 
 .bio {
   margin: 0;
+  color: var(--color-text-soft);
+  line-height: var(--leading-normal);
 }
 
 .written {
   margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .written strong {
-  font-size: 0.95rem;
+  display: block;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--color-text-muted);
 }
 
 .written ul {
-  margin: 8px 0 0;
-  padding-left: 20px;
-}
-
-.written li + li {
-  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .written a {
+  display: block;
+  padding: 8px 12px;
+  border-radius: var(--radius-xs);
+  background: var(--color-bg-subtle);
+  color: var(--color-text);
   text-decoration: none;
+  font-size: var(--text-sm);
   font-weight: 500;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .written a:hover {
-  text-decoration: underline;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  transform: translateX(3px);
 }
 </style>

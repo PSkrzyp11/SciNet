@@ -1,11 +1,22 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useToast } from '@/composables/useToast'
 import { useFavoritesStore } from '@/stores/favorites'
 
 const props = defineProps<{ articleId: number; withLabel?: boolean }>()
 
 const favorites = useFavoritesStore()
+const { notify } = useToast()
 const saved = computed(() => favorites.isFavorite(props.articleId))
+
+function handleClick() {
+  const wasSaved = saved.value
+  favorites.toggle(props.articleId)
+  notify(wasSaved ? 'Usunięto z zapisanych' : 'Zapisano artykuł na później', {
+    variant: 'info',
+    duration: 2400,
+  })
+}
 </script>
 
 <template>
@@ -16,7 +27,7 @@ const saved = computed(() => favorites.isFavorite(props.articleId))
     :aria-pressed="saved"
     :aria-label="withLabel ? undefined : 'Zapisz artykuł'"
     :title="saved ? 'Usuń z zapisanych' : 'Zapisz artykuł'"
-    @click="favorites.toggle(articleId)"
+    @click="handleClick"
   >
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
       <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z" />
@@ -31,16 +42,19 @@ const saved = computed(() => favorites.isFavorite(props.articleId))
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px;
+  gap: var(--space-2);
+  padding: 7px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: none;
   color: var(--color-text-muted);
+  font-size: var(--text-sm);
   cursor: pointer;
   transition:
-    background 0.2s,
-    color 0.2s;
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring);
 }
 
 .favorite:hover {
@@ -48,7 +62,10 @@ const saved = computed(() => favorites.isFavorite(props.articleId))
   color: var(--color-primary);
 }
 
-/* Na ekranach dotykowych przycisk ma wygodne 44 px */
+.favorite:active {
+  transform: scale(0.92);
+}
+
 @media (pointer: coarse) {
   .favorite {
     justify-content: center;
@@ -58,14 +75,27 @@ const saved = computed(() => favorites.isFavorite(props.articleId))
 }
 
 .favorite.with-label {
-  padding: 6px 14px;
-  border-color: var(--color-border);
+  padding: 7px 15px;
+  border-color: var(--color-border-strong);
+  border-radius: var(--radius-pill);
   background: var(--color-surface);
+  color: var(--color-text-soft);
   font-weight: 600;
+}
+
+.favorite.with-label:hover {
+  border-color: var(--color-primary-border);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .favorite.saved {
   color: var(--color-primary);
+}
+
+.favorite.with-label.saved {
+  border-color: var(--color-primary-border);
+  background: var(--color-primary-light);
 }
 
 svg {
@@ -74,9 +104,23 @@ svg {
   stroke: currentColor;
   stroke-width: 2;
   stroke-linejoin: round;
+  transition: transform var(--duration-normal) var(--ease-spring);
 }
 
 .saved svg {
   fill: var(--color-accent);
+  animation: bookmark-pop var(--duration-normal) var(--ease-spring);
+}
+
+@keyframes bookmark-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.2);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
 }
 </style>

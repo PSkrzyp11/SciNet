@@ -1,50 +1,254 @@
-/* Globalne style aplikacji SciNet */
+/* ==========================================================================
+   SciNet — Design System: „Royal Editorial Atelier”
+   Królewski ametyst, ciepły papier redakcyjny i szlachetny bursztyn (Sunglow Gold)
+   ========================================================================== */
 
-/* Jeden motyw: royal purple, biel i sunglow gold */
-:root {
+:root,
+[data-theme='light'] {
   color-scheme: light;
 
-  /* Royal purple */
-  --color-primary: #7851a9;
-  --color-primary-hover: #5f3f8a;
-  --color-primary-light: #f3edfa;
-  --color-primary-border: #d9c9ec;
+  /* --- Typografia --- */
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Sunglow gold: złoty tekst jest nieczytelny, więc tylko jako tło z ciemnym napisem */
-  --color-accent: #ffcc33;
-  --color-accent-hover: #f5bd14;
-  --color-accent-light: #fff6d6;
-  --color-on-accent: #2f1b4d;
+  /* Płynna skala typograficzna (Modular Scale) */
+  --text-xs: 0.775rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: clamp(1.2rem, 1.12rem + 0.35vw, 1.35rem);
+  --text-xl: clamp(1.35rem, 1.22rem + 0.55vw, 1.65rem);
+  --text-2xl: clamp(1.65rem, 1.42rem + 0.95vw, 2.15rem);
+  --text-3xl: clamp(2rem, 1.65rem + 1.6vw, 2.75rem);
+  --text-display: clamp(2.5rem, 1.95rem + 2.4vw, 3.6rem);
 
-  /* Teksty to bardzo ciemne odcienie fioletu */
-  --color-text: #2f1b4d;
-  --color-text-soft: #46306a;
-  --color-text-muted: #66527f;
-  --color-border: #e6dcf2;
-  --color-input-border: #9a83b8;
+  /* Wysokości linii i światło międzyznakowe */
+  --leading-tight: 1.16;
+  --leading-snug: 1.32;
+  --leading-normal: 1.62;
+  --leading-relaxed: 1.78;
 
-  --color-bg: #faf7fd;
+  --tracking-tight: -0.024em;
+  --tracking-snug: -0.012em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.04em;
+  --tracking-wider: 0.08em;
+
+  /* --- Skala odstępów (4/8 px) --- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --space-9: 48px;
+  --space-10: 64px;
+  --space-12: 80px;
+
+  /* --- Zaokrąglenia (Border Radius) --- */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-pill: 999px;
+
+  /* --- Układ --- */
+  --max-width: 1240px;
+  --board-max-width: 1380px;
+  --reading-width: 740px;
+
+  /* --- Czasy i krzywe animacji --- */
+  --duration-fast: 160ms;
+  --duration-normal: 260ms;
+  --duration-slow: 380ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* --- Kolory bazowe: Royal Purple (Królewski Ametyst) --- */
+  --color-primary: #63369e;
+  --color-primary-hover: #4e2782;
+  --color-primary-active: #3d1c68;
+  --color-primary-light: #f2ebfa;
+  --color-primary-subtle: rgba(99, 54, 158, 0.075);
+  --color-primary-border: #d5c2ed;
+  --color-on-primary: #ffffff;
+
+  /* --- Kolory akcentu: Sunglow Gold (Szlachetny Bursztyn) --- */
+  --color-accent: #f0b429;
+  --color-accent-hover: #d99b14;
+  --color-accent-active: #c0860c;
+  --color-accent-light: #fef6dc;
+  --color-accent-subtle: rgba(240, 180, 41, 0.14);
+  --color-accent-border: #f3d378;
+  --color-on-accent: #221338;
+
+  /* --- Tła i powierzchnie (Ciepły papier redakcyjny) --- */
+  --color-bg: #faf7f2;
+  --color-bg-subtle: #f3eee6;
   --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-surface-muted: #f7f3ec;
+  --color-surface-tint: #f6f1fb;
+  --color-surface-glass: rgba(250, 247, 242, 0.85);
 
-  /* Czerwień zostaje, bo błąd musi wyglądać jak błąd */
+  /* --- Tekst (Atramentowy fiolet — kontrast WCAG AA/AAA) --- */
+  --color-text: #1e1330;
+  --color-text-soft: #3a2854;
+  --color-text-muted: #5e4d76;
+  --color-text-subtle: #6e5d88;
+
+  /* --- Obramowania --- */
+  --color-border: #e6dff0;
+  --color-border-subtle: #efeaf6;
+  --color-border-strong: #cec0e2;
+  --color-input-border: #9c86b8;
+
+  /* --- Stany semantyczne --- */
   --color-error: #b3261e;
+  --color-error-bg: #fef1f0;
+  --color-error-border: #f5c2bf;
+  --color-success: #1b6e44;
+  --color-success-bg: #edf8f2;
+  --color-success-border: #b4e2c9;
 
-  --radius: 14px;
-  --max-width: 1200px;
+  /* --- Kolory dziedzin nauki (subtelne kodowanie redakcyjne) --- */
+  --cat-physics-bg: #f1ebfb;
+  --cat-physics-text: #592e91;
+  --cat-physics-border: #d6c4f0;
 
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  font-size: 18px;
-  line-height: 1.6;
+  --cat-biology-bg: #e9f6ef;
+  --cat-biology-text: #18633d;
+  --cat-biology-border: #b6e2ca;
+
+  --cat-cs-bg: #eaf1fb;
+  --cat-cs-text: #1e4b8f;
+  --cat-cs-border: #bed3f4;
+
+  --cat-astronomy-bg: #fef4d9;
+  --cat-astronomy-text: #7a4f06;
+  --cat-astronomy-border: #f3d58a;
+
+  --cat-ecology-bg: #eef5e8;
+  --cat-ecology-text: #2e5e1e;
+  --cat-ecology-border: #c3deaf;
+
+  --cat-math-bg: #fbeee9;
+  --cat-math-text: #86321c;
+  --cat-math-border: #f0c6b8;
+
+  /* --- Warstwowe cienie --- */
+  --shadow-xs: 0 1px 2px rgba(30, 19, 48, 0.04);
+  --shadow-sm: 0 2px 4px -1px rgba(30, 19, 48, 0.05), 0 4px 12px -2px rgba(99, 54, 158, 0.06);
+  --shadow-md: 0 4px 8px -2px rgba(30, 19, 48, 0.06), 0 12px 28px -4px rgba(99, 54, 158, 0.11);
+  --shadow-lg: 0 8px 16px -4px rgba(30, 19, 48, 0.08), 0 20px 44px -8px rgba(47, 27, 77, 0.16);
+  --shadow-glow: 0 0 0 1px var(--color-primary-border), 0 10px 30px -6px rgba(99, 54, 158, 0.16);
+  --shadow-focus: 0 0 0 3px rgba(99, 54, 158, 0.24);
+  --shadow-focus-error: 0 0 0 3px rgba(179, 38, 30, 0.22);
+
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: var(--leading-normal);
   color: var(--color-text);
-  background: var(--color-bg);
+  background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
+/* ==========================================================================
+   Tryb ciemny — „Nocturnal Observatory”
+   ========================================================================== */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-primary: #b692f6;
+  --color-primary-hover: #c9adfa;
+  --color-primary-active: #9f75ec;
+  --color-primary-light: rgba(182, 146, 246, 0.15);
+  --color-primary-subtle: rgba(182, 146, 246, 0.09);
+  --color-primary-border: rgba(182, 146, 246, 0.34);
+  --color-on-primary: #170e29;
+
+  --color-accent: #f5c445;
+  --color-accent-hover: #ffd363;
+  --color-accent-active: #e2b02e;
+  --color-accent-light: rgba(245, 196, 69, 0.15);
+  --color-accent-subtle: rgba(245, 196, 69, 0.1);
+  --color-accent-border: rgba(245, 196, 69, 0.38);
+  --color-on-accent: #191029;
+
+  --color-bg: #0e0a17;
+  --color-bg-subtle: #151023;
+  --color-surface: #181228;
+  --color-surface-elevated: #211936;
+  --color-surface-muted: #140e21;
+  --color-surface-tint: #201736;
+  --color-surface-glass: rgba(14, 10, 23, 0.84);
+
+  --color-text: #f3eefb;
+  --color-text-soft: #d9ceec;
+  --color-text-muted: #afa0ca;
+  --color-text-subtle: #9988b8;
+
+  --color-border: #2c2144;
+  --color-border-subtle: #231a37;
+  --color-border-strong: #413163;
+  --color-input-border: #58457e;
+
+  --color-error: #ff897d;
+  --color-error-bg: rgba(179, 38, 30, 0.2);
+  --color-error-border: rgba(255, 137, 125, 0.35);
+  --color-success: #6dd59c;
+  --color-success-bg: rgba(27, 110, 68, 0.22);
+  --color-success-border: rgba(109, 213, 156, 0.35);
+
+  --cat-physics-bg: rgba(182, 146, 246, 0.15);
+  --cat-physics-text: #d5bfff;
+  --cat-physics-border: rgba(182, 146, 246, 0.3);
+
+  --cat-biology-bg: rgba(74, 201, 134, 0.14);
+  --cat-biology-text: #8ce6b5;
+  --cat-biology-border: rgba(74, 201, 134, 0.3);
+
+  --cat-cs-bg: rgba(96, 165, 250, 0.15);
+  --cat-cs-text: #9fd0ff;
+  --cat-cs-border: rgba(96, 165, 250, 0.3);
+
+  --cat-astronomy-bg: rgba(245, 196, 69, 0.15);
+  --cat-astronomy-text: #ffe08a;
+  --cat-astronomy-border: rgba(245, 196, 69, 0.32);
+
+  --cat-ecology-bg: rgba(132, 204, 88, 0.14);
+  --cat-ecology-text: #b6ec94;
+  --cat-ecology-border: rgba(132, 204, 88, 0.3);
+
+  --cat-math-bg: rgba(248, 139, 107, 0.15);
+  --cat-math-text: #ffbba6;
+  --cat-math-border: rgba(248, 139, 107, 0.3);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35), 0 6px 16px -2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 14px -2px rgba(0, 0, 0, 0.45), 0 16px 32px -4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.55), 0 28px 56px -8px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 0 0 1px var(--color-primary-border), 0 12px 32px -6px rgba(182, 146, 246, 0.2);
+  --shadow-focus: 0 0 0 3px rgba(182, 146, 246, 0.32);
+  --shadow-focus-error: 0 0 0 3px rgba(255, 137, 125, 0.3);
+}
+
+@media (max-width: 560px) {
+  :root {
+    font-size: 16px;
+  }
+}
+
+/* ==========================================================================
+   Reset i elementy bazowe
+   ========================================================================== */
 *,
 *::before,
 *::after {
@@ -53,6 +257,41 @@
 
 body {
   margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition:
+    background-color var(--duration-normal) var(--ease-out),
+    color var(--duration-normal) var(--ease-out);
+}
+
+::selection {
+  background: var(--color-accent-light);
+  color: var(--color-on-accent);
+}
+
+[data-theme='dark'] ::selection {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* Subtelny, dopracowany pasek przewijania */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border: 2px solid var(--color-bg);
+  border-radius: var(--radius-pill);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-input-border);
 }
 
 #app {
@@ -66,42 +305,59 @@ main {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 20px 24px;
+  padding: 0 var(--space-5) var(--space-7);
 }
 
-/* Tablica korzysta z całej szerokości: panele boczne leżą przy krawędziach okna */
+/* Tablica ma własny 3-kolumnowy kontener o kontrolowanej szerokości */
 main:has(.board) {
-  max-width: none;
+  max-width: var(--board-max-width);
 }
 
+/* --- Nagłówki z redakcyjnym charakterem (Fraunces) --- */
 h1,
 h2,
-h3 {
-  line-height: 1.25;
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
   color: var(--color-text);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
 }
 
-/* Tytuł podstrony */
 h1 {
-  margin: 56px 0 12px;
-  font-size: 2.4rem;
+  margin: var(--space-9) 0 var(--space-3);
+  font-size: var(--text-3xl);
+  font-weight: 650;
 }
 
 h2 {
-  margin: 0 0 20px;
-  font-size: 1.7rem;
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: var(--tracking-snug);
+}
+
+h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-snug);
 }
 
 /* Podpis pod tytułem podstrony */
 .lead {
-  margin: 0 0 36px;
+  margin: 0 0 var(--space-8);
   max-width: 640px;
   color: var(--color-text-muted);
-  font-size: 1.15rem;
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
 }
 
 a {
   color: var(--color-primary);
+  transition: color var(--duration-fast) var(--ease-out);
 }
 
 img {
@@ -139,4 +395,15 @@ select {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

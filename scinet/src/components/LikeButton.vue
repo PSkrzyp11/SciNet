@@ -31,22 +31,23 @@ const emit = defineEmits<{ toggle: [] }>()
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
+  gap: var(--space-2);
+  padding: 7px 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
   background: var(--color-surface);
-  color: var(--color-text-muted);
-  font-size: 0.9rem;
+  color: var(--color-text-soft);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition:
-    background 0.2s,
-    border-color 0.2s,
-    color 0.2s;
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
-/* Na ekranach dotykowych przycisk ma wygodne 44 px */
 @media (pointer: coarse) {
   .like {
     min-height: 44px;
@@ -55,13 +56,20 @@ const emit = defineEmits<{ toggle: [] }>()
 
 .like:hover {
   background: var(--color-primary-light);
+  border-color: var(--color-primary-border);
   color: var(--color-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+.like:active {
+  transform: scale(0.94);
 }
 
 .like.liked {
-  border-color: var(--color-accent);
+  border-color: var(--color-accent-border);
   background: var(--color-accent);
   color: var(--color-on-accent);
+  box-shadow: 0 2px 10px rgba(240, 180, 41, 0.28);
 }
 
 .like.liked:hover {
@@ -75,14 +83,35 @@ svg {
   stroke: currentColor;
   stroke-width: 2;
   stroke-linejoin: round;
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.like:hover svg {
+  transform: translateY(-1px) rotate(-6deg);
 }
 
 .liked svg {
   fill: currentColor;
+  animation: thumb-pop var(--duration-normal) var(--ease-spring);
+}
+
+@keyframes thumb-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  55% {
+    transform: scale(1.24) rotate(-8deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
 }
 
 /* Liczby tej samej szerokości: licznik nie przesuwa sąsiednich elementów */
 .count {
+  padding-left: 2px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   font-variant-numeric: tabular-nums;
 }
 </style>

@@ -33,6 +33,11 @@ const touched = reactive({
 })
 const formElement = ref<HTMLFormElement | null>(null)
 
+const wordCount = computed(() => {
+  const trimmed = form.content.trim()
+  return trimmed ? trimmed.split(/\s+/).length : 0
+})
+
 const errors = computed<Record<Field, string>>(() => ({
   title: form.title.trim() ? '' : 'Podaj tytuł artykułu.',
   author: form.author.trim() ? '' : 'Podaj autora.',
@@ -84,14 +89,23 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
 
 <template>
   <form ref="formElement" class="article-form" novalidate @submit.prevent="submit">
-    <h2 v-if="!initial">Nowy artykuł</h2>
+    <header v-if="!initial" class="form-head">
+      <span class="eyebrow">Kolegium Redakcyjne</span>
+      <h2>Nowy artykuł</h2>
+    </header>
 
     <div class="field">
       <label>
-        Tytuł
-        <input v-model="form.title" type="text" required v-bind="fieldAttrs('title')" />
+        <span class="label-text">Tytuł</span>
+        <input
+          v-model="form.title"
+          type="text"
+          placeholder="Np. Jak grzyby komunikują się pod ziemią?"
+          required
+          v-bind="fieldAttrs('title')"
+        />
       </label>
-      <span v-if="visibleError('title')" id="article-title-error" class="error">
+      <span v-if="visibleError('title')" id="article-title-error" class="error" role="alert">
         {{ visibleError('title') }}
       </span>
     </div>
@@ -99,17 +113,17 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
     <div class="row">
       <div class="field">
         <label>
-          Autor
+          <span class="label-text">Autor</span>
           <input v-model="form.author" type="text" required v-bind="fieldAttrs('author')" />
         </label>
-        <span v-if="visibleError('author')" id="article-author-error" class="error">
+        <span v-if="visibleError('author')" id="article-author-error" class="error" role="alert">
           {{ visibleError('author') }}
         </span>
       </div>
 
       <div class="field">
         <label>
-          Dziedzina nauki
+          <span class="label-text">Dziedzina nauki</span>
           <select v-model="form.category" required v-bind="fieldAttrs('category')">
             <option value="" disabled>Wybierz dziedzinę</option>
             <option v-for="category in CATEGORIES" :key="category" :value="category">
@@ -117,7 +131,12 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
             </option>
           </select>
         </label>
-        <span v-if="visibleError('category')" id="article-category-error" class="error">
+        <span
+          v-if="visibleError('category')"
+          id="article-category-error"
+          class="error"
+          role="alert"
+        >
           {{ visibleError('category') }}
         </span>
       </div>
@@ -125,15 +144,19 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
 
     <div class="field">
       <label>
-        Treść
+        <span class="label-row">
+          <span class="label-text">Treść</span>
+          <span class="word-counter" aria-hidden="true">{{ wordCount }} słów</span>
+        </span>
         <textarea
           v-model="form.content"
           rows="8"
+          placeholder="Wyjaśnij zagadnienie krok po kroku…"
           required
           v-bind="fieldAttrs('content')"
         ></textarea>
       </label>
-      <span v-if="visibleError('content')" id="article-content-error" class="error">
+      <span v-if="visibleError('content')" id="article-content-error" class="error" role="alert">
         {{ visibleError('content') }}
       </span>
       <span v-else class="hint">Akapity oddziel pustą linią.</span>
@@ -141,7 +164,7 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
 
     <div class="field">
       <label>
-        Adres obrazka (opcjonalnie)
+        <span class="label-text">Adres obrazka (opcjonalnie)</span>
         <input
           v-model="form.image"
           type="url"
@@ -149,7 +172,7 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
           v-bind="fieldAttrs('image')"
         />
       </label>
-      <span v-if="visibleError('image')" id="article-image-error" class="error">
+      <span v-if="visibleError('image')" id="article-image-error" class="error" role="alert">
         {{ visibleError('image') }}
       </span>
       <span v-else class="hint">Podaj adres obrazka z internetu, nie plik z komputera.</span>
@@ -169,25 +192,51 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
 
 <style scoped>
 .article-form {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  margin-bottom: 28px;
-  padding: 28px;
+  gap: var(--space-5);
+  margin-bottom: var(--space-7);
+  padding: var(--space-7);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-primary-border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 560px) {
+  .article-form {
+    padding: var(--space-5);
+  }
+}
+
+.form-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-primary);
 }
 
 h2 {
   margin: 0;
-  font-size: 1.4rem;
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
 }
 
 .row {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 @media (max-width: 560px) {
@@ -205,23 +254,52 @@ h2 {
 label {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-2);
   color: var(--color-text-soft);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.word-counter {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   font-weight: 500;
+  color: var(--color-text-muted);
 }
 
 input,
 select,
 textarea {
   width: 100%;
-  padding: 12px 14px;
+  padding: 12px 15px;
   border: 1px solid var(--color-input-border);
-  border-radius: 10px;
-  transition: border-color 0.2s;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-base);
+  font-weight: 400;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
 }
 
 textarea {
   resize: vertical;
+  line-height: var(--leading-normal);
+}
+
+input:hover:not(:focus),
+select:hover:not(:focus),
+textarea:hover:not(:focus) {
+  border-color: var(--color-primary);
 }
 
 input:focus,
@@ -229,57 +307,83 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-light);
+  box-shadow: var(--shadow-focus);
 }
 
 input.invalid,
 select.invalid,
 textarea.invalid {
   border-color: var(--color-error);
+  background: var(--color-error-bg);
+}
+
+input.invalid:focus,
+select.invalid:focus,
+textarea.invalid:focus {
+  box-shadow: var(--shadow-focus-error);
 }
 
 .error {
   color: var(--color-error);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
+  font-weight: 500;
 }
 
 .hint {
   color: var(--color-text-muted);
-  font-size: 0.9rem;
+  font-size: var(--text-xs);
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
 }
 
 .publish,
 .cancel {
   padding: 12px 28px;
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.publish:active,
+.cancel:active {
+  transform: scale(0.975);
 }
 
 .publish {
   border: 1px solid var(--color-primary);
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-xs);
 }
 
 .publish:hover {
   background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .cancel {
-  border: 1px solid var(--color-border);
-  background: none;
+  border: 1px solid var(--color-border-strong);
+  background: var(--color-surface);
   color: var(--color-text);
 }
 
 .cancel:hover {
   background: var(--color-primary-light);
+  border-color: var(--color-primary-border);
+  color: var(--color-primary);
 }
 </style>
