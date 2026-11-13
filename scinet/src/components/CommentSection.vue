@@ -85,6 +85,7 @@ async function submit() {
         <label>
           Komentarz
           <textarea
+            data-lenis-prevent
             v-model="form.text"
             name="text"
             rows="3"

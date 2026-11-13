@@ -1,5 +1,23 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
+import { jumpTo } from '@/motion'
 import BoardView from '@/views/BoardView.vue'
+
+// Tyle trwa podmiana strony przez <Transition mode="out-in"> w App.vue
+const RESTORE_DELAY = 80
+
+/**
+ * Dokąd przewinąć po nawigacji: `null` oznacza „zostaw jak jest”.
+ * Zmiana samych parametrów (np. pisanie w wyszukiwarce) nie przewija strony,
+ * nowa strona zaczyna się od góry, a „wstecz” wraca do zapamiętanej pozycji.
+ */
+export function scrollTarget(
+  to: Pick<RouteLocationNormalized, 'path'>,
+  from: Pick<RouteLocationNormalized, 'path'>,
+  savedPosition: { top: number } | null,
+) {
+  if (to.path === from.path) return null
+  return savedPosition?.top ?? 0
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,8 +64,23 @@ const router = createRouter({
       meta: { title: 'Nie znaleziono strony' },
     },
   ],
-  // Zmiana samych parametrów (np. pisanie w wyszukiwarce) nie przewija strony
-  scrollBehavior: (to, from) => (to.path === from.path ? false : { top: 0 }),
+  scrollBehavior(to, from, savedPosition) {
+    const top = scrollTarget(to, from, savedPosition)
+    if (top === null) return false
+
+    if (top === 0) {
+      jumpTo(0)
+      return false
+    }
+
+    // Przy „wstecz” nowa strona musi się najpierw wyrenderować, żeby miała pełną wysokość
+    return new Promise((resolve) => {
+      window.setTimeout(() => {
+        jumpTo(top)
+        resolve(false)
+      }, RESTORE_DELAY)
+    })
+  },
 })
 
 router.afterEach((to) => {

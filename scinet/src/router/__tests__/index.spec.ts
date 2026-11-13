@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
-import router from '../index'
+import router, { scrollTarget } from '../index'
 
 const scrollTo = vi.fn()
 
@@ -53,5 +53,20 @@ describe('router', () => {
     await flushPromises()
 
     expect(scrollTo).not.toHaveBeenCalled()
+  })
+})
+
+describe('scrollTarget', () => {
+  it('nowa strona zaczyna się od góry', () => {
+    expect(scrollTarget({ path: '/kontakt' }, { path: '/' }, null)).toBe(0)
+  })
+
+  it('przycisk „wstecz” wraca do zapamiętanej pozycji', () => {
+    expect(scrollTarget({ path: '/' }, { path: '/artykuly/1' }, { top: 1240 })).toBe(1240)
+  })
+
+  it('zmiana samych parametrów adresu nie przewija strony', () => {
+    expect(scrollTarget({ path: '/' }, { path: '/' }, null)).toBeNull()
+    expect(scrollTarget({ path: '/' }, { path: '/' }, { top: 300 })).toBeNull()
   })
 })

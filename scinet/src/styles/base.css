@@ -158,3 +158,9 @@ select {
     scroll-behavior: auto !important;
   }
 }
+
+/* Arkusz Lenis blokuje przekazywanie przewijania z elementów z własnym scrollem.
+   W polu tekstowym to przeszkadza: po dojechaniu do końca pola strona ma się przewijać dalej. */
+.lenis textarea[data-lenis-prevent] {
+  overscroll-behavior: auto;
+}

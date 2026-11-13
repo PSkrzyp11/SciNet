@@ -149,6 +149,7 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
           <span class="word-counter" aria-hidden="true">{{ wordCount }} słów</span>
         </span>
         <textarea
+          data-lenis-prevent
           v-model="form.content"
           rows="8"
           placeholder="Wyjaśnij zagadnienie krok po kroku…"

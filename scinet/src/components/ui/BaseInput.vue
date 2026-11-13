@@ -45,6 +45,7 @@ function onInput(event: Event) {
       <div class="control-wrap">
         <slot name="prefix" />
         <textarea
+          data-lenis-prevent
           v-if="type === 'textarea'"
           :value="modelValue"
           :name="name"

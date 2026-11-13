@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, watch } from 'vue'
+import { lockScroll, unlockScroll } from '@/motion'
 
 const props = defineProps<{
   open: boolean
@@ -9,6 +10,21 @@ const props = defineProps<{
 const emit = defineEmits<{
   close: []
 }>()
+
+// Strona pod otwartym oknem nie może się przewijać
+let locked = false
+
+function lock() {
+  if (locked) return
+  locked = true
+  lockScroll()
+}
+
+function unlock() {
+  if (!locked) return
+  locked = false
+  unlockScroll()
+}
 
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape' && props.open) {
@@ -22,8 +38,10 @@ watch(
     if (typeof document === 'undefined') return
     if (isOpen) {
       document.addEventListener('keydown', onKeydown)
+      lock()
     } else {
       document.removeEventListener('keydown', onKeydown)
+      unlock()
     }
   },
   { immediate: true },
@@ -33,6 +51,7 @@ onBeforeUnmount(() => {
   if (typeof document !== 'undefined') {
     document.removeEventListener('keydown', onKeydown)
   }
+  unlock()
 })
 </script>
 

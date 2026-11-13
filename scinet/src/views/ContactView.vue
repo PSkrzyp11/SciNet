@@ -135,6 +135,7 @@ const faq = [
           <label>
             Wiadomość
             <textarea
+              data-lenis-prevent
               v-model="form.message"
               rows="6"
               placeholder="Opisz swój pomysł lub pytanie…"
