@@ -1,7 +1,8 @@
 import '@fontsource-variable/archivo'
 import '@fontsource-variable/plus-jakarta-sans'
 import '@fontsource-variable/jetbrains-mono'
-import './style.css'
+import './styles/tokens.css'
+import './styles/base.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

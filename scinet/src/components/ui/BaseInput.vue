@@ -111,7 +111,7 @@ function onInput(event: Event) {
 input,
 textarea {
   width: 100%;
-  padding: 12px 15px;
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-input-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);

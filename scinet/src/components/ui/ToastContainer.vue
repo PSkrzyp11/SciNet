@@ -50,7 +50,7 @@ const { toasts, dismiss } = useToast()
   position: fixed;
   right: var(--space-5);
   bottom: var(--space-5);
-  z-index: 90;
+  z-index: var(--z-toast);
   pointer-events: none;
 }
 
@@ -70,7 +70,7 @@ const { toasts, dismiss } = useToast()
   gap: var(--space-3);
   min-width: 280px;
   max-width: 380px;
-  padding: 14px 16px;
+  padding: var(--space-35) var(--space-4);
   background: var(--color-surface-elevated);
   border: 1px solid var(--color-border-strong);
   border-left: 4px solid var(--color-primary);
@@ -90,7 +90,7 @@ const { toasts, dismiss } = useToast()
 .toast-icon {
   display: inline-flex;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: var(--space-05);
   color: var(--color-primary);
 }
 
@@ -120,7 +120,7 @@ const { toasts, dismiss } = useToast()
 }
 
 .toast-desc {
-  margin: 2px 0 0;
+  margin: var(--space-05) 0 0;
   color: var(--color-text-muted);
   font-size: var(--text-xs);
   line-height: 1.4;
@@ -128,7 +128,7 @@ const { toasts, dismiss } = useToast()
 
 .toast-close {
   display: inline-flex;
-  padding: 4px;
+  padding: var(--space-1);
   border: none;
   border-radius: var(--radius-xs);
   background: transparent;

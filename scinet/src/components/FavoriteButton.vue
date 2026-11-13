@@ -39,11 +39,11 @@ function handleClick() {
 <style scoped>
 .favorite {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-raised);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 7px;
+  padding: var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: none;
@@ -75,7 +75,7 @@ function handleClick() {
 }
 
 .favorite.with-label {
-  padding: 7px 15px;
+  padding: var(--space-2) var(--space-4);
   border-color: var(--color-border-strong);
   border-radius: var(--radius-pill);
   background: var(--color-surface);

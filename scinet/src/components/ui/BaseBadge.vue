@@ -49,7 +49,7 @@ const categorySlug = computed(() => {
 .base-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-15);
   white-space: nowrap;
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
@@ -63,12 +63,12 @@ const categorySlug = computed(() => {
 }
 
 .size-sm {
-  padding: 2px 10px;
+  padding: var(--space-05) var(--space-25);
   font-size: var(--text-xs);
 }
 
 .size-md {
-  padding: 4px 13px;
+  padding: var(--space-1) var(--space-35);
   font-size: var(--text-xs);
 }
 

@@ -207,7 +207,7 @@ form {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-15);
 }
 
 label {
@@ -222,7 +222,7 @@ label {
 input,
 textarea {
   width: 100%;
-  padding: 12px 15px;
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-input-border);
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
@@ -262,7 +262,7 @@ textarea.invalid {
 
 .add-comment {
   align-self: flex-start;
-  padding: 12px 24px;
+  padding: var(--space-3) var(--space-6);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--color-primary);

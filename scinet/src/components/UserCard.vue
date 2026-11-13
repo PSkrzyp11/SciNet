@@ -65,11 +65,11 @@ defineProps<{ user: Author; articleCount: number; likeCount: number }>()
 
 .avatar-wrap {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-raised);
   display: inline-flex;
   margin-top: -36px;
   margin-bottom: var(--space-2);
-  padding: 3px;
+  padding: var(--space-1);
   border-radius: 50%;
   background: var(--color-surface);
   box-shadow: var(--shadow-xs);
@@ -85,7 +85,7 @@ h2 {
 .field {
   display: inline-block;
   margin: 6px 0 var(--space-3);
-  padding: 2px 10px;
+  padding: var(--space-05) var(--space-25);
   border-radius: var(--radius-pill);
   background: var(--color-primary-light);
   color: var(--color-primary);
@@ -123,17 +123,17 @@ dl {
 
 dt {
   color: var(--color-text-muted);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
 }
 
 dd {
-  margin: 2px 0 0;
+  margin: var(--space-05) 0 0;
   color: var(--color-primary);
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: var(--text-figure);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;

@@ -76,18 +76,18 @@ withDefaults(
 
 /* Rozmiary */
 .size-sm {
-  padding: 7px 14px;
+  padding: var(--space-2) var(--space-35);
   font-size: var(--text-sm);
   border-radius: var(--radius-xs);
 }
 
 .size-md {
-  padding: 11px 22px;
+  padding: var(--space-3) 22px;
   font-size: var(--text-base);
 }
 
 .size-lg {
-  padding: 14px 28px;
+  padding: var(--space-35) 28px;
   font-size: var(--text-base);
   border-radius: var(--radius-md);
 }
@@ -200,7 +200,7 @@ withDefaults(
   border: 2px solid currentColor;
   border-right-color: transparent;
   border-radius: 50%;
-  animation: spin 0.65s linear infinite;
+  animation: spin var(--duration-spin) linear infinite;
 }
 
 @keyframes spin {

@@ -347,16 +347,16 @@ function handleRemove(id: number, title: string) {
 
 .hero-copy {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-raised);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-15);
 }
 
 .hero-kicker {
   align-self: flex-start;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
@@ -370,7 +370,7 @@ function handleRemove(id: number, title: string) {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-3);
-  animation: hero-rise var(--duration-slow) var(--ease-out) 60ms both;
+  animation: hero-rise var(--duration-slow) var(--ease-out) var(--stagger-step) both;
 }
 
 h1 {
@@ -382,7 +382,7 @@ h1 {
 
 .count {
   margin: 0;
-  padding: 3px 11px;
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--color-primary-light);
   border: 1px solid var(--color-primary-border);
@@ -394,12 +394,12 @@ h1 {
 }
 
 .hero-sub {
-  margin: 2px 0 0;
+  margin: var(--space-05) 0 0;
   max-width: 580px;
   color: var(--color-text-muted);
   font-size: var(--text-sm);
   line-height: 1.5;
-  animation: hero-rise var(--duration-slow) var(--ease-out) 120ms both;
+  animation: hero-rise var(--duration-slow) var(--ease-out) calc(var(--stagger-step) * 2) both;
 }
 
 @keyframes hero-rise {
@@ -419,7 +419,7 @@ h1 {
   align-items: center;
   gap: var(--space-3);
   width: 100%;
-  padding: 12px 14px 12px 16px;
+  padding: var(--space-3) var(--space-35) var(--space-3) var(--space-4);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius);
   background: var(--color-surface);
@@ -451,7 +451,7 @@ h1 {
 
 .add-cta {
   flex-shrink: 0;
-  padding: 10px 20px;
+  padding: var(--space-25) var(--space-5);
   border-radius: var(--radius-sm);
   background: var(--color-accent);
   color: var(--color-on-accent);
@@ -485,7 +485,7 @@ h1 {
 .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: var(--space-25);
 }
 
 .search-field {
@@ -513,7 +513,7 @@ h1 {
 
 .search {
   width: 100%;
-  padding: 12px 14px 12px 44px;
+  padding: var(--space-3) var(--space-35) var(--space-3) 44px;
   border: 1px solid var(--color-input-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
@@ -539,7 +539,7 @@ h1 {
   width: 100%;
   height: 100%;
   min-height: 48px;
-  padding: 0 16px;
+  padding: 0 var(--space-4);
   border: 1px solid var(--color-input-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
@@ -567,7 +567,7 @@ h1 {
   flex-shrink: 0;
   align-items: center;
   gap: var(--space-2);
-  padding: 8px 16px;
+  padding: var(--space-2) var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
@@ -601,12 +601,12 @@ h1 {
 
 .n {
   min-width: 22px;
-  padding: 0 7px;
+  padding: 0 var(--space-2);
   border-radius: var(--radius-pill);
   background: var(--color-primary-light);
   color: var(--color-primary);
   font-family: var(--font-mono);
-  font-size: 0.76rem;
+  font-size: var(--text-xs);
   font-weight: 700;
   line-height: 22px;
   text-align: center;
@@ -623,7 +623,7 @@ h1 {
   .filters {
     flex-wrap: nowrap;
     margin-inline: -20px;
-    padding: 2px 20px 4px;
+    padding: var(--space-05) var(--space-5) var(--space-1);
     overflow-x: auto;
     scrollbar-width: none;
   }
@@ -633,7 +633,7 @@ h1 {
   }
 
   .add {
-    padding: 10px 12px;
+    padding: var(--space-25) var(--space-3);
     gap: var(--space-2);
   }
 
@@ -645,7 +645,7 @@ h1 {
   }
 
   .add-cta {
-    padding: 8px 14px;
+    padding: var(--space-2) var(--space-35);
     font-size: var(--text-xs);
   }
 }
@@ -655,7 +655,7 @@ h1 {
   .filters {
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 4px;
+    gap: var(--space-1);
     padding: var(--space-5) var(--space-3);
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -666,12 +666,12 @@ h1 {
   .filters-title {
     display: block;
     margin: 0 var(--space-2) var(--space-2);
-    font-size: 1.15rem;
+    font-size: var(--text-md);
   }
 
   .filters button {
     justify-content: space-between;
-    padding: 9px 10px 9px 14px;
+    padding: var(--space-25) var(--space-25) var(--space-25) var(--space-35);
     border: none;
     border-radius: var(--radius-sm);
     background: none;
@@ -701,7 +701,7 @@ h1 {
 /* Sekwencyjne wejście kart na tablicy (stagger) */
 .stagger-item {
   animation: card-stagger var(--duration-slow) var(--ease-out) both;
-  animation-delay: calc(min(var(--stagger, 0), 6) * 55ms);
+  animation-delay: calc(min(var(--stagger, 0), 6) * var(--stagger-step));
 }
 
 @keyframes card-stagger {
@@ -759,7 +759,7 @@ h1 {
 
 .reset {
   margin-top: var(--space-2);
-  padding: 11px 24px;
+  padding: var(--space-3) var(--space-6);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--color-primary);

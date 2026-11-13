@@ -31,7 +31,7 @@ withDefaults(
     var(--color-bg-subtle) 80%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.6s var(--ease-in-out) infinite;
+  animation: shimmer var(--duration-shimmer) var(--ease-in-out) infinite;
 }
 
 @keyframes shimmer {

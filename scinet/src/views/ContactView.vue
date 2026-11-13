@@ -189,7 +189,7 @@ const faq = [
   display: inline-block;
   margin-bottom: var(--space-1);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
@@ -259,7 +259,7 @@ label {
 input,
 textarea {
   width: 100%;
-  padding: 12px 15px;
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-input-border);
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
@@ -285,7 +285,7 @@ textarea:focus {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-15);
 }
 
 input.invalid,
@@ -302,7 +302,7 @@ textarea.invalid {
 
 .btn {
   align-self: flex-start;
-  padding: 13px 32px;
+  padding: var(--space-35) var(--space-7);
   border: none;
   border-radius: var(--radius-sm);
   background: var(--color-primary);
@@ -338,7 +338,7 @@ textarea.invalid {
 .success-badge {
   display: inline-block;
   margin-bottom: var(--space-2);
-  padding: 3px 10px;
+  padding: var(--space-1) var(--space-25);
   border-radius: var(--radius-pill);
   background: var(--color-accent);
   color: var(--color-on-accent);
@@ -358,7 +358,7 @@ textarea.invalid {
 }
 
 .link {
-  padding: 9px 18px;
+  padding: var(--space-25) 18px;
   border: 1px solid var(--color-primary-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
@@ -403,7 +403,7 @@ dt {
 }
 
 dd {
-  margin: 4px 0 0;
+  margin: var(--space-1) 0 0;
   font-weight: 500;
 }
 
@@ -448,7 +448,7 @@ summary {
   gap: var(--space-3);
   padding: var(--space-5) var(--space-6);
   font-family: var(--font-display);
-  font-size: 1.08rem;
+  font-size: var(--text-md);
   font-weight: 600;
   list-style: none;
   cursor: pointer;
@@ -469,7 +469,7 @@ summary::after {
   background: var(--color-primary-light);
   color: var(--color-primary);
   font-family: var(--font-mono);
-  font-size: 1.1rem;
+  font-size: var(--text-md);
   font-weight: 500;
   transition:
     transform var(--duration-normal) var(--ease-spring),

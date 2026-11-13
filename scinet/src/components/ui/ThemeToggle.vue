@@ -31,8 +31,8 @@ const { theme, toggleTheme } = useTheme()
 .theme-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 13px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-35);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
   background: var(--color-surface);

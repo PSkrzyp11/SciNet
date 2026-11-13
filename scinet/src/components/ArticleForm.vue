@@ -213,14 +213,14 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
 .form-head {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-1);
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--color-border-subtle);
 }
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
@@ -248,7 +248,7 @@ h2 {
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-15);
 }
 
 label {
@@ -278,7 +278,7 @@ input,
 select,
 textarea {
   width: 100%;
-  padding: 12px 15px;
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-input-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
@@ -343,7 +343,7 @@ textarea.invalid:focus {
 
 .publish,
 .cancel {
-  padding: 12px 28px;
+  padding: var(--space-3) 28px;
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
   font-weight: 600;

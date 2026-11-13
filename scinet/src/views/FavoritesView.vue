@@ -42,7 +42,7 @@ const favorites = useFavoritesStore()
   display: inline-block;
   margin-bottom: var(--space-1);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
@@ -102,7 +102,7 @@ h1 {
 .btn {
   display: inline-block;
   margin-top: var(--space-2);
-  padding: 12px 26px;
+  padding: var(--space-3) 26px;
   border-radius: var(--radius-sm);
   background: var(--color-primary);
   color: var(--color-on-primary);

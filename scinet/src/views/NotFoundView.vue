@@ -30,7 +30,7 @@
 .code {
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(4.5rem, 14vw, 7.5rem);
+  font-size: var(--text-mega);
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
@@ -47,7 +47,7 @@ h1 {
 
 .btn {
   display: inline-block;
-  padding: 13px 28px;
+  padding: var(--space-35) 28px;
   border-radius: var(--radius-sm);
   background: var(--color-primary);
   color: var(--color-on-primary);

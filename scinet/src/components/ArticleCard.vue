@@ -222,7 +222,7 @@ function confirmDelete() {
 /* Menu i przyciski leżą nad linkiem rozciągniętym na całą kartę */
 .menu {
   position: relative;
-  z-index: 2;
+  z-index: var(--z-dropdown);
   align-self: flex-start;
 }
 
@@ -230,7 +230,7 @@ function confirmDelete() {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 7px;
+  padding: var(--space-2);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   background: none;
@@ -262,9 +262,9 @@ function confirmDelete() {
   right: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: var(--space-05);
   min-width: 164px;
-  padding: 6px;
+  padding: var(--space-15);
   background: var(--color-surface-elevated);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
@@ -288,7 +288,7 @@ function confirmDelete() {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 9px 12px;
+  padding: var(--space-25) var(--space-3);
   border: none;
   border-radius: var(--radius-xs);
   background: none;
@@ -347,7 +347,7 @@ function confirmDelete() {
 }
 
 h3 {
-  margin: 2px 0 0;
+  margin: var(--space-05) 0 0;
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: 650;
@@ -376,7 +376,7 @@ h3 {
 /* Na karcie tylko początek treści, całość jest na stronie artykułu */
 .text {
   display: -webkit-box;
-  margin: 2px 0 0;
+  margin: var(--space-05) 0 0;
   overflow: hidden;
   color: var(--color-text-muted);
   font-size: var(--text-base);
@@ -400,7 +400,7 @@ h3 {
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-3) var(--space-4);
-  margin-top: 2px;
+  margin-top: var(--space-05);
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-border-subtle);
 }
@@ -412,8 +412,8 @@ h3 {
 .comment-count {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: var(--space-15);
+  padding: var(--space-15) var(--space-25);
   border-radius: var(--radius-pill);
   background: var(--color-bg-subtle);
   color: var(--color-text-muted);

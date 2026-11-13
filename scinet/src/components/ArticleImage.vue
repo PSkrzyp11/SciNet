@@ -45,7 +45,7 @@ watch(
     var(--color-bg-subtle) 80%
   );
   background-size: 200% 100%;
-  animation: image-shimmer 1.6s var(--ease-in-out) infinite;
+  animation: image-shimmer var(--duration-shimmer) var(--ease-in-out) infinite;
   transition:
     transform var(--duration-slow) var(--ease-out),
     box-shadow var(--duration-normal) var(--ease-out),

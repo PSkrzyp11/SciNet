@@ -42,7 +42,7 @@ defineProps<{ articles: Article[] }>()
 h2 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: var(--text-md);
 }
 
 .spark {
@@ -53,7 +53,7 @@ h2 {
   border-radius: 50%;
   background: var(--color-accent-light);
   color: var(--color-on-accent);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
 }
 
 [data-theme='dark'] .spark {
@@ -86,7 +86,7 @@ li::before {
   content: '0' counter(rank);
   flex-shrink: 0;
   font-family: var(--font-display);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-muted);
 }
@@ -103,7 +103,7 @@ li:hover {
 a {
   flex: 1;
   min-width: 0;
-  padding: 11px 0;
+  padding: var(--space-3) 0;
   color: var(--color-text);
   font-weight: 500;
   text-decoration: none;
@@ -117,7 +117,7 @@ a:hover {
 
 .count {
   flex-shrink: 0;
-  padding: 2px 9px;
+  padding: var(--space-05) var(--space-25);
   border-radius: var(--radius-pill);
   background: var(--color-accent-light);
   border: 1px solid var(--color-accent-border);

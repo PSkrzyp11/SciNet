@@ -134,7 +134,7 @@ onBeforeUnmount(() => {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 40;
+  z-index: var(--z-progress);
   height: 3px;
   background: transparent;
   pointer-events: none;
@@ -145,16 +145,16 @@ onBeforeUnmount(() => {
   height: 100%;
   background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
   transform-origin: left center;
-  transition: transform 80ms linear;
+  transition: transform var(--duration-instant) linear;
 }
 
 .back {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-15);
   width: fit-content;
   margin-bottom: var(--space-5);
-  padding: 6px 12px;
+  padding: var(--space-15) var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--color-bg-subtle);
   color: var(--color-text-soft);
@@ -191,7 +191,7 @@ onBeforeUnmount(() => {
 .share {
   display: inline-flex;
   align-items: center;
-  padding: 7px 15px;
+  padding: var(--space-2) var(--space-4);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
@@ -258,7 +258,7 @@ h1 {
 
 p {
   margin: 0 0 var(--space-5);
-  font-size: 1.125rem;
+  font-size: var(--text-md);
   line-height: var(--leading-relaxed);
   color: var(--color-text);
   /* Pojedynczy Enter wpisany w formularzu jest nową linią w akapicie */
@@ -292,9 +292,9 @@ p {
 
 .related-eyebrow {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
@@ -321,7 +321,7 @@ p {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--space-2);
-  padding: 12px 16px;
+  padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-sm);
   background: var(--color-bg-subtle);
@@ -361,7 +361,7 @@ p {
 
 .not-found-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--color-primary-light);
   color: var(--color-primary);
@@ -377,7 +377,7 @@ p {
 .back-btn {
   display: inline-flex;
   align-items: center;
-  padding: 12px 24px;
+  padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-sm);
   background: var(--color-primary);
   color: var(--color-on-primary);

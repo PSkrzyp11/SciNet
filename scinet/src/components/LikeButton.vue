@@ -28,11 +28,11 @@ const emit = defineEmits<{ toggle: [] }>()
 /* Przycisk leży nad linkiem rozciągniętym na całą kartę */
 .like {
   position: relative;
-  z-index: 1;
+  z-index: var(--z-raised);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  padding: 7px 14px;
+  padding: var(--space-2) var(--space-35);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
@@ -109,7 +109,7 @@ svg {
 
 /* Liczby tej samej szerokości: licznik nie przesuwa sąsiednich elementów */
 .count {
-  padding-left: 2px;
+  padding-left: var(--space-05);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-variant-numeric: tabular-nums;

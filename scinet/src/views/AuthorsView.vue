@@ -71,7 +71,7 @@ const allAuthors = computed<Author[]>(() => {
   display: inline-block;
   margin-bottom: var(--space-1);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
@@ -101,7 +101,7 @@ h1 {
   border-radius: var(--radius);
   box-shadow: var(--shadow-xs);
   animation: author-rise var(--duration-slow) var(--ease-out) both;
-  animation-delay: calc(min(var(--stagger, 0), 8) * 60ms);
+  animation-delay: calc(min(var(--stagger, 0), 8) * var(--stagger-step));
   transition:
     transform var(--duration-normal) var(--ease-out),
     box-shadow var(--duration-normal) var(--ease-out),
@@ -141,7 +141,7 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: var(--space-15);
 }
 
 h3 {
@@ -152,7 +152,7 @@ h3 {
 
 .field {
   display: inline-block;
-  padding: 3px 11px;
+  padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--color-primary-light);
   border: 1px solid var(--color-primary-border);
@@ -186,7 +186,7 @@ h3 {
 .written ul {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-15);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -194,7 +194,7 @@ h3 {
 
 .written a {
   display: block;
-  padding: 8px 12px;
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-xs);
   background: var(--color-bg-subtle);
   color: var(--color-text);

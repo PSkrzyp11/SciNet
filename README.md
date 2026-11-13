@@ -83,7 +83,7 @@ scinet/src/
 ├── views/        # całe podstrony, w tym tablica
 ├── App.vue       # główny układ strony
 ├── main.ts       # punkt startowy aplikacji
-└── style.css     # style globalne i kolory
+└── styles/       # tokens.css (zmienne) i base.css (style bazowe)
 ```
 
 Komponenty dostają dane przez propsy, a zmiany zgłaszają przez emity. Dane w store'ach zmieniają dopiero widoki.

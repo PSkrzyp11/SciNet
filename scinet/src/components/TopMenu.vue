@@ -109,7 +109,7 @@ const isActive = (to: string) =>
 .top-menu {
   position: sticky;
   top: 0;
-  z-index: 30;
+  z-index: var(--z-header);
   background: var(--color-surface-glass);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -146,10 +146,10 @@ const isActive = (to: string) =>
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   margin-right: auto;
   font-family: var(--font-display);
-  font-size: 1.55rem;
+  font-size: var(--text-brand);
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--color-text);
@@ -169,7 +169,7 @@ const isActive = (to: string) =>
   border-radius: var(--radius-xs);
   background: var(--color-primary);
   color: var(--color-accent);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   box-shadow: var(--shadow-xs);
 }
 
@@ -181,8 +181,8 @@ nav {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 4px;
-  padding: 4px;
+  gap: var(--space-1);
+  padding: var(--space-1);
   background: var(--color-bg-subtle);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
@@ -191,8 +191,8 @@ nav {
 nav a {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
+  gap: var(--space-15);
+  padding: var(--space-2) 18px;
   border-radius: var(--radius-pill);
   color: var(--color-text-soft);
   text-decoration: none;
@@ -221,12 +221,12 @@ nav a.active {
   justify-content: center;
   min-width: 20px;
   height: 20px;
-  padding: 0 6px;
+  padding: 0 var(--space-15);
   border-radius: var(--radius-pill);
   background: var(--color-accent);
   color: var(--color-on-accent);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -294,7 +294,7 @@ nav a.active .badge {
 
 .menu-toggle {
   display: none;
-  padding: 8px;
+  padding: var(--space-2);
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
@@ -358,7 +358,7 @@ nav a.active .badge {
 
   nav a {
     justify-content: space-between;
-    padding: 12px 16px;
+    padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-sm);
   }
 }

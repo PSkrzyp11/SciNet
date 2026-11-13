@@ -77,7 +77,7 @@ onBeforeUnmount(() => {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: var(--z-modal);
   display: grid;
   place-items: center;
   padding: var(--space-5);

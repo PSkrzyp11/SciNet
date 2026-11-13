@@ -58,7 +58,7 @@ function save(draft: ArticleDraft) {
   align-items: center;
   width: fit-content;
   margin-bottom: var(--space-5);
-  padding: 6px 12px;
+  padding: var(--space-15) var(--space-3);
   border-radius: var(--radius-pill);
   background: var(--color-bg-subtle);
   color: var(--color-text-soft);
@@ -79,9 +79,9 @@ function save(draft: ArticleDraft) {
 
 .eyebrow {
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-1);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: var(--text-2xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
@@ -112,7 +112,7 @@ h1 {
 
 .back-btn {
   display: inline-flex;
-  padding: 12px 24px;
+  padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-sm);
   background: var(--color-primary);
   color: var(--color-on-primary);
