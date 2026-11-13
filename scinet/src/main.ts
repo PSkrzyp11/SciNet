@@ -1,3 +1,6 @@
+import '@fontsource-variable/archivo'
+import '@fontsource-variable/plus-jakarta-sans'
+import '@fontsource-variable/jetbrains-mono'
 import './style.css'
 
 import { createApp } from 'vue'

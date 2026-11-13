@@ -86,7 +86,6 @@ li::before {
   content: '0' counter(rank);
   flex-shrink: 0;
   font-family: var(--font-display);
-  font-style: italic;
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-text-muted);

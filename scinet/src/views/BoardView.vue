@@ -142,17 +142,10 @@ function handleRemove(id: number, title: string) {
 
       <Transition name="composer" mode="out-in">
         <ArticleForm v-if="formOpen" @save="publish" @cancel="closeForm" />
-        <button
-          v-else
-          ref="addButton"
-          type="button"
-          class="add"
-          aria-label="Dodaj artykuł"
-          @click="formOpen = true"
-        >
+        <button v-else ref="addButton" type="button" class="add" @click="formOpen = true">
           <AuthorAvatar :name="currentUser.name" />
           <span class="add-hint">Co nowego w nauce? Podziel się odkryciem…</span>
-          <span class="add-cta" aria-hidden="true">Dodaj artykuł</span>
+          <span class="add-cta">Dodaj artykuł</span>
         </button>
       </Transition>
 
@@ -193,6 +186,7 @@ function handleRemove(id: number, title: string) {
     </nav>
 
     <div class="results">
+      <h2 class="visually-hidden">Artykuły</h2>
       <div v-if="!store.articles.length" class="empty board-empty">
         <svg class="empty-art" viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
           <circle cx="32" cy="32" r="26" stroke-dasharray="4 4" />

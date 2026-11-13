@@ -30,9 +30,8 @@
 .code {
   display: block;
   font-family: var(--font-display);
-  font-style: italic;
   font-size: clamp(4.5rem, 14vw, 7.5rem);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
   color: var(--color-primary);

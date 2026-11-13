@@ -171,11 +171,21 @@ describe('BoardView', () => {
     )
   })
 
-  it('pole dodawania ma czytelną nazwę dla czytników ekranu', async () => {
+  it('nazwa pola dodawania zgadza się z widocznym tekstem', async () => {
+    const { wrapper } = await mountAt('/')
+    const add = wrapper.find('.add')
+
+    // aria-label nadpisałby widoczny tekst, a sterowanie głosem szuka przycisku po tym, co widać
+    expect(add.attributes('aria-label')).toBeUndefined()
+    expect(add.find('.add-cta').text()).toBe('Dodaj artykuł')
+    expect(add.find('.add-cta').attributes('aria-hidden')).toBeUndefined()
+    expect(add.find('.avatar').text()).toBe('AN')
+  })
+
+  it('lista artykułów ma własny nagłówek dla czytników ekranu', async () => {
     const { wrapper } = await mountAt('/')
 
-    expect(wrapper.find('.add').attributes('aria-label')).toBe('Dodaj artykuł')
-    expect(wrapper.find('.add .avatar').text()).toBe('AN')
+    expect(wrapper.find('.results > h2').text()).toBe('Artykuły')
   })
 
   it('przy każdej dziedzinie pokazuje liczbę artykułów', async () => {
