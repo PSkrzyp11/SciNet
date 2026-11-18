@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ArticleForm from '@/components/ArticleForm.vue'
 import AuthorAvatar from '@/components/AuthorAvatar.vue'
+import MarqueeStrip from '@/components/MarqueeStrip.vue'
 import TopLikedPanel from '@/components/TopLikedPanel.vue'
 import UserCard from '@/components/UserCard.vue'
 import { useToast } from '@/composables/useToast'
@@ -131,7 +132,10 @@ function handleRemove(id: number, title: string) {
       </svg>
       <div class="hero-copy">
         <span class="hero-kicker">Magazyn społeczności naukowej</span>
-        <h1>Tablica</h1>
+        <!-- Napis wysuwa się zza maski w samym CSS, więc nie czeka na żadną bibliotekę (LCP) -->
+        <h1>
+          <span class="hero-title-mask"><span class="hero-title-line">Tablica</span></span>
+        </h1>
         <div class="hero-foot">
           <p class="hero-sub">
             Najciekawsze odkrycia, analizy i eksperymenty opisane przystępnym językiem.
@@ -142,6 +146,8 @@ function handleRemove(id: number, title: string) {
         </div>
       </div>
     </header>
+
+    <MarqueeStrip class="board-marquee" :items="CATEGORIES" label="Przeglądaj dziedziny" />
 
     <div class="top">
       <Transition name="composer" mode="out-in">
@@ -236,6 +242,7 @@ function handleRemove(id: number, title: string) {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     'hero'
+    'marquee'
     'top'
     'filters'
     'results'
@@ -246,6 +253,12 @@ function handleRemove(id: number, title: string) {
 
 .board-head {
   grid-area: hero;
+}
+
+.board-marquee {
+  grid-area: marquee;
+  /* Pasek przylega do hero, więc odstęp siatki nad nim jest mniejszy */
+  margin-top: calc(var(--space-2) * -1);
 }
 
 .top {
@@ -272,9 +285,10 @@ function handleRemove(id: number, title: string) {
 @media (min-width: 760px) {
   .board {
     grid-template-columns: minmax(0, 1fr) 270px;
-    grid-template-rows: auto auto auto 1fr;
+    grid-template-rows: auto auto auto auto 1fr;
     grid-template-areas:
       'hero hero'
+      'marquee marquee'
       'top side'
       'filters side'
       'results side';
@@ -290,9 +304,10 @@ function handleRemove(id: number, title: string) {
 @media (min-width: 1100px) {
   .board {
     grid-template-columns: 236px minmax(0, 1fr) 290px;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     grid-template-areas:
       'hero hero hero'
+      'marquee marquee marquee'
       'filters top side'
       'filters results side';
     column-gap: var(--space-7);
@@ -377,6 +392,34 @@ function handleRemove(id: number, title: string) {
   width: 100%;
 }
 
+/* Od tabletu treść hero stoi na siatce 12 kolumn */
+@media (min-width: 760px) {
+  .hero-copy {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+    column-gap: var(--grid-gap);
+  }
+
+  .hero-copy > * {
+    grid-column: 1 / -1;
+  }
+
+  .hero-foot {
+    display: grid;
+    grid-template-columns: subgrid;
+    align-items: end;
+  }
+
+  .hero-sub {
+    grid-column: 1 / 7;
+  }
+
+  .hero-foot .count {
+    grid-column: 10 / -1;
+    justify-self: end;
+  }
+}
+
 .hero-kicker {
   align-self: flex-start;
   font-family: var(--font-mono);
@@ -396,7 +439,25 @@ h1 {
   line-height: 0.95;
   letter-spacing: -0.035em;
   color: var(--fx-text);
-  animation: hero-rise var(--duration-slow) var(--ease-out) var(--stagger-step) both;
+}
+
+.hero-title-mask {
+  display: block;
+  overflow: clip;
+  /* Miejsce na ogonki liter, żeby maska ich nie ucinała */
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+.hero-title-line {
+  display: block;
+  animation: hero-line var(--duration-cinematic) var(--ease-expo) var(--stagger-step) both;
+}
+
+@keyframes hero-line {
+  from {
+    transform: translateY(105%);
+  }
 }
 
 .hero-foot {

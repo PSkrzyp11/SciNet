@@ -5,22 +5,59 @@
 
 /* Fonty zastępcze o wymiarach dopasowanych do właściwych. Zanim font się wczyta,
    tekst zajmuje tyle samo miejsca, więc jego podmiana niczego nie przesuwa (CLS).
-   Liczby zmierzone w przeglądarce na polskim tekście z interfejsu. */
+   Liczby zmierzone w przeglądarce na polskim tekście z interfejsu, osobno dla zwykłych
+   i pogrubionych grubości, bo pogrubiony font zmienia szerokość liter inaczej niż Arial. */
 @font-face {
   font-family: 'Plus Jakarta Sans Fallback';
-  src: local('Arial'), local('Liberation Sans'), local('Arimo');
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo');
+  font-weight: 100 549;
   size-adjust: 105.4%;
-  ascent-override: 98.4%;
+  ascent-override: 98.5%;
   descent-override: 21.1%;
   line-gap-override: 0%;
 }
 
 @font-face {
+  font-family: 'Plus Jakarta Sans Fallback';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Arimo Bold');
+  font-weight: 550 900;
+  size-adjust: 100.8%;
+  ascent-override: 103%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}
+
+@font-face {
   font-family: 'Archivo Fallback';
-  src: local('Arial'), local('Liberation Sans'), local('Arimo');
-  size-adjust: 108.9%;
-  ascent-override: 80.6%;
-  descent-override: 19.3%;
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('Arimo');
+  font-weight: 100 649;
+  size-adjust: 99.9%;
+  ascent-override: 87.9%;
+  descent-override: 21%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Archivo Fallback';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Arimo Bold');
+  font-weight: 650 749;
+  size-adjust: 99.4%;
+  ascent-override: 88.3%;
+  descent-override: 21.1%;
+  line-gap-override: 0%;
+}
+
+/* Tytuły w grubości 800 są szersze od Arial Bold, więc mają własne dopasowanie */
+@font-face {
+  font-family: 'Archivo Fallback';
+  src:
+    local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('Arimo Bold');
+  font-weight: 750 900;
+  size-adjust: 104.7%;
+  ascent-override: 83.9%;
+  descent-override: 20.1%;
   line-gap-override: 0%;
 }
 

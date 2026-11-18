@@ -1,8 +1,13 @@
+<script setup lang="ts">
+import SplitHeading from '@/components/SplitHeading.vue'
+import WeightText from '@/components/WeightText.vue'
+</script>
+
 <template>
   <section class="not-found">
     <div class="orbit-card">
-      <span class="code">404</span>
-      <h1>Nie ma takiej strony</h1>
+      <WeightText class="code" text="404" label="Błąd 404" :min="400" />
+      <SplitHeading text="Nie ma takiej strony" :delay="0.15" />
       <p class="lead">Adres jest nieprawidłowy albo strona została przeniesiona.</p>
       <RouterLink to="/" class="btn">Wróć na tablicę</RouterLink>
     </div>
@@ -29,9 +34,7 @@
 
 .code {
   display: block;
-  font-family: var(--font-display);
   font-size: var(--text-mega);
-  font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
   color: var(--color-primary);

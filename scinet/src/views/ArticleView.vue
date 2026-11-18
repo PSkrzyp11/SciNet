@@ -5,6 +5,7 @@ import AuthorAvatar from '@/components/AuthorAvatar.vue'
 import CommentSection from '@/components/CommentSection.vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import LikeButton from '@/components/LikeButton.vue'
+import SplitHeading from '@/components/SplitHeading.vue'
 import BaseBadge from '@/components/ui/BaseBadge.vue'
 import { useToast } from '@/composables/useToast'
 import { readingTime } from '@/data/articles'
@@ -61,34 +62,36 @@ onBeforeUnmount(() => {
       <div class="progress-bar" :style="{ transform: `scaleX(${readProgress / 100})` }"></div>
     </div>
 
-    <RouterLink to="/" class="back">← Wróć na tablicę</RouterLink>
+    <header class="article-head">
+      <RouterLink to="/" class="back">← Wróć na tablicę</RouterLink>
 
-    <div class="top">
-      <BaseBadge class="category" :category="article.category" />
-      <div class="actions">
-        <LikeButton
-          :count="article.likes"
-          :liked="article.liked"
-          @toggle="store.toggleLike(article.id)"
-        />
-        <FavoriteButton :article-id="article.id" with-label />
-        <button type="button" class="share" title="Kopiuj link" @click="copyArticleLink">
-          Udostępnij
-        </button>
-        <RouterLink :to="`/artykuly/${article.id}/edytuj`" class="edit">Edytuj</RouterLink>
+      <div class="top">
+        <BaseBadge class="category" :category="article.category" />
+        <div class="actions">
+          <LikeButton
+            :count="article.likes"
+            :liked="article.liked"
+            @toggle="store.toggleLike(article.id)"
+          />
+          <FavoriteButton :article-id="article.id" with-label />
+          <button type="button" class="share" title="Kopiuj link" @click="copyArticleLink">
+            Udostępnij
+          </button>
+          <RouterLink :to="`/artykuly/${article.id}/edytuj`" class="edit">Edytuj</RouterLink>
+        </div>
       </div>
-    </div>
 
-    <h1>{{ article.title }}</h1>
+      <SplitHeading class="article-title" :text="article.title" />
 
-    <div class="meta">
-      <AuthorAvatar :name="article.author" :size="36" />
-      <span class="meta-author">{{ article.author }}</span>
-      <span aria-hidden="true">·</span>
-      <span class="meta-mono">{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
-      <span aria-hidden="true">·</span>
-      <span class="meta-mono">{{ readingTime(article) }} min czytania</span>
-    </div>
+      <div class="meta">
+        <AuthorAvatar :name="article.author" :size="36" />
+        <span class="meta-author">{{ article.author }}</span>
+        <span aria-hidden="true">·</span>
+        <span class="meta-mono">{{ new Date(article.date).toLocaleDateString('pl-PL') }}</span>
+        <span aria-hidden="true">·</span>
+        <span class="meta-mono">{{ readingTime(article) }} min czytania</span>
+      </div>
+    </header>
 
     <ArticleImage class="image" :src="article.image" :alt="article.title" />
 
@@ -121,12 +124,38 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* Siatka 12 kolumn: nagłówek na całą szerokość, tekst w ośmiu środkowych kolumnach.
+   Na telefonie i tablecie wszystko zajmuje pełną szerokość. */
 .article {
-  max-width: var(--reading-width);
-  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gap);
   padding-top: var(--space-8);
   /* Długi tekst bez spacji wpisany w formularzu nie rozpycha strony */
   overflow-wrap: anywhere;
+}
+
+.article > * {
+  grid-column: 1 / -1;
+}
+
+.article-head {
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.article-head > * {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 960px) {
+  .article > :not(.article-head) {
+    grid-column: 3 / 11;
+  }
+
+  .article-head .article-title {
+    grid-column: 1 / 11;
+  }
 }
 
 .progress-track {
@@ -232,6 +261,16 @@ h1 {
   font-size: var(--text-3xl);
   line-height: 1.15;
   letter-spacing: var(--tracking-tight);
+}
+
+/* Tytuł artykułu: duży krój Archivo, linie wysuwają się zza maski */
+.article-title {
+  margin: var(--space-6) 0 var(--space-6);
+  font-size: clamp(2.1rem, 1.25rem + 3.4vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
 }
 
 .meta {
