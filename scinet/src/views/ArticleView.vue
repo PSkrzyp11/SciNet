@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import ArticleImage from '@/components/ArticleImage.vue'
 import AuthorAvatar from '@/components/AuthorAvatar.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 import CommentSection from '@/components/CommentSection.vue'
 import FavoriteButton from '@/components/FavoriteButton.vue'
 import LikeButton from '@/components/LikeButton.vue'
@@ -74,10 +75,23 @@ onBeforeUnmount(() => {
             @toggle="store.toggleLike(article.id)"
           />
           <FavoriteButton :article-id="article.id" with-label />
-          <button type="button" class="share" title="Kopiuj link" @click="copyArticleLink">
+          <BaseButton
+            variant="secondary"
+            size="sm"
+            class="share"
+            title="Kopiuj link"
+            @click="copyArticleLink"
+          >
             Udostępnij
-          </button>
-          <RouterLink :to="`/artykuly/${article.id}/edytuj`" class="edit">Edytuj</RouterLink>
+          </BaseButton>
+          <BaseButton
+            :to="`/artykuly/${article.id}/edytuj`"
+            variant="secondary"
+            size="sm"
+            class="edit"
+          >
+            Edytuj
+          </BaseButton>
         </div>
       </div>
 
@@ -119,7 +133,7 @@ onBeforeUnmount(() => {
     <span class="not-found-badge" aria-hidden="true">Brak publikacji</span>
     <h1>Nie ma takiego artykułu</h1>
     <p class="lead">Mógł zostać usunięty albo link jest nieprawidłowy.</p>
-    <RouterLink to="/" class="back-btn">← Wróć na tablicę</RouterLink>
+    <BaseButton to="/" class="back-btn">← Wróć na tablicę</BaseButton>
   </div>
 </template>
 
@@ -214,45 +228,6 @@ onBeforeUnmount(() => {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-2);
-}
-
-.edit,
-.share {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface);
-  color: var(--color-text-soft);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring);
-}
-
-@media (pointer: coarse) {
-  .edit,
-  .share {
-    min-height: 44px;
-  }
-}
-
-.edit:hover,
-.share:hover {
-  background: var(--color-primary-light);
-  border-color: var(--color-primary-border);
-  color: var(--color-primary);
-}
-
-.edit:active,
-.share:active {
-  transform: scale(0.96);
 }
 
 h1 {
@@ -411,21 +386,5 @@ p {
 
 .not-found .lead {
   margin: 0 auto var(--space-6);
-}
-
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color var(--duration-fast) var(--ease-out);
-}
-
-.back-btn:hover {
-  background: var(--color-primary-hover);
 }
 </style>

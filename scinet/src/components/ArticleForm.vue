@@ -7,9 +7,14 @@ import {
   type ArticleDraft,
   type Category,
 } from '@/data/articles'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
 import { currentUser } from '@/data/authors'
 
 type Field = 'title' | 'author' | 'category' | 'content' | 'image'
+
+// Napis z „//” wpisany wprost w szablon psuje sprawdzanie typów (vue-tsc), więc jest tutaj
+const IMAGE_PLACEHOLDER = 'https://'
 
 // Z propsem initial formularz służy do edycji istniejącego artykułu
 const props = defineProps<{ initial?: ArticleDraft }>()
@@ -53,17 +58,13 @@ const errors = computed<Record<Field, string>>(() => ({
 // Błąd widać dopiero po wyjściu z wypełnionego pola albo po próbie publikacji
 const visibleError = (field: Field) => (touched[field] ? errors.value[field] : '')
 
-function fieldAttrs(field: Field) {
-  const invalid = Boolean(visibleError(field))
-  return {
-    class: { invalid },
-    name: field,
-    'aria-invalid': invalid || undefined,
-    'aria-describedby': invalid ? `article-${field}-error` : undefined,
-    onBlur: () => {
-      if (form[field].trim()) touched[field] = true
-    },
-  }
+// Wspólne ustawienia pola: nazwa, błąd i jego identyfikator dla czytnika ekranu
+function fieldProps(field: Field) {
+  return { name: field, error: visibleError(field), errorId: `article-${field}-error` }
+}
+
+function touch(field: Field) {
+  if (form[field].trim()) touched[field] = true
 }
 
 async function submit() {
@@ -94,99 +95,73 @@ onMounted(() => formElement.value?.querySelector('input')?.focus())
       <h2>Nowy artykuł</h2>
     </header>
 
-    <div class="field">
-      <label>
-        <span class="label-text">Tytuł</span>
-        <input
-          v-model="form.title"
-          type="text"
-          placeholder="Np. Jak grzyby komunikują się pod ziemią?"
-          required
-          v-bind="fieldAttrs('title')"
-        />
-      </label>
-      <span v-if="visibleError('title')" id="article-title-error" class="error" role="alert">
-        {{ visibleError('title') }}
-      </span>
-    </div>
+    <BaseInput
+      v-model="form.title"
+      label="Tytuł"
+      placeholder="Np. Jak grzyby komunikują się pod ziemią?"
+      required
+      v-bind="fieldProps('title')"
+      @blur="touch('title')"
+    />
 
     <div class="row">
-      <div class="field">
-        <label>
-          <span class="label-text">Autor</span>
-          <input v-model="form.author" type="text" required v-bind="fieldAttrs('author')" />
-        </label>
-        <span v-if="visibleError('author')" id="article-author-error" class="error" role="alert">
-          {{ visibleError('author') }}
-        </span>
-      </div>
+      <BaseInput
+        v-model="form.author"
+        label="Autor"
+        required
+        v-bind="fieldProps('author')"
+        @blur="touch('author')"
+      />
 
-      <div class="field">
-        <label>
-          <span class="label-text">Dziedzina nauki</span>
-          <select v-model="form.category" required v-bind="fieldAttrs('category')">
-            <option value="" disabled>Wybierz dziedzinę</option>
-            <option v-for="category in CATEGORIES" :key="category" :value="category">
-              {{ category }}
-            </option>
-          </select>
-        </label>
-        <span
-          v-if="visibleError('category')"
-          id="article-category-error"
-          class="error"
-          role="alert"
-        >
-          {{ visibleError('category') }}
-        </span>
-      </div>
+      <BaseInput
+        v-model="form.category"
+        type="select"
+        label="Dziedzina nauki"
+        required
+        v-bind="fieldProps('category')"
+        @blur="touch('category')"
+      >
+        <option value="" disabled>Wybierz dziedzinę</option>
+        <option v-for="category in CATEGORIES" :key="category" :value="category">
+          {{ category }}
+        </option>
+      </BaseInput>
     </div>
 
-    <div class="field">
-      <label>
-        <span class="label-row">
-          <span class="label-text">Treść</span>
-          <span class="word-counter" aria-hidden="true">{{ wordCount }} słów</span>
-        </span>
-        <textarea
-          data-lenis-prevent
-          v-model="form.content"
-          rows="8"
-          placeholder="Wyjaśnij zagadnienie krok po kroku…"
-          required
-          v-bind="fieldAttrs('content')"
-        ></textarea>
-      </label>
-      <span v-if="visibleError('content')" id="article-content-error" class="error" role="alert">
-        {{ visibleError('content') }}
-      </span>
-      <span v-else class="hint">Akapity oddziel pustą linią.</span>
-    </div>
+    <BaseInput
+      v-model="form.content"
+      type="textarea"
+      label="Treść"
+      :rows="8"
+      placeholder="Wyjaśnij zagadnienie krok po kroku…"
+      hint="Akapity oddziel pustą linią."
+      required
+      v-bind="fieldProps('content')"
+      @blur="touch('content')"
+    >
+      <template #label-aside>
+        <span class="word-counter" aria-hidden="true">{{ wordCount }} słów</span>
+      </template>
+    </BaseInput>
 
-    <div class="field">
-      <label>
-        <span class="label-text">Adres obrazka (opcjonalnie)</span>
-        <input
-          v-model="form.image"
-          type="url"
-          placeholder="https://"
-          v-bind="fieldAttrs('image')"
-        />
-      </label>
-      <span v-if="visibleError('image')" id="article-image-error" class="error" role="alert">
-        {{ visibleError('image') }}
-      </span>
-      <span v-else class="hint">Podaj adres obrazka z internetu, nie plik z komputera.</span>
-    </div>
+    <BaseInput
+      v-model="form.image"
+      type="url"
+      label="Adres obrazka (opcjonalnie)"
+      :placeholder="IMAGE_PLACEHOLDER"
+      hint="Podaj adres obrazka z internetu, nie plik z komputera."
+      v-bind="fieldProps('image')"
+      @blur="touch('image')"
+    />
 
     <!-- Bez blur przy wciśnięciu myszy błąd adresu nie przesuwa przycisków w trakcie klikania -->
     <div class="actions">
-      <button type="submit" class="publish" @mousedown.prevent>
+      <BaseButton type="submit" class="publish" @mousedown.prevent>
         {{ initial ? 'Zapisz zmiany' : 'Opublikuj' }}
-      </button>
-      <button type="button" class="cancel" @mousedown.prevent @click="emit('cancel')">
+      </BaseButton>
+      <BaseButton variant="secondary" class="cancel" @mousedown.prevent @click="emit('cancel')">
         Anuluj
-      </button>
+      </BaseButton>
     </div>
   </form>
 </template>
@@ -246,28 +221,6 @@ h2 {
   }
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-15);
-}
-
-label {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  color: var(--color-text-soft);
-  font-size: var(--text-sm);
-  font-weight: 600;
-}
-
-.label-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-2);
-}
-
 .word-counter {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -275,116 +228,10 @@ label {
   color: var(--color-text-muted);
 }
 
-input,
-select,
-textarea {
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-input-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-size: var(--text-base);
-  font-weight: 400;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
-    background-color var(--duration-fast) var(--ease-out);
-}
-
-textarea {
-  resize: vertical;
-  line-height: var(--leading-normal);
-}
-
-input:hover:not(:focus),
-select:hover:not(:focus),
-textarea:hover:not(:focus) {
-  border-color: var(--color-primary);
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-focus);
-}
-
-input.invalid,
-select.invalid,
-textarea.invalid {
-  border-color: var(--color-error);
-  background: var(--color-error-bg);
-}
-
-input.invalid:focus,
-select.invalid:focus,
-textarea.invalid:focus {
-  box-shadow: var(--shadow-focus-error);
-}
-
-.error {
-  color: var(--color-error);
-  font-size: var(--text-sm);
-  font-weight: 500;
-}
-
-.hint {
-  color: var(--color-text-muted);
-  font-size: var(--text-xs);
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
   padding-top: var(--space-2);
-}
-
-.publish,
-.cancel {
-  padding: var(--space-3) 28px;
-  border-radius: var(--radius-sm);
-  font-size: var(--text-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-.publish:active,
-.cancel:active {
-  transform: scale(0.975);
-}
-
-.publish {
-  border: 1px solid var(--color-primary);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  box-shadow: var(--shadow-xs);
-}
-
-.publish:hover {
-  background: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
-}
-
-.cancel {
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-surface);
-  color: var(--color-text);
-}
-
-.cancel:hover {
-  background: var(--color-primary-light);
-  border-color: var(--color-primary-border);
-  color: var(--color-primary);
 }
 </style>

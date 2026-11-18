@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
 import ArticleCard from '@/components/ArticleCard.vue'
 import { useArticlesStore } from '@/stores/articles'
 import { useFavoritesStore } from '@/stores/favorites'
@@ -29,7 +30,7 @@ const favorites = useFavoritesStore()
       <path d="M18 10h28a3 3 0 0 1 3 3v41l-17-10-17 10V13a3 3 0 0 1 3-3z" />
     </svg>
     <p>Nie masz jeszcze zapisanych artykułów.</p>
-    <RouterLink to="/" class="btn">Przeglądaj artykuły</RouterLink>
+    <BaseButton to="/" class="btn">Przeglądaj artykuły</BaseButton>
   </div>
 </template>
 
@@ -97,31 +98,5 @@ h1 {
 
 .empty p {
   margin: 0;
-}
-
-.btn {
-  display: inline-block;
-  margin-top: var(--space-2);
-  padding: var(--space-3) 26px;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: var(--shadow-xs);
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-.btn:hover {
-  background: var(--color-primary-hover);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
-}
-
-.btn:active {
-  transform: scale(0.97);
 }
 </style>

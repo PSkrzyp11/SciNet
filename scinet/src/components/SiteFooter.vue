@@ -34,7 +34,7 @@ const links = [
         <span class="label">Mapa</span>
         <ul>
           <li v-for="link in links" :key="link.to">
-            <RouterLink :to="link.to">{{ link.label }}</RouterLink>
+            <RouterLink :to="link.to" class="link-draw">{{ link.label }}</RouterLink>
           </li>
         </ul>
       </nav>
@@ -145,7 +145,8 @@ const links = [
   text-decoration: none;
   transition:
     color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring);
+    transform var(--duration-fast) var(--ease-spring),
+    background-size var(--duration-normal) var(--ease-out);
 }
 
 .footer-nav a:hover {

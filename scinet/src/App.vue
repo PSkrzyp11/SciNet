@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue'
 import SiteFooter from './components/SiteFooter.vue'
 import TopMenu from './components/TopMenu.vue'
 import ToastContainer from './components/ui/ToastContainer.vue'
+
+// Kursor-towarzysz przydaje się tylko z myszą, więc ładuje się osobno, po starcie strony
+const CursorFollower = defineAsyncComponent(() => import('./components/CursorFollower.vue'))
 </script>
 
 <template>
@@ -18,6 +22,7 @@ import ToastContainer from './components/ui/ToastContainer.vue'
   </main>
   <SiteFooter />
   <ToastContainer />
+  <CursorFollower />
 </template>
 
 <style scoped>

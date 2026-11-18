@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref } from 'vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
 import { useToast } from '@/composables/useToast'
 
 type Field = 'name' | 'email' | 'message'
@@ -20,16 +22,13 @@ const errors = computed<Record<Field, string>>(() => ({
 // Błąd widać dopiero po wyjściu z wypełnionego pola albo po próbie wysłania
 const visibleError = (field: Field) => (touched[field] ? errors.value[field] : '')
 
-function fieldAttrs(field: Field) {
-  const invalid = Boolean(visibleError(field))
-  return {
-    class: { invalid },
-    'aria-invalid': invalid || undefined,
-    'aria-describedby': invalid ? `${field}-error` : undefined,
-    onBlur: () => {
-      if (form[field].trim()) touched[field] = true
-    },
-  }
+// Wspólne ustawienia pola: nazwa, błąd i jego identyfikator dla czytnika ekranu
+function fieldProps(field: Field) {
+  return { name: field, error: visibleError(field), errorId: `${field}-error` }
+}
+
+function touch(field: Field) {
+  if (form[field].trim()) touched[field] = true
 }
 
 async function submit() {
@@ -97,58 +96,43 @@ const faq = [
         <span class="success-badge" aria-hidden="true">✓ Wysłano</span>
         <strong>Dzięki! Wiadomość została wysłana.</strong>
         <p>Odpowiemy najszybciej, jak to możliwe.</p>
-        <button type="button" class="link" @click="sent = false">Napisz kolejną wiadomość</button>
+        <BaseButton variant="secondary" class="link" @click="sent = false">
+          Napisz kolejną wiadomość
+        </BaseButton>
       </div>
 
       <form v-else ref="formElement" novalidate @submit.prevent="submit">
-        <div class="field">
-          <label>
-            Imię
-            <input
-              v-model="form.name"
-              type="text"
-              placeholder="Twoje imię"
-              required
-              v-bind="fieldAttrs('name')"
-            />
-          </label>
-          <span v-if="visibleError('name')" id="name-error" class="error" role="alert">
-            {{ visibleError('name') }}
-          </span>
-        </div>
-        <div class="field">
-          <label>
-            E-mail
-            <input
-              v-model="form.email"
-              type="email"
-              placeholder="imie@domena.pl"
-              required
-              v-bind="fieldAttrs('email')"
-            />
-          </label>
-          <span v-if="visibleError('email')" id="email-error" class="error" role="alert">
-            {{ visibleError('email') }}
-          </span>
-        </div>
-        <div class="field">
-          <label>
-            Wiadomość
-            <textarea
-              data-lenis-prevent
-              v-model="form.message"
-              rows="6"
-              placeholder="Opisz swój pomysł lub pytanie…"
-              required
-              v-bind="fieldAttrs('message')"
-            ></textarea>
-          </label>
-          <span v-if="visibleError('message')" id="message-error" class="error" role="alert">
-            {{ visibleError('message') }}
-          </span>
-        </div>
+        <BaseInput
+          v-model="form.name"
+          label="Imię"
+          placeholder="Twoje imię"
+          autocomplete="name"
+          required
+          v-bind="fieldProps('name')"
+          @blur="touch('name')"
+        />
+        <BaseInput
+          v-model="form.email"
+          type="email"
+          label="E-mail"
+          placeholder="imie@domena.pl"
+          autocomplete="email"
+          required
+          v-bind="fieldProps('email')"
+          @blur="touch('email')"
+        />
+        <BaseInput
+          v-model="form.message"
+          type="textarea"
+          label="Wiadomość"
+          :rows="6"
+          placeholder="Opisz swój pomysł lub pytanie…"
+          required
+          v-bind="fieldProps('message')"
+          @blur="touch('message')"
+        />
         <!-- Bez blur przy wciśnięciu myszy błąd nie przesuwa przycisku w trakcie klikania -->
-        <button type="submit" class="btn" @mousedown.prevent>Wyślij</button>
+        <BaseButton type="submit" class="btn" @mousedown.prevent>Wyślij</BaseButton>
       </form>
 
       <aside class="info">
@@ -248,83 +232,8 @@ form {
   gap: var(--space-5);
 }
 
-label {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  color: var(--color-text-soft);
-  font-size: var(--text-sm);
-  font-weight: 600;
-}
-
-input,
-textarea {
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-input-border);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-base);
-  font-weight: 400;
-  resize: vertical;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-input:hover:not(:focus),
-textarea:hover:not(:focus) {
-  border-color: var(--color-primary);
-}
-
-input:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-focus);
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-15);
-}
-
-input.invalid,
-textarea.invalid {
-  border-color: var(--color-error);
-  background: var(--color-error-bg);
-}
-
-.error {
-  color: var(--color-error);
-  font-size: var(--text-sm);
-  font-weight: 500;
-}
-
 .btn {
   align-self: flex-start;
-  padding: var(--space-35) var(--space-7);
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow-xs);
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-.btn:hover {
-  background: var(--color-primary-hover);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
-}
-
-.btn:active {
-  transform: scale(0.975);
 }
 
 .success {
@@ -356,24 +265,6 @@ textarea.invalid {
 .success p {
   margin: var(--space-2) 0 var(--space-4);
   color: var(--color-text-soft);
-}
-
-.link {
-  padding: var(--space-25) 18px;
-  border: 1px solid var(--color-primary-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  color: var(--color-primary);
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring);
-}
-
-.link:hover {
-  background: var(--color-primary-light);
 }
 
 .info {

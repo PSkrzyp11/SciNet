@@ -1,6 +1,7 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
+import { nextTick } from 'vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import TopMenu from '../TopMenu.vue'
 
@@ -90,5 +91,69 @@ describe('TopMenu', () => {
     const { wrapper } = await mountAt('/')
 
     expect(wrapper.findAll('button').map((b) => b.attributes('aria-label'))).toEqual(['Menu'])
+  })
+
+  describe('chowanie paska przy przewijaniu', () => {
+    let frames: FrameRequestCallback[] = []
+
+    beforeEach(() => {
+      frames = []
+      vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>
+        frames.push(callback),
+      )
+      vi.stubGlobal('cancelAnimationFrame', vi.fn())
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+      window.scrollY = 0
+    })
+
+    async function scrollTo(y: number) {
+      window.scrollY = y
+      window.dispatchEvent(new Event('scroll'))
+      frames.splice(0).forEach((callback) => callback(0))
+      await nextTick()
+    }
+
+    it('chowa pasek przy przewijaniu w dół i pokazuje przy przewijaniu w górę', async () => {
+      const { wrapper } = await mountAt('/')
+      const header = wrapper.find('header')
+
+      await scrollTo(400)
+      expect(header.classes()).toContain('hidden')
+
+      await scrollTo(300)
+      expect(header.classes()).not.toContain('hidden')
+    })
+
+    it('blisko góry strony pasek jest zawsze widoczny', async () => {
+      const { wrapper } = await mountAt('/')
+
+      await scrollTo(100)
+      expect(wrapper.find('header').classes()).not.toContain('hidden')
+    })
+
+    it('z otwartym menu pasek się nie chowa', async () => {
+      const { wrapper } = await mountAt('/')
+      await wrapper.find('.menu-toggle').trigger('click')
+
+      await scrollTo(600)
+      expect(wrapper.find('header').classes()).not.toContain('hidden')
+    })
+
+    it('fokus z klawiatury przywraca schowany pasek', async () => {
+      const { wrapper } = await mountAt('/')
+      await scrollTo(600)
+
+      await wrapper.find('header').trigger('focusin')
+      expect(wrapper.find('header').classes()).not.toContain('hidden')
+    })
+  })
+
+  it('wskaźnik aktywnej zakładki jest ozdobą ukrytą przed czytnikami', async () => {
+    const { wrapper } = await mountAt('/')
+
+    expect(wrapper.find('.nav-indicator').attributes('aria-hidden')).toBe('true')
   })
 })

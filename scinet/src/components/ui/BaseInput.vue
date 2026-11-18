@@ -1,10 +1,15 @@
 <script setup lang="ts">
+// Atrybuty (autocomplete, maxlength, class, data-*) trafiają na samo pole, a nie na opakowanie
+defineOptions({ inheritAttrs: false })
+
 withDefaults(
   defineProps<{
     modelValue: string
     label?: string
+    /** Etykieta tylko dla czytników ekranu (np. wyszukiwarka z ikoną) */
+    hideLabel?: boolean
     name?: string
-    type?: 'text' | 'email' | 'url' | 'search' | 'textarea'
+    type?: 'text' | 'email' | 'url' | 'search' | 'textarea' | 'select'
     rows?: number
     placeholder?: string
     hint?: string
@@ -15,6 +20,7 @@ withDefaults(
   }>(),
   {
     label: undefined,
+    hideLabel: false,
     name: undefined,
     type: 'text',
     rows: 4,
@@ -33,7 +39,7 @@ const emit = defineEmits<{
 }>()
 
 function onInput(event: Event) {
-  const target = event.target as HTMLInputElement | HTMLTextAreaElement
+  const target = event.target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
   emit('update:modelValue', target.value)
 }
 </script>
@@ -41,12 +47,19 @@ function onInput(event: Event) {
 <template>
   <div class="field">
     <label class="label">
-      <span v-if="label" class="label-text">{{ label }}</span>
+      <span
+        v-if="label || $slots['label-aside']"
+        class="label-row"
+        :class="{ 'visually-hidden': hideLabel }"
+      >
+        <span v-if="label" class="label-text">{{ label }}</span>
+        <slot name="label-aside" />
+      </span>
       <div class="control-wrap">
         <slot name="prefix" />
         <textarea
-          data-lenis-prevent
           v-if="type === 'textarea'"
+          data-lenis-prevent
           :value="modelValue"
           :name="name"
           :rows="rows"
@@ -56,9 +69,25 @@ function onInput(event: Event) {
           :class="{ invalid: Boolean(error) }"
           :aria-invalid="Boolean(error) || undefined"
           :aria-describedby="error && errorId ? errorId : undefined"
+          v-bind="$attrs"
           @input="onInput"
           @blur="emit('blur', $event)"
         ></textarea>
+        <select
+          v-else-if="type === 'select'"
+          :value="modelValue"
+          :name="name"
+          :required="required"
+          :disabled="disabled"
+          :class="{ invalid: Boolean(error) }"
+          :aria-invalid="Boolean(error) || undefined"
+          :aria-describedby="error && errorId ? errorId : undefined"
+          v-bind="$attrs"
+          @change="onInput"
+          @blur="emit('blur', $event)"
+        >
+          <slot />
+        </select>
         <input
           v-else
           :value="modelValue"
@@ -70,6 +99,7 @@ function onInput(event: Event) {
           :class="{ invalid: Boolean(error), 'has-prefix': Boolean($slots.prefix) }"
           :aria-invalid="Boolean(error) || undefined"
           :aria-describedby="error && errorId ? errorId : undefined"
+          v-bind="$attrs"
           @input="onInput"
           @blur="emit('blur', $event)"
         />
@@ -92,6 +122,7 @@ function onInput(event: Event) {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  min-width: 0;
 }
 
 .label {
@@ -103,14 +134,38 @@ function onInput(event: Event) {
   font-weight: 600;
 }
 
+.label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
 .control-wrap {
   position: relative;
   display: flex;
   align-items: center;
 }
 
+/* Ikona w polu (np. lupa wyszukiwarki) */
+.control-wrap :slotted(svg) {
+  position: absolute;
+  left: 15px;
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  pointer-events: none;
+  transition: stroke var(--duration-fast) var(--ease-out);
+}
+
+.control-wrap:focus-within :slotted(svg) {
+  stroke: var(--color-primary);
+}
+
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--color-input-border);
@@ -126,8 +181,12 @@ textarea {
     background-color var(--duration-fast) var(--ease-out);
 }
 
+select {
+  cursor: pointer;
+}
+
 input.has-prefix {
-  padding-left: 42px;
+  padding-left: 44px;
 }
 
 textarea {
@@ -135,30 +194,35 @@ textarea {
 }
 
 input:hover:not(:disabled):not(:focus),
-textarea:hover:not(:disabled):not(:focus) {
+textarea:hover:not(:disabled):not(:focus),
+select:hover:not(:disabled):not(:focus) {
   border-color: var(--color-primary);
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: var(--shadow-focus);
 }
 
 input.invalid,
-textarea.invalid {
+textarea.invalid,
+select.invalid {
   border-color: var(--color-error);
   background: var(--color-error-bg);
 }
 
 input.invalid:focus,
-textarea.invalid:focus {
+textarea.invalid:focus,
+select.invalid:focus {
   box-shadow: var(--shadow-focus-error);
 }
 
 input:disabled,
-textarea:disabled {
+textarea:disabled,
+select:disabled {
   opacity: 0.6;
   background: var(--color-surface-muted);
   cursor: not-allowed;

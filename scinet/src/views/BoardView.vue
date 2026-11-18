@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
 import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ArticleForm from '@/components/ArticleForm.vue'
 import AuthorAvatar from '@/components/AuthorAvatar.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
 import MarqueeStrip from '@/components/MarqueeStrip.vue'
 import TopLikedPanel from '@/components/TopLikedPanel.vue'
 import UserCard from '@/components/UserCard.vue'
@@ -160,22 +162,28 @@ function handleRemove(id: number, title: string) {
       </Transition>
 
       <div v-if="store.articles.length" class="controls">
-        <label class="search-field">
-          <span class="visually-hidden">Szukaj po tytule</span>
-          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-            <circle cx="11" cy="11" r="7" />
-            <path d="M20 20l-4-4" />
-          </svg>
-          <input v-model="search" type="search" class="search" placeholder="Szukaj tytułu…" />
-        </label>
-        <label class="sort">
-          <span class="visually-hidden">Sortuj</span>
-          <select v-model="sort">
+        <BaseInput
+          v-model="search"
+          type="search"
+          label="Szukaj po tytule"
+          hide-label
+          class="search"
+          placeholder="Szukaj tytułu…"
+        >
+          <template #prefix>
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-4-4" />
+            </svg>
+          </template>
+        </BaseInput>
+        <div class="sort">
+          <BaseInput v-model="sort" type="select" label="Sortuj" hide-label>
             <option value="newest">Najnowsze</option>
             <option value="oldest">Najstarsze</option>
             <option value="title">A–Z</option>
-          </select>
-        </label>
+          </BaseInput>
+        </div>
       </div>
     </div>
 
@@ -223,7 +231,7 @@ function handleRemove(id: number, title: string) {
           <path d="M40 40l14 14M22 28h12" />
         </svg>
         <p>Nie znaleźliśmy artykułów pasujących do wyszukiwania.</p>
-        <button type="button" class="reset" @click="reset">Wyczyść filtry</button>
+        <BaseButton class="reset" @click="reset">Wyczyść filtry</BaseButton>
       </div>
     </div>
 
@@ -576,67 +584,9 @@ h1 {
   gap: var(--space-25);
 }
 
-.search-field {
-  position: relative;
+/* Wyszukiwarka zajmuje resztę miejsca, a sortowanie przechodzi pod nią, gdy go brakuje */
+.controls > .field {
   flex: 1 1 200px;
-  min-width: 0;
-}
-
-.search-field svg {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
-  fill: none;
-  stroke: var(--color-text-muted);
-  stroke-width: 2;
-  stroke-linecap: round;
-  pointer-events: none;
-  transition: stroke var(--duration-fast) var(--ease-out);
-}
-
-.search-field:focus-within svg {
-  stroke: var(--color-primary);
-}
-
-.search {
-  width: 100%;
-  padding: var(--space-3) var(--space-35) var(--space-3) 44px;
-  border: 1px solid var(--color-input-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  font-size: var(--text-base);
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-.search:hover:not(:focus),
-.sort select:hover:not(:focus) {
-  border-color: var(--color-primary);
-}
-
-.search:focus,
-.sort select:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-focus);
-}
-
-.sort select {
-  width: 100%;
-  height: 100%;
-  min-height: 48px;
-  padding: 0 var(--space-4);
-  border: 1px solid var(--color-input-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  color: var(--color-text);
-  font-weight: 500;
-  cursor: pointer;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .filters {
@@ -843,29 +793,5 @@ h1 {
 .empty p {
   margin: 0;
   max-width: 420px;
-}
-
-.reset {
-  margin-top: var(--space-2);
-  padding: var(--space-3) var(--space-6);
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow-xs);
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring);
-}
-
-.reset:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-1px);
-}
-
-.reset:active {
-  transform: scale(0.97);
 }
 </style>

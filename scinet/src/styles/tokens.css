@@ -180,6 +180,8 @@
   --z-progress: 40;
   --z-toast: 90;
   --z-modal: 100;
+  /* Kursor-towarzysz leży nad wszystkim, ale nie łapie kliknięć */
+  --z-cursor: 120;
 
   /* --- Kolory bazowe: Royal Purple (Królewski Ametyst) --- */
   --color-primary: #63369e;

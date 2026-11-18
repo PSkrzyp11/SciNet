@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import ArticleForm from '@/components/ArticleForm.vue'
@@ -42,7 +43,7 @@ function save(draft: ArticleDraft) {
   <div v-else class="not-found">
     <h1>Nie ma takiego artykułu</h1>
     <p class="lead">Mógł zostać usunięty albo link jest nieprawidłowy.</p>
-    <RouterLink to="/" class="back-btn">← Wróć na tablicę</RouterLink>
+    <BaseButton to="/" class="back-btn">← Wróć na tablicę</BaseButton>
   </div>
 </template>
 
@@ -108,15 +109,5 @@ h1 {
 
 .not-found .lead {
   margin: 0 auto var(--space-6);
-}
-
-.back-btn {
-  display: inline-flex;
-  padding: var(--space-3) var(--space-6);
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-  text-decoration: none;
 }
 </style>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
 import SplitHeading from '@/components/SplitHeading.vue'
 import WeightText from '@/components/WeightText.vue'
 </script>
@@ -9,7 +10,7 @@ import WeightText from '@/components/WeightText.vue'
       <WeightText class="code" text="404" label="Błąd 404" :min="400" />
       <SplitHeading text="Nie ma takiej strony" :delay="0.15" />
       <p class="lead">Adres jest nieprawidłowy albo strona została przeniesiona.</p>
-      <RouterLink to="/" class="btn">Wróć na tablicę</RouterLink>
+      <BaseButton to="/" class="btn">Wróć na tablicę</BaseButton>
     </div>
   </section>
 </template>
@@ -46,30 +47,5 @@ h1 {
 
 .lead {
   margin: 0 auto var(--space-6);
-}
-
-.btn {
-  display: inline-block;
-  padding: var(--space-35) 28px;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-  text-decoration: none;
-  box-shadow: var(--shadow-xs);
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-.btn:hover {
-  background: var(--color-primary-hover);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
-}
-
-.btn:active {
-  transform: scale(0.975);
 }
 </style>

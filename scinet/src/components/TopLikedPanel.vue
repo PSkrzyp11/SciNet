@@ -13,7 +13,9 @@ defineProps<{ articles: Article[] }>()
 
     <TransitionGroup v-if="articles.length" name="rank-list" tag="ol">
       <li v-for="article in articles" :key="article.id">
-        <RouterLink :to="`/artykuly/${article.id}`">{{ article.title }}</RouterLink>
+        <RouterLink :to="`/artykuly/${article.id}`">
+          <span class="link-draw">{{ article.title }}</span>
+        </RouterLink>
         <span class="count" :title="`Polubienia: ${article.likes}`">{{ article.likes }}</span>
       </li>
     </TransitionGroup>

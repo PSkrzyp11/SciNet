@@ -120,6 +120,22 @@ img {
   display: block;
 }
 
+/* Rysowane podkreślenie: linia rośnie od lewej po najechaniu albo przy fokusie z klawiatury.
+   Klasę dostaje sam tekst linku, więc linia biegnie pod tekstem, a nie pod całym blokiem. */
+.link-draw {
+  background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+  text-decoration: none;
+  transition: background-size var(--duration-normal) var(--ease-out);
+}
+
+.link-draw:hover,
+.link-draw:focus-visible,
+a:hover > .link-draw,
+a:focus-visible > .link-draw,
+.card:hover .link-draw {
+  background-size: 100% 1px;
+}
+
 button,
 input,
 textarea,

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, reactive, ref } from 'vue'
 import AuthorAvatar from '@/components/AuthorAvatar.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
 import { useToast } from '@/composables/useToast'
 import type { ArticleComment, CommentDraft } from '@/data/articles'
 import { currentUser } from '@/data/authors'
@@ -63,45 +65,28 @@ async function submit() {
     <p v-else class="empty">Nikt jeszcze nie skomentował tego artykułu.</p>
 
     <form ref="formElement" novalidate @submit.prevent="submit">
-      <div class="field">
-        <label>
-          Autor
-          <input
-            v-model="form.author"
-            type="text"
-            name="author"
-            required
-            :class="{ invalid: errors.author }"
-            :aria-invalid="Boolean(errors.author) || undefined"
-            :aria-describedby="errors.author ? 'comment-author-error' : undefined"
-          />
-        </label>
-        <span v-if="errors.author" id="comment-author-error" class="error" role="alert">
-          {{ errors.author }}
-        </span>
-      </div>
+      <BaseInput
+        v-model="form.author"
+        label="Autor"
+        name="author"
+        required
+        :error="errors.author"
+        error-id="comment-author-error"
+      />
 
-      <div class="field">
-        <label>
-          Komentarz
-          <textarea
-            data-lenis-prevent
-            v-model="form.text"
-            name="text"
-            rows="3"
-            placeholder="Dołącz do dyskusji naukowej…"
-            required
-            :class="{ invalid: errors.text }"
-            :aria-invalid="Boolean(errors.text) || undefined"
-            :aria-describedby="errors.text ? 'comment-text-error' : undefined"
-          ></textarea>
-        </label>
-        <span v-if="errors.text" id="comment-text-error" class="error" role="alert">
-          {{ errors.text }}
-        </span>
-      </div>
+      <BaseInput
+        v-model="form.text"
+        type="textarea"
+        label="Komentarz"
+        name="text"
+        :rows="3"
+        placeholder="Dołącz do dyskusji naukowej…"
+        required
+        :error="errors.text"
+        error-id="comment-text-error"
+      />
 
-      <button type="submit" class="add-comment">Dodaj komentarz</button>
+      <BaseButton type="submit" class="add-comment">Dodaj komentarz</BaseButton>
     </form>
   </section>
 </template>
@@ -205,85 +190,7 @@ form {
   box-shadow: var(--shadow-xs);
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-15);
-}
-
-label {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  color: var(--color-text-soft);
-  font-size: var(--text-sm);
-  font-weight: 600;
-}
-
-input,
-textarea {
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--color-input-border);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-base);
-  font-weight: 400;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-textarea {
-  resize: vertical;
-}
-
-input:hover:not(:focus),
-textarea:hover:not(:focus) {
-  border-color: var(--color-primary);
-}
-
-input:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-focus);
-}
-
-input.invalid,
-textarea.invalid {
-  border-color: var(--color-error);
-  background: var(--color-error-bg);
-}
-
-.error {
-  color: var(--color-error);
-  font-size: var(--text-sm);
-  font-weight: 500;
-}
-
 .add-comment {
   align-self: flex-start;
-  padding: var(--space-3) var(--space-6);
-  border: none;
-  border-radius: var(--radius-sm);
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow-xs);
-  transition:
-    background-color var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-.add-comment:hover {
-  background: var(--color-primary-hover);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-1px);
-}
-
-.add-comment:active {
-  transform: scale(0.975);
 }
 </style>

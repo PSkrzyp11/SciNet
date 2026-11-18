@@ -107,7 +107,9 @@ function confirmDelete() {
     <div class="card-body">
       <BaseBadge class="category" :category="article.category" />
       <h3>
-        <RouterLink :to="`/artykuly/${article.id}`" class="title">{{ article.title }}</RouterLink>
+        <RouterLink :to="`/artykuly/${article.id}`" class="title link-draw">{{
+          article.title
+        }}</RouterLink>
       </h3>
       <p class="text">{{ article.content.join(' ') }}</p>
     </div>
@@ -358,7 +360,9 @@ h3 {
 .title {
   color: inherit;
   text-decoration: none;
-  transition: color var(--duration-fast) var(--ease-out);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-size var(--duration-normal) var(--ease-out);
 }
 
 .title:hover {
