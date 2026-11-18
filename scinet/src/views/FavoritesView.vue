@@ -15,6 +15,8 @@ const favorites = useFavoritesStore()
     <p class="lead">Artykuły, do których chcesz wrócić. Lista jest zapisana w tej przeglądarce.</p>
   </header>
 
+  <!-- Tytuły kart to h3, więc lista potrzebuje nagłówka h2 (jak na tablicy) -->
+  <h2 v-if="favorites.count" class="visually-hidden">Zapisane artykuły</h2>
   <TransitionGroup v-if="favorites.count" name="fav-list" tag="div" class="grid">
     <ArticleCard
       v-for="article in favorites.savedArticles"

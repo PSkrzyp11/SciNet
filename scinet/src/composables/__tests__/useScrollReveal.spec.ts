@@ -38,7 +38,7 @@ describe('revealInBatches', () => {
 
     revealInBatches(motion, [visible, below, above])
 
-    expect(set).toHaveBeenCalledWith([below, above], expect.objectContaining({ autoAlpha: 0 }))
+    expect(set).toHaveBeenCalledWith([below, above], expect.objectContaining({ opacity: 0 }))
   })
 
   it('gdy wszystko jest widoczne, niczego nie animuje', () => {
@@ -64,6 +64,24 @@ describe('revealInBatches', () => {
     expect(fromTo).toHaveBeenCalledTimes(2)
     expect(fromTo.mock.calls[0]?.[1]).toEqual({ y: 40 })
     expect(fromTo.mock.calls[1]?.[1]).toEqual({ y: -40 })
-    expect(fromTo.mock.calls[0]?.[2]).toEqual(expect.objectContaining({ autoAlpha: 1, y: 0 }))
+    expect(fromTo.mock.calls[0]?.[2]).toEqual(expect.objectContaining({ opacity: 1, y: 0 }))
+  })
+
+  it('ukryty element zostaje osiągalny z klawiatury i pokazuje się przy fokusie', () => {
+    const { motion, set, fromTo } = fakeMotion()
+    const below = element(window.innerHeight + 300)
+    const link = document.createElement('a')
+    link.href = '/'
+    below.append(link)
+
+    const cleanup = revealInBatches(motion, [below])
+    // Bez visibility: hidden, bo takiego elementu klawiatura by nie odwiedziła
+    expect(set.mock.calls[0]?.[1]).not.toHaveProperty('autoAlpha')
+    expect(set.mock.calls[0]?.[1]).not.toHaveProperty('visibility')
+
+    link.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+    expect(fromTo).toHaveBeenCalledWith([below], { y: 0 }, expect.objectContaining({ opacity: 1 }))
+
+    cleanup?.()
   })
 })

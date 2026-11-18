@@ -25,7 +25,23 @@ Portal społecznościowy dla ludzi nauki: tablica artykułów, które można pub
 - **Autorzy:** krótkie opisy i listy tekstów, także osób wpisanych w formularzu.
 - **Kontakt:** formularz z walidacją, dane kontaktowe i najczęstsze pytania.
 - **Każdy ekran:** trzy kolumny na komputerze, dwie na tablecie i jedna na telefonie, bez przewijania na boki.
-- **Kolory:** jeden motyw w barwach royal purple, biel i sunglow gold.
+- **Motywy:** ciemny „nocne obserwatorium” (domyślny) i jasny, w barwach royal purple, biel i sunglow gold.
+
+## Wygląd i ruch
+
+- **Hero tablicy:** żywy gradient rysowany w WebGL (własny shader w Web Workerze), który przyciąga się do kursora i mocniej faluje przy szybkim przewijaniu. Pod spodem zawsze jest statyczny gradient CSS.
+- **Typografia:** Archivo, Plus Jakarta Sans i JetBrains Mono z własnego serwera. Tytuły wysuwają się linia po linii, a litery dużego napisu w stopce grubieją pod kursorem.
+- **Przejścia między stronami** (View Transitions API): tytuł i obrazek karty płynnie przechodzą w nagłówek artykułu, a pozostałe strony zmieniają się z krótką kurtyną.
+- **Przewijanie:** płynne na komputerze (Lenis). Hero zwija się przy przewijaniu, a karty, liczniki i stopka reagują na pozycję strony.
+- **Detale:** obrazy falują pod kursorem, przyciski są lekko magnetyczne, a kursor-towarzysz pokazuje „Czytaj” nad kartą.
+- **Trzy poziomy efektów:** komputer z myszą dostaje wszystko. Telefon i słabszy sprzęt dostają lżejszą wersję z natywnym scrollem, bez kursora i zniekształceń, a kod tych efektów się nie pobiera. Przy ustawieniu „ogranicz ruch” albo bez WebGL strona zmienia się natychmiast, bez animacji.
+
+## Dostępność i wydajność
+
+- Lighthouse na wersji produkcyjnej: komputer 100 we wszystkich kategoriach, telefon Performance 92–94, a dostępność, Best Practices i SEO 100. CLS najwyżej 0,004.
+- Każdy element da się obsłużyć klawiaturą, a fokus jest zawsze widoczny. Po zmianie strony fokus trafia na początek nowej treści.
+- Tekst ma kontrast co najmniej 4,5:1 w obu motywach, także na animowanym gradiencie.
+- Biblioteki animacji ładują się po wyświetleniu strony, a efekty, które zmieniają układ, czekają na koniec przewijania.
 
 Portal działa w całości w przeglądarce, bez serwera i bazy danych. Dane zapisują się w `localStorage`, więc zostają po odświeżeniu strony, ale nie przenoszą się na inne urządzenia.
 
@@ -40,6 +56,9 @@ Portal działa w całości w przeglądarce, bez serwera i bazy danych. Dane zapi
 | Język | [TypeScript](https://www.typescriptlang.org/) |
 | Routing | [Vue Router](https://router.vuejs.org/) |
 | Stan aplikacji | [Pinia](https://pinia.vuejs.org/) |
+| Animacje | [GSAP](https://gsap.com/) (ScrollTrigger, SplitText), [Lenis](https://lenis.darkroom.engineering/) |
+| Grafika | WebGL 1 z OffscreenCanvas w Web Workerze, bez bibliotek 3D |
+| Fonty | [Fontsource](https://fontsource.org/) (Archivo, Plus Jakarta Sans, JetBrains Mono) |
 | Budowanie | [Vite](https://vite.dev/) |
 | Testy | [Vitest](https://vitest.dev/), [Vue Test Utils](https://test-utils.vuejs.org/) |
 | Jakość kodu | ESLint, Oxlint, Prettier |
@@ -76,8 +95,12 @@ Uruchamiaj je w folderze `scinet`.
 
 ```text
 scinet/src/
-├── components/   # karta artykułu, formularz, komentarze, panele, menu
+├── assets/       # kafle ziarna tła
+├── components/   # karta artykułu, formularz, komentarze, panele, menu, ui/ (przyciski, pola)
+├── composables/  # motyw, powiadomienia, animacje przy przewijaniu, poziom efektów
 ├── data/         # model danych, przykładowe artykuły i autorzy
+├── fx/           # efekty WebGL: gradient hero, fale na obrazach, shadery, workery
+├── motion/       # płynny scroll, przejścia stron, poziomy efektów, podział tekstu
 ├── router/       # adresy podstron i tytuły kart
 ├── stores/       # stan aplikacji: artykuły i zakładki
 ├── views/        # całe podstrony, w tym tablica
@@ -99,4 +122,5 @@ Obrazki przykładowych artykułów są w domenie publicznej i pochodzą z Wikime
 - [x] Testy automatyczne (Vitest)
 - [x] Publikowanie, edycja, usuwanie i komentarze
 - [x] Polubienia, panele boczne i widok na każdy ekran
+- [x] Nowy wygląd: tryb ciemny, animacje, efekty WebGL i przejścia między stronami
 - [ ] Publikacja aplikacji w internecie

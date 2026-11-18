@@ -107,7 +107,7 @@ const { refresh: refreshScrollMotion } = useScrollReveal(boardElement, (motion, 
       .to(copy, { y: 120, opacity: 0.25 }, 0)
       .to(title, { scale: 0.86, transformOrigin: 'left bottom' }, 0)
   }
-  revealInBatches(motion, [...root.querySelectorAll('.feed .card')])
+  return revealInBatches(motion, [...root.querySelectorAll('.feed .card')])
 })
 
 // Po filtrowaniu, sortowaniu albo dodaniu artykułu karty stoją gdzie indziej, więc animacje

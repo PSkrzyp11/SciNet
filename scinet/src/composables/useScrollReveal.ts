@@ -59,10 +59,11 @@ function inViewport(el: Element) {
 /**
  * Elementy wchodzą grupami, gdy wjadą na ekran, z dołu albo z góry (przy przewijaniu w górę).
  * Te widoczne od razu zostają bez zmian: ukrycie ich po starcie dałoby mignięcie.
+ * Zwraca sprzątanie, które `useScrollReveal` wywoła przy odmontowaniu.
  */
 export function revealInBatches({ gsap, ScrollTrigger }: ScrollMotion, targets: Element[]) {
   const hidden = targets.filter((el) => !inViewport(el))
-  if (!hidden.length) return
+  if (!hidden.length) return undefined
 
   // Każdy element odsłania się tylko raz, żeby karty nie podskakiwały przy każdym przewinięciu
   const revealed = new WeakSet<Element>()
@@ -77,11 +78,21 @@ export function revealInBatches({ gsap, ScrollTrigger }: ScrollMotion, targets: 
     gsap.fromTo(
       fresh,
       { y: fromY },
-      { autoAlpha: 1, y: 0, duration, ease: 'expo.out', stagger: 0.08, overwrite: true },
+      { opacity: 1, y: 0, duration, ease: 'expo.out', stagger: 0.08, overwrite: true },
     )
   }
 
-  gsap.set(hidden, { autoAlpha: 0, y: distance })
+  // Ukrywamy samą przezroczystością, bez visibility: hidden. Niewidoczny element nadal
+  // dostaje fokus z klawiatury, a przeglądarka sama przewija do niego ekran.
+  gsap.set(hidden, { opacity: 0, y: distance })
+
+  // Fokus z klawiatury pokazuje element od razu, zanim dogoni go przewijanie
+  const onFocus = (event: Event) => {
+    const el = hidden.find((item) => item.contains(event.target as Node))
+    if (el) show([el], 0)
+  }
+  hidden.forEach((el) => el.addEventListener('focusin', onFocus))
+
   ScrollTrigger.batch(hidden, {
     start: 'top 92%',
     end: 'bottom 8%',
@@ -90,4 +101,6 @@ export function revealInBatches({ gsap, ScrollTrigger }: ScrollMotion, targets: 
     // (np. po powrocie przyciskiem „wstecz” do środka tablicy)
     onEnterBack: (batch) => show(batch, -distance),
   })
+
+  return () => hidden.forEach((el) => el.removeEventListener('focusin', onFocus))
 }
