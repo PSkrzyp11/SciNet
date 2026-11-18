@@ -24,7 +24,7 @@ dajesz polubienia, komentujesz i zapisujesz te, do których chcesz wrócić.
 ![Tablica SciNet w ciemnym motywie: animowany gradient w nagłówku, pasek dziedzin, menu dziedzin, pole dodawania artykułu i wizytówka autorki](docs/board.webp)
 
 > [!NOTE]
-> Projekt na zakończenie kursu Vue. Działa w całości w przeglądarce, bez serwera. Przykładowe artykuły, autorzy i dane kontaktowe są zmyślone, a formularz kontaktowy niczego nie wysyła.
+> Działa w całości w przeglądarce, bez serwera. Przykładowe artykuły, autorzy i dane kontaktowe są zmyślone, a formularz kontaktowy niczego nie wysyła.
 
 ## Funkcje
 
