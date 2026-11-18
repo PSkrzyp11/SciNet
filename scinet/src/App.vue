@@ -3,6 +3,7 @@ import { defineAsyncComponent } from 'vue'
 import SiteFooter from './components/SiteFooter.vue'
 import TopMenu from './components/TopMenu.vue'
 import ToastContainer from './components/ui/ToastContainer.vue'
+import { viewTransitionsEnabled } from './motion/viewTransition'
 
 // Kursor-towarzysz przydaje się tylko z myszą, więc ładuje się osobno, po starcie strony
 const CursorFollower = defineAsyncComponent(() => import('./components/CursorFollower.vue'))
@@ -10,10 +11,15 @@ const CursorFollower = defineAsyncComponent(() => import('./components/CursorFol
 
 <template>
   <TopMenu />
-  <main>
+  <!-- Po zmianie strony fokus trafia tutaj, więc czytnik zaczyna od nowej treści -->
+  <main id="main" tabindex="-1">
     <RouterView v-slot="{ Component, route }">
+      <!-- Z View Transitions animację robi przeglądarka, więc strona podmienia się od razu -->
+      <div v-if="viewTransitionsEnabled" :key="route.path" class="page-view">
+        <component :is="Component" />
+      </div>
       <!-- Klucz to sama ścieżka, więc zmiana filtrów w adresie nie uruchamia animacji -->
-      <Transition name="page" mode="out-in">
+      <Transition v-else name="page" mode="out-in">
         <div :key="route.path" class="page-view">
           <component :is="Component" />
         </div>

@@ -6,6 +6,7 @@ import FavoriteButton from '@/components/FavoriteButton.vue'
 import LikeButton from '@/components/LikeButton.vue'
 import BaseBadge from '@/components/ui/BaseBadge.vue'
 import { readingTime, type Article } from '@/data/articles'
+import { sharedArticleId } from '@/motion/viewTransition'
 
 const props = defineProps<{ article: Article }>()
 
@@ -13,6 +14,11 @@ const props = defineProps<{ article: Article }>()
 const emit = defineEmits<{ delete: []; like: [] }>()
 
 const formatDate = (date: string) => new Date(date).toLocaleDateString('pl-PL')
+
+// Tytuł i obrazek tej karty płynnie przechodzą w nagłówek artykułu (View Transitions).
+// Nazwa musi być unikalna na stronie, więc dostaje ją tylko przechodząca karta.
+const sharedName = (part: 'title' | 'image') =>
+  sharedArticleId.value === props.article.id ? { viewTransitionName: `article-${part}` } : undefined
 
 // Efekt subtelnego podświetlenia (spotlight) podążającego za kursorem
 const cardElement = ref<HTMLElement | null>(null)
@@ -106,7 +112,7 @@ function confirmDelete() {
 
     <div class="card-body">
       <BaseBadge class="category" :category="article.category" />
-      <h3>
+      <h3 :style="sharedName('title')">
         <RouterLink :to="`/artykuly/${article.id}`" class="title link-draw">{{
           article.title
         }}</RouterLink>
@@ -115,7 +121,7 @@ function confirmDelete() {
     </div>
 
     <div v-if="article.image" class="media-wrap">
-      <ArticleImage :src="article.image" :alt="article.title" />
+      <ArticleImage :src="article.image" :alt="article.title" :style="sharedName('image')" />
     </div>
 
     <footer class="bar">

@@ -69,4 +69,37 @@ describe('scrollTarget', () => {
     expect(scrollTarget({ path: '/' }, { path: '/' }, null)).toBeNull()
     expect(scrollTarget({ path: '/' }, { path: '/' }, { top: 300 })).toBeNull()
   })
+
+  it('po przejściu na inną stronę fokus trafia na początek jej treści', async () => {
+    const main = document.createElement('main')
+    main.id = 'main'
+    main.tabIndex = -1
+    document.body.append(main)
+    await router.push('/')
+    await flushPromises()
+
+    await router.push('/kontakt')
+    await flushPromises()
+
+    expect(document.activeElement).toBe(main)
+    main.remove()
+  })
+
+  it('zmiana samych filtrów zostawia fokus w wyszukiwarce', async () => {
+    const main = document.createElement('main')
+    main.id = 'main'
+    main.tabIndex = -1
+    const search = document.createElement('input')
+    document.body.append(main, search)
+    await router.push('/')
+    await flushPromises()
+    search.focus()
+
+    await router.push('/?q=kwant')
+    await flushPromises()
+
+    expect(document.activeElement).toBe(search)
+    main.remove()
+    search.remove()
+  })
 })

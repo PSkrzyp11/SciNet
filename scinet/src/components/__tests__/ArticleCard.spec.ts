@@ -3,6 +3,7 @@ import { mount, RouterLinkStub } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import ArticleCard from '../ArticleCard.vue'
 import type { Article } from '@/data/articles'
+import { sharedArticleId } from '@/motion/viewTransition'
 
 const article: Article = {
   id: 7,
@@ -182,5 +183,19 @@ describe('ArticleCard', () => {
     const links = mountCard().findAllComponents(RouterLinkStub)
 
     expect(links.map((link) => link.props('to'))).toEqual(['/artykuly/7/edytuj', '/artykuly/7'])
+  })
+
+  it('tylko karta przechodzącego artykułu ma nazwy przejścia strony', () => {
+    sharedArticleId.value = 7
+    const shared = mountCard({ image: 'https://example.com/obrazek.jpg' })
+    expect(shared.find('h3').attributes('style')).toContain('view-transition-name: article-title')
+    expect(shared.find('.article-image-frame').attributes('style')).toContain(
+      'view-transition-name: article-image',
+    )
+
+    sharedArticleId.value = 8
+    const other = mountCard()
+    expect(other.find('h3').attributes('style')).toBeUndefined()
+    sharedArticleId.value = null
   })
 })

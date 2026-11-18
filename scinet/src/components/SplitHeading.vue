@@ -13,8 +13,10 @@ const props = withDefaults(
     trigger?: 'load' | 'view'
     /** Opóźnienie startu w sekundach */
     delay?: number
+    /** Bez animacji, np. gdy nagłówek właśnie przyleciał z karty w przejściu strony */
+    static?: boolean
   }>(),
-  { as: 'h1', trigger: 'load', delay: 0 },
+  { as: 'h1', trigger: 'load', delay: 0, static: false },
 )
 
 // Jeśli biblioteka albo fonty się spóźnią, nagłówek pojawia się zwyczajnie (plan B)
@@ -78,7 +80,14 @@ function setup() {
   teardown()
   const target = el.value
   // W testach (bez IntersectionObserver) i przy ograniczonym ruchu nagłówek jest zwykłym tekstem
-  if (!target || reducedMotion.value || typeof IntersectionObserver === 'undefined') return
+  if (
+    !target ||
+    props.static ||
+    reducedMotion.value ||
+    typeof IntersectionObserver === 'undefined'
+  ) {
+    return
+  }
 
   const id = run
   pending.value = true

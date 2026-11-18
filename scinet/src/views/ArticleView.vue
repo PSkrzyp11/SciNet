@@ -10,6 +10,7 @@ import SplitHeading from '@/components/SplitHeading.vue'
 import BaseBadge from '@/components/ui/BaseBadge.vue'
 import { useToast } from '@/composables/useToast'
 import { readingTime } from '@/data/articles'
+import { sharedArticleId, viewTransitionsEnabled } from '@/motion/viewTransition'
 import { useArticlesStore } from '@/stores/articles'
 
 const props = defineProps<{ id: string }>()
@@ -18,6 +19,11 @@ const store = useArticlesStore()
 const { notify } = useToast()
 
 const article = computed(() => store.articles.find((a) => a.id === Number(props.id)))
+
+// Artykuł otwarty z karty: tytuł przylatuje z karty, więc nie odsłania się drugi raz
+const arrivedFromCard = computed(
+  () => viewTransitionsEnabled.value && sharedArticleId.value === article.value?.id,
+)
 
 const related = computed(() =>
   store.articles.filter((a) => a.id !== article.value?.id && a.author === article.value?.author),
@@ -95,7 +101,12 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <SplitHeading class="article-title" :text="article.title" />
+      <SplitHeading
+        class="article-title"
+        :text="article.title"
+        :static="arrivedFromCard"
+        style="view-transition-name: article-title"
+      />
 
       <div class="meta">
         <AuthorAvatar :name="article.author" :size="36" />
@@ -107,7 +118,13 @@ onBeforeUnmount(() => {
       </div>
     </header>
 
-    <ArticleImage class="image" :src="article.image" :alt="article.title" eager />
+    <ArticleImage
+      class="image"
+      :src="article.image"
+      :alt="article.title"
+      eager
+      style="view-transition-name: article-image"
+    />
 
     <p v-for="(paragraph, i) in article.content" :key="i">{{ paragraph }}</p>
 

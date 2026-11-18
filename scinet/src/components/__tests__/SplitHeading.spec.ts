@@ -135,4 +135,17 @@ describe('SplitHeading', () => {
     expect(wrapper.text()).toBe('Tytuł')
     wrapper.unmount()
   })
+
+  it('w trybie statycznym nie dzieli tekstu, nawet gdy ruch jest dozwolony', async () => {
+    stubMotion()
+    const wrapper = mount(SplitHeading, {
+      props: { text: 'Tytuł z karty', static: true },
+      attachTo: document.body,
+    })
+    await flushPromises()
+
+    expect(create).not.toHaveBeenCalled()
+    expect(wrapper.classes()).not.toContain('split-pending')
+    wrapper.unmount()
+  })
 })

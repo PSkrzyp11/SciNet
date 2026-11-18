@@ -64,6 +64,12 @@ main {
   padding: 0 var(--space-5) var(--space-7);
 }
 
+/* Fokus trafia tu programowo po zmianie strony. Sam <main> nie jest kontrolką,
+   więc nie potrzebuje ramki, a elementy w środku mają własny wskaźnik fokusu. */
+main:focus {
+  outline: none;
+}
+
 /* Tablica ma własny 3-kolumnowy kontener o kontrolowanej szerokości */
 main:has(.board) {
   max-width: var(--board-max-width);
@@ -183,4 +189,71 @@ select {
    W polu tekstowym to przeszkadza: po dojechaniu do końca pola strona ma się przewijać dalej. */
 .lenis textarea[data-lenis-prevent] {
   overscroll-behavior: auto;
+}
+
+/* ==========================================================================
+   Przejścia między stronami (View Transitions API)
+   Rodzaj przejścia ustawia router w atrybucie data-transition na <html>.
+   ========================================================================== */
+
+/* Pasek menu ma własną warstwę, więc nie bierze udziału w kurtynie i stoi w miejscu */
+.top-menu {
+  view-transition-name: site-header;
+}
+
+/* Zwykłe strony: stara gaśnie, a nowa wjeżdża od dołu jak kurtyna na tle w kolorze marki */
+html[data-transition='page']::view-transition-group(root) {
+  background: var(--fx-base);
+}
+
+html[data-transition='page']::view-transition-old(root) {
+  animation: vt-fade-out var(--duration-normal) var(--ease-out) both;
+}
+
+html[data-transition='page']::view-transition-new(root) {
+  animation: vt-curtain var(--duration-slow) var(--ease-expo) both;
+}
+
+/* Karta ↔ artykuł: reszta strony tylko się przenika, a ruch robią tytuł i obrazek */
+html[data-transition='article']::view-transition-old(root) {
+  animation: vt-fade-out var(--duration-normal) var(--ease-out) both;
+}
+
+html[data-transition='article']::view-transition-new(root) {
+  animation: vt-fade-in var(--duration-slow) var(--ease-out) both;
+}
+
+::view-transition-group(article-title),
+::view-transition-group(article-image) {
+  animation-duration: var(--duration-reveal);
+  animation-timing-function: var(--ease-expo);
+}
+
+/* Tekst nie rozciąga się w trakcie lotu: zrzuty skalują się według wysokości i trzymają
+   proporcje, więc mały tytuł karty rośnie do nagłówka artykułu bez zniekształceń */
+::view-transition-old(article-title),
+::view-transition-new(article-title) {
+  width: auto;
+  height: 100%;
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-curtain {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
 }
