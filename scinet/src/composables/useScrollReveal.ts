@@ -1,5 +1,6 @@
 import { onBeforeUnmount, onMounted, type Ref } from 'vue'
 import { whenMotionReady, type ScrollMotion } from '@/motion'
+import { fxTier } from '@/motion/fxTier'
 
 /**
  * Animacje sterowane scrollem (GSAP ScrollTrigger, w jednej pętli z Lenis).
@@ -20,8 +21,7 @@ export function useScrollReveal(
   async function run() {
     const motion = await whenMotionReady()
     const root = scope.value
-    if (!motion || !root || unmounted) return
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    if (!motion || !root || unmounted || fxTier.value === 'off') return
 
     context?.revert()
     context = motion.gsap.context(() => setup(motion, root), root)
@@ -66,6 +66,10 @@ export function revealInBatches({ gsap, ScrollTrigger }: ScrollMotion, targets: 
 
   // Każdy element odsłania się tylko raz, żeby karty nie podskakiwały przy każdym przewinięciu
   const revealed = new WeakSet<Element>()
+  // Na poziomie lekkim (telefon) wejścia są krótsze i z mniejszej odległości
+  const lite = fxTier.value === 'lite'
+  const duration = lite ? 0.5 : 0.8
+  const distance = lite ? 24 : 40
   const show = (batch: Element[], fromY: number) => {
     const fresh = batch.filter((el) => !revealed.has(el))
     if (!fresh.length) return
@@ -73,17 +77,17 @@ export function revealInBatches({ gsap, ScrollTrigger }: ScrollMotion, targets: 
     gsap.fromTo(
       fresh,
       { y: fromY },
-      { autoAlpha: 1, y: 0, duration: 0.8, ease: 'expo.out', stagger: 0.08, overwrite: true },
+      { autoAlpha: 1, y: 0, duration, ease: 'expo.out', stagger: 0.08, overwrite: true },
     )
   }
 
-  gsap.set(hidden, { autoAlpha: 0, y: 40 })
+  gsap.set(hidden, { autoAlpha: 0, y: distance })
   ScrollTrigger.batch(hidden, {
     start: 'top 92%',
     end: 'bottom 8%',
-    onEnter: (batch) => show(batch, 40),
+    onEnter: (batch) => show(batch, distance),
     // Przy przewijaniu w górę elementy, których jeszcze nie było widać, wjeżdżają z góry
     // (np. po powrocie przyciskiem „wstecz” do środka tablicy)
-    onEnterBack: (batch) => show(batch, -40),
+    onEnterBack: (batch) => show(batch, -distance),
   })
 }

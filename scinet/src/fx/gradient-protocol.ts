@@ -18,7 +18,13 @@ export interface GradientSize {
 }
 
 export type ToWorker =
-  | ({ type: 'init'; canvas: OffscreenCanvas; colors: GradientColors } & GradientSize)
+  // `lite`: poziom lekki (telefon) — niższa rozdzielczość i 30 klatek na sekundę
+  | ({
+      type: 'init'
+      canvas: OffscreenCanvas
+      colors: GradientColors
+      lite: boolean
+    } & GradientSize)
   | ({ type: 'resize' } & GradientSize)
   | { type: 'colors'; colors: GradientColors }
   | { type: 'play' }

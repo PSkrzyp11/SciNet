@@ -1,8 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { nextTick } from 'vue'
+import { nextTick, type Ref } from 'vue'
 import GradientCanvas from '../GradientCanvas.vue'
+import { fxTier } from '@/motion/fxTier'
 import type { FromWorker, ToWorker } from '../gradient-protocol'
+
+// Poziom efektów ustawiany w teście (w jsdom nie ma WebGL, więc prawdziwy byłby „off”)
+vi.mock('@/motion/fxTier', async () => {
+  const { ref } = await import('vue')
+  return { fxTier: ref('full') }
+})
 
 // Udawany worker: zapisuje wiadomości i pozwala odpowiedzieć tak, jak zrobiłby prawdziwy
 class FakeWorker {
@@ -71,10 +78,13 @@ function stubOffscreenSupport() {
   })
 }
 
+const setTier = (tier: 'full' | 'lite' | 'off') => ((fxTier as unknown as Ref<string>).value = tier)
+
 describe('GradientCanvas', () => {
   beforeEach(() => {
     FakeWorker.instances = []
     viewCallback = null
+    setTier('full')
   })
 
   afterEach(() => {
@@ -99,9 +109,9 @@ describe('GradientCanvas', () => {
     expect(() => wrapper.unmount()).not.toThrow()
   })
 
-  it('przy ograniczonym ruchu nie uruchamia workera', () => {
+  it('na poziomie „off” (ograniczony ruch, brak WebGL) nie uruchamia workera', () => {
     stubOffscreenSupport()
-    stubMotionPreference(true)
+    setTier('off')
 
     mount(GradientCanvas)
 
@@ -206,5 +216,26 @@ describe('GradientCanvas', () => {
     expect(FakeWorker.instances[0]?.types()).not.toContain('pointer')
     wrapper.unmount()
     hero.remove()
+  })
+
+  it('na poziomie lekkim prosi workera o tańszy render', () => {
+    stubOffscreenSupport()
+    stubMotionPreference(false)
+    setTier('lite')
+
+    mount(GradientCanvas)
+
+    expect(FakeWorker.instances[0]?.sent[0]).toMatchObject({ type: 'init', lite: true })
+  })
+
+  it('po przejściu na poziom „off” zatrzymuje gradient', async () => {
+    stubOffscreenSupport()
+    stubMotionPreference(false)
+    mount(GradientCanvas)
+
+    setTier('off')
+    await nextTick()
+
+    expect(FakeWorker.instances[0]?.terminated).toBe(true)
   })
 })

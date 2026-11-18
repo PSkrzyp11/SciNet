@@ -379,3 +379,11 @@
     font-size: 16px;
   }
 }
+
+/* Poziom lekki (telefon, słabszy sprzęt): krótsze wejścia i przejścia.
+   Atrybut data-fx ustawia moduł motion/fxTier.ts. */
+html[data-fx='lite'] {
+  --duration-slow: 300ms;
+  --duration-reveal: 550ms;
+  --duration-cinematic: 700ms;
+}

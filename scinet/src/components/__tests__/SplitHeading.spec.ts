@@ -3,6 +3,12 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import SplitHeading from '../SplitHeading.vue'
 
+// Poziom efektów ustawiany w teście (w jsdom nie ma WebGL, więc prawdziwy byłby „off”)
+vi.mock('@/motion/fxTier', async () => {
+  const { ref } = await import('vue')
+  return { fxTier: ref('full') }
+})
+
 const create = vi.fn()
 const revert = vi.fn()
 const from = vi.fn()

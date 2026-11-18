@@ -30,6 +30,9 @@ let colors: GradientColors | null = null
 let scale = SCALE
 let playing = false
 let failed = false
+// Poziom lekki rysuje co drugą klatkę (30 kl./s), co wystarcza dla wolnego gradientu
+let lite = false
+let skipFrame = false
 
 let frame = 0
 let last = 0
@@ -84,6 +87,10 @@ function fail() {
 function render(now: number) {
   frame = 0
   if (!gl || !program) return
+  if (lite) {
+    skipFrame = !skipFrame
+    if (skipFrame) return schedule()
+  }
   const delta = last ? Math.min(now - last, 100) : 16
   last = now
   frames += 1
@@ -179,6 +186,8 @@ self.addEventListener('message', (event: MessageEvent<ToWorker>) => {
     case 'init':
       size = { width: message.width, height: message.height }
       colors = message.colors
+      lite = message.lite
+      if (lite) scale = LOW_SCALE
       void init(message.canvas)
       break
     case 'resize':

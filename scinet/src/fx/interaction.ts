@@ -1,3 +1,5 @@
+import { fxTier } from '@/motion/fxTier'
+
 // Kursor i prędkość przewijania dla efektów WebGL. Zdarzenia są zbierane i wysyłane
 // najwyżej raz na klatkę, żeby nie zasypywać workera wiadomościami.
 
@@ -117,9 +119,10 @@ export function isCorsFriendly(src: string) {
   }
 }
 
-/** Efekt wymaga myszy, zgody na ruch i rysowania WebGL w workerze. */
+/** Efekt wymaga pełnego poziomu efektów, myszy, zgody na ruch i WebGL w workerze. */
 export function canDistort() {
   return (
+    fxTier.value === 'full' &&
     hasFinePointer() &&
     !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
     typeof Worker !== 'undefined' &&

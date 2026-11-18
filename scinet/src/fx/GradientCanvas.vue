@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useTheme } from '@/composables/useTheme'
+import { fxTier } from '@/motion/fxTier'
 import type { FromWorker, GradientColors, GradientSize, ToWorker } from './gradient-protocol'
 import { hasFinePointer, trackPointer, trackScrollVelocity } from './interaction'
 import { hexToRgb } from './webgl'
 
-// Gęstość pikseli ponad 1,5 nie poprawia miękkiego gradientu, a kosztuje kartę graficzną
+// Gęstość pikseli ponad 1,5 nie poprawia miękkiego gradientu, a kosztuje kartę graficzną.
+// Na poziomie lekkim (telefon) wystarcza 1.
 const MAX_DPR = 1.5
+const LITE_MAX_DPR = 1
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 // Canvas pojawia się dopiero po pierwszej klatce, a pod nim zawsze jest gradient CSS
@@ -15,7 +17,6 @@ const ready = ref(false)
 // Canvas przekazany do workera nie wraca na stronę, więc ponowny start wymaga nowego
 const generation = ref(0)
 
-const reducedMotion = useReducedMotion()
 const { theme } = useTheme()
 
 let stop: (() => void) | null = null
@@ -45,7 +46,10 @@ function readColors(el: HTMLElement): GradientColors {
 }
 
 function sizeOf(el: HTMLElement): GradientSize {
-  const ratio = Math.min(window.devicePixelRatio || 1, MAX_DPR)
+  const ratio = Math.min(
+    window.devicePixelRatio || 1,
+    fxTier.value === 'lite' ? LITE_MAX_DPR : MAX_DPR,
+  )
   return {
     width: Math.max(1, Math.round(el.clientWidth * ratio)),
     height: Math.max(1, Math.round(el.clientHeight * ratio)),
@@ -101,7 +105,16 @@ function start() {
   })
   worker.addEventListener('error', teardown)
 
-  send({ type: 'init', canvas: offscreen, colors: readColors(el), ...sizeOf(el) }, [offscreen])
+  send(
+    {
+      type: 'init',
+      canvas: offscreen,
+      colors: readColors(el),
+      lite: fxTier.value === 'lite',
+      ...sizeOf(el),
+    },
+    [offscreen],
+  )
   viewObserver.observe(el)
   sizeObserver.observe(el)
   document.addEventListener('visibilitychange', update)
@@ -111,12 +124,14 @@ function start() {
 }
 
 onMounted(() => {
-  if (!reducedMotion.value) start()
+  if (fxTier.value !== 'off') start()
 })
 
-// Ustawienie „ogranicz ruch” może się zmienić przy otwartej stronie
-watch(reducedMotion, async (reduced) => {
-  if (reduced) return stop?.()
+// Poziom efektów może się zmienić przy otwartej stronie (np. ustawienie „ogranicz ruch”):
+// wtedy gradient zatrzymuje się albo startuje od nowa w nowej jakości
+watch(fxTier, async (tier) => {
+  stop?.()
+  if (tier === 'off') return
   generation.value += 1
   await nextTick()
   start()

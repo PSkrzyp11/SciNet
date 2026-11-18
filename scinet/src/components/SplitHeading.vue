@@ -2,6 +2,7 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import type { SplitText } from 'gsap/SplitText'
 import { useReducedMotion } from '@/composables/useReducedMotion'
+import { fxTier } from '@/motion/fxTier'
 import { loadSplitText } from '@/motion/text'
 
 const props = withDefaults(
@@ -84,6 +85,7 @@ function setup() {
     !target ||
     props.static ||
     reducedMotion.value ||
+    fxTier.value === 'off' ||
     typeof IntersectionObserver === 'undefined'
   ) {
     return

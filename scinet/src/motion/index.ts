@@ -1,6 +1,7 @@
 import type Lenis from 'lenis'
 import type { gsap as Gsap } from 'gsap'
 import type { ScrollTrigger as ScrollTriggerClass } from 'gsap/ScrollTrigger'
+import { fxTier } from './fxTier'
 
 // Jedna flaga wyłącza płynny scroll: zostaje wtedy natywne przewijanie przeglądarki
 const SMOOTH_SCROLL = true
@@ -31,19 +32,29 @@ export const whenMotionReady = () => ready
  * sam wyłącza wygładzanie.
  */
 export async function initMotion() {
-  if (!SMOOTH_SCROLL) return resolveReady(null)
   if (lenis || starting || typeof window === 'undefined') return
+  // Poziom „off” (ograniczony ruch, brak WebGL): bez bibliotek ruchu, zmiany są natychmiastowe
+  if (fxTier.value === 'off') return resolveReady(null)
   starting = true
 
   try {
-    const [{ default: LenisClass }, { gsap }, { ScrollTrigger }] = await Promise.all([
-      import('lenis'),
+    const [{ gsap }, { ScrollTrigger }] = await Promise.all([
       import('gsap'),
       import('gsap/ScrollTrigger'),
+    ])
+    gsap.registerPlugin(ScrollTrigger)
+
+    // Poziom lekki (telefon, słabszy sprzęt): natywny scroll, a ScrollTrigger sam słucha
+    // przewijania. Lenis wczytuje się tylko na pełnym poziomie.
+    if (!SMOOTH_SCROLL || fxTier.value !== 'full') {
+      resolveReady({ gsap, ScrollTrigger })
+      return
+    }
+
+    const [{ default: LenisClass }] = await Promise.all([
+      import('lenis'),
       import('lenis/dist/lenis.css'),
     ])
-
-    gsap.registerPlugin(ScrollTrigger)
 
     const instance = new LenisClass({ anchors: true })
 
