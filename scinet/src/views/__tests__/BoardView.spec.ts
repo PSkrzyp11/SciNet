@@ -431,4 +431,18 @@ describe('BoardView', () => {
 
     expect(store.articles.map((a) => a.id)).toEqual(before)
   })
+
+  it('hero jest pierwszym elementem tablicy, a jego tło nie trafia do czytników', async () => {
+    const { wrapper } = await mountAt('/')
+    await flushPromises()
+    const hero = wrapper.find('.board > :first-child')
+
+    expect(hero.classes()).toContain('board-head')
+    expect(hero.find('h1').text()).toBe('Tablica')
+    expect(wrapper.findAll('h1')).toHaveLength(1)
+    expect(hero.find('.count').exists()).toBe(true)
+    for (const decoration of hero.findAll('canvas, svg')) {
+      expect(decoration.attributes('aria-hidden')).toBe('true')
+    }
+  })
 })

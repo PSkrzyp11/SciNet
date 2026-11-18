@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ArticleForm from '@/components/ArticleForm.vue'
@@ -10,6 +10,9 @@ import { useToast } from '@/composables/useToast'
 import { CATEGORIES, type Article, type ArticleDraft } from '@/data/articles'
 import { currentUser } from '@/data/authors'
 import { useArticlesStore } from '@/stores/articles'
+
+// Tło WebGL ładuje się osobno. Do tego czasu, i gdy WebGL nie działa, widać gradient CSS.
+const GradientCanvas = defineAsyncComponent(() => import('@/fx/GradientCanvas.vue'))
 
 const sorters = {
   newest: (a: Article, b: Article) => b.date.localeCompare(a.date),
@@ -119,27 +122,28 @@ function handleRemove(id: number, title: string) {
 
 <template>
   <div class="board">
-    <div class="top">
-      <header ref="heroElement" class="board-head" @pointermove="handleHeroPointerMove">
-        <svg class="hero-ornament" viewBox="0 0 200 200" aria-hidden="true">
-          <circle cx="100" cy="100" r="85" />
-          <circle cx="100" cy="100" r="55" stroke-dasharray="3 6" />
-          <ellipse cx="100" cy="100" rx="85" ry="32" transform="rotate(-28 100 100)" />
-        </svg>
-        <div class="hero-copy">
-          <span class="hero-kicker">Magazyn społeczności naukowej</span>
-          <div class="hero-title-row">
-            <h1>Tablica</h1>
-            <p v-if="store.articles.length" class="count" aria-live="polite">
-              Znaleziono: {{ filtered.length }}
-            </p>
-          </div>
+    <header ref="heroElement" class="board-head" @pointermove="handleHeroPointerMove">
+      <GradientCanvas />
+      <svg class="hero-ornament" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="85" />
+        <circle cx="100" cy="100" r="55" stroke-dasharray="3 6" />
+        <ellipse cx="100" cy="100" rx="85" ry="32" transform="rotate(-28 100 100)" />
+      </svg>
+      <div class="hero-copy">
+        <span class="hero-kicker">Magazyn społeczności naukowej</span>
+        <h1>Tablica</h1>
+        <div class="hero-foot">
           <p class="hero-sub">
             Najciekawsze odkrycia, analizy i eksperymenty opisane przystępnym językiem.
           </p>
+          <p v-if="store.articles.length" class="count" aria-live="polite">
+            Znaleziono: {{ filtered.length }}
+          </p>
         </div>
-      </header>
+      </div>
+    </header>
 
+    <div class="top">
       <Transition name="composer" mode="out-in">
         <ArticleForm v-if="formOpen" @save="publish" @cancel="closeForm" />
         <button v-else ref="addButton" type="button" class="add" @click="formOpen = true">
@@ -226,17 +230,22 @@ function handleRemove(id: number, title: string) {
 </template>
 
 <style scoped>
-/* Telefon: jedna kolumna, najpierw tablica, a pod nią panele */
+/* Telefon: jedna kolumna, najpierw hero i tablica, a pod nimi panele */
 .board {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
+    'hero'
     'top'
     'filters'
     'results'
     'side';
   gap: var(--space-5) var(--space-6);
-  padding-top: var(--space-7);
+  padding-top: var(--space-5);
+}
+
+.board-head {
+  grid-area: hero;
 }
 
 .top {
@@ -259,12 +268,13 @@ function handleRemove(id: number, title: string) {
   margin-top: var(--space-2);
 }
 
-/* Tablet: tablica i kolumna z panelami po prawej */
+/* Tablet: hero na całą szerokość, pod nim tablica i kolumna z panelami po prawej */
 @media (min-width: 760px) {
   .board {
     grid-template-columns: minmax(0, 1fr) 270px;
-    grid-template-rows: auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
     grid-template-areas:
+      'hero hero'
       'top side'
       'filters side'
       'results side';
@@ -280,8 +290,9 @@ function handleRemove(id: number, title: string) {
 @media (min-width: 1100px) {
   .board {
     grid-template-columns: 236px minmax(0, 1fr) 290px;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
+      'hero hero hero'
       'filters top side'
       'filters results side';
     column-gap: var(--space-7);
@@ -314,34 +325,46 @@ function handleRemove(id: number, title: string) {
   margin-bottom: 0;
 }
 
-/* Redakcyjny baner Hero ze światłem podążającym za kursorem i ornamentem orbitalnym */
+/* Hero: żywy gradient WebGL, a pod nim statyczny gradient CSS z tych samych kolorów.
+   Wysokość ustala CSS, więc pojawienie się canvasu niczego nie przesuwa. */
 .board-head {
   position: relative;
+  display: flex;
+  align-items: flex-end;
   overflow: hidden;
-  padding: var(--space-6);
+  min-height: clamp(240px, 36vh, 340px);
+  min-height: clamp(240px, 36svh, 340px);
+  padding: var(--space-6) var(--space-5);
   background:
     radial-gradient(
-      360px circle at var(--hero-x, 85%) var(--hero-y, 20%),
-      rgba(240, 180, 41, 0.22),
-      transparent 60%
+      420px circle at var(--hero-x, 86%) var(--hero-y, 30%),
+      color-mix(in srgb, var(--fx-color-3) 38%, transparent),
+      transparent 62%
     ),
-    radial-gradient(circle at 12% 88%, rgba(99, 54, 158, 0.12), transparent 55%),
-    var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-xs);
+    radial-gradient(circle at 62% 8%, var(--fx-color-2), transparent 58%),
+    radial-gradient(circle at 18% 96%, var(--fx-color-1), transparent 62%), var(--fx-base);
+  border-radius: var(--radius-lg);
+  color: var(--fx-text);
+}
+
+@media (min-width: 760px) {
+  .board-head {
+    min-height: clamp(300px, 52vh, 520px);
+    min-height: clamp(300px, 52svh, 520px);
+    padding: var(--space-9) var(--space-8);
+  }
 }
 
 .hero-ornament {
   position: absolute;
   top: -36px;
   right: -28px;
-  width: 180px;
-  height: 180px;
+  width: clamp(180px, 28vw, 340px);
+  height: clamp(180px, 28vw, 340px);
   fill: none;
-  stroke: var(--color-primary);
-  stroke-width: 1.2;
-  opacity: 0.12;
+  stroke: var(--fx-text);
+  stroke-width: 0.8;
+  opacity: 0.16;
   pointer-events: none;
 }
 
@@ -350,7 +373,8 @@ function handleRemove(id: number, title: string) {
   z-index: var(--z-raised);
   display: flex;
   flex-direction: column;
-  gap: var(--space-15);
+  gap: var(--space-3);
+  width: 100%;
 }
 
 .hero-kicker {
@@ -360,33 +384,37 @@ function handleRemove(id: number, title: string) {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wider);
-  color: var(--color-primary);
+  color: var(--fx-accent);
   animation: hero-rise var(--duration-slow) var(--ease-out) both;
-}
-
-.hero-title-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  animation: hero-rise var(--duration-slow) var(--ease-out) var(--stagger-step) both;
 }
 
 h1 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--text-2xl);
-  letter-spacing: var(--tracking-tight);
+  font-size: var(--text-hero);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  color: var(--fx-text);
+  animation: hero-rise var(--duration-slow) var(--ease-out) var(--stagger-step) both;
+}
+
+.hero-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  animation: hero-rise var(--duration-slow) var(--ease-out) calc(var(--stagger-step) * 2) both;
 }
 
 .count {
   margin: 0;
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill);
-  background: var(--color-primary-light);
-  border: 1px solid var(--color-primary-border);
-  color: var(--color-primary);
+  background: color-mix(in srgb, var(--fx-base) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--fx-text) 28%, transparent);
+  color: var(--fx-text);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: 600;
@@ -394,12 +422,11 @@ h1 {
 }
 
 .hero-sub {
-  margin: var(--space-05) 0 0;
-  max-width: 580px;
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
+  margin: 0;
+  max-width: 460px;
+  color: var(--fx-text-muted);
+  font-size: var(--text-md);
   line-height: 1.5;
-  animation: hero-rise var(--duration-slow) var(--ease-out) calc(var(--stagger-step) * 2) both;
 }
 
 @keyframes hero-rise {
