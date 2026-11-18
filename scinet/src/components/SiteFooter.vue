@@ -1,10 +1,31 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import MarqueeStrip from '@/components/MarqueeStrip.vue'
 import SplitHeading from '@/components/SplitHeading.vue'
 import WeightText from '@/components/WeightText.vue'
+import { useScrollReveal } from '@/composables/useScrollReveal'
 import { CATEGORIES } from '@/data/articles'
 
 const year = new Date().getFullYear()
+
+// Duży napis wyjeżdża z dołu w miarę dojeżdżania do końca strony. Koniec animacji to
+// sam dół strony, więc przy pełnym przewinięciu napis jest zawsze w całości widoczny.
+const footer = ref<HTMLElement | null>(null)
+
+useScrollReveal(footer, ({ gsap }, root) => {
+  const mega = root.querySelector('.footer-mega-wrap')
+  if (!mega) return
+  gsap.fromTo(
+    mega,
+    { yPercent: 35, opacity: 0.15 },
+    {
+      yPercent: 0,
+      opacity: 1,
+      ease: 'none',
+      scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom bottom', scrub: true },
+    },
+  )
+})
 
 const links = [
   { to: '/', label: 'Tablica' },
@@ -15,7 +36,7 @@ const links = [
 </script>
 
 <template>
-  <footer class="site-footer">
+  <footer ref="footer" class="site-footer">
     <MarqueeStrip
       class="footer-marquee"
       :items="CATEGORIES"
@@ -47,7 +68,11 @@ const links = [
         </p>
       </div>
 
-      <WeightText class="footer-mega" text="SciNet" :min="500" />
+      <!-- Przewijaniem animujemy opakowanie, a nie sam napis: napis ma w stylu zmienną CSS,
+           a każda zmiana takiego stylu przeliczałaby układ liter w każdej klatce -->
+      <div class="footer-mega-wrap">
+        <WeightText class="footer-mega" text="SciNet" :min="500" />
+      </div>
 
       <div class="footer-base">
         <span>© {{ year }} SciNet</span>
@@ -161,9 +186,12 @@ const links = [
 }
 
 /* Napis na całą szerokość: litery grubieją pod kursorem */
-.footer-mega {
+.footer-mega-wrap {
   justify-self: center;
   margin-top: var(--space-6);
+}
+
+.footer-mega {
   font-size: min(25vw, 17rem);
   line-height: 0.8;
   letter-spacing: -0.04em;

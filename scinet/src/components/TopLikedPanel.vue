@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CountUp from '@/components/CountUp.vue'
 import type { Article } from '@/data/articles'
 
 defineProps<{ articles: Article[] }>()
@@ -16,7 +17,9 @@ defineProps<{ articles: Article[] }>()
         <RouterLink :to="`/artykuly/${article.id}`">
           <span class="link-draw">{{ article.title }}</span>
         </RouterLink>
-        <span class="count" :title="`Polubienia: ${article.likes}`">{{ article.likes }}</span>
+        <span class="count" :title="`Polubienia: ${article.likes}`">
+          <CountUp :value="article.likes" />
+        </span>
       </li>
     </TransitionGroup>
 

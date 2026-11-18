@@ -1,4 +1,6 @@
 import type Lenis from 'lenis'
+import type { gsap as Gsap } from 'gsap'
+import type { ScrollTrigger as ScrollTriggerClass } from 'gsap/ScrollTrigger'
 
 // Jedna flaga wyłącza płynny scroll: zostaje wtedy natywne przewijanie przeglądarki
 const SMOOTH_SCROLL = true
@@ -8,6 +10,20 @@ let starting = false
 
 export const getLenis = () => lenis
 
+export interface ScrollMotion {
+  gsap: typeof Gsap
+  ScrollTrigger: typeof ScrollTriggerClass
+}
+
+let resolveReady: (motion: ScrollMotion | null) => void = () => {}
+const ready = new Promise<ScrollMotion | null>((resolve) => (resolveReady = resolve))
+
+/**
+ * GSAP i ScrollTrigger, gdy już się wczytają (po wyświetleniu strony).
+ * `null` oznacza, że biblioteki się nie wczytały i animacje scrolla zostają wyłączone.
+ */
+export const whenMotionReady = () => ready
+
 /**
  * Uruchamia płynny scroll i wspólną pętlę animacji.
  * Biblioteki ładują się osobno, po wyświetleniu strony, więc nie opóźniają startu.
@@ -15,7 +31,8 @@ export const getLenis = () => lenis
  * sam wyłącza wygładzanie.
  */
 export async function initMotion() {
-  if (!SMOOTH_SCROLL || lenis || starting || typeof window === 'undefined') return
+  if (!SMOOTH_SCROLL) return resolveReady(null)
+  if (lenis || starting || typeof window === 'undefined') return
   starting = true
 
   try {
@@ -37,8 +54,10 @@ export async function initMotion() {
 
     lenis = instance
     if (locks > 0) instance.stop()
+    resolveReady({ gsap, ScrollTrigger })
   } catch {
     // Bez bibliotek ruchu strona działa dalej z natywnym scrollem
+    resolveReady(null)
   } finally {
     starting = false
   }

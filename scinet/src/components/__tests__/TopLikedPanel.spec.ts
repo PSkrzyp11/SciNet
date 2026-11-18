@@ -18,7 +18,8 @@ describe('TopLikedPanel', () => {
 
     expect(wrapper.findAll('li')).toHaveLength(2)
     expect(item.text()).toContain(first?.title)
-    expect(item.find('.count').text()).toBe(String(first?.likes))
+    expect(item.find('.count [aria-hidden="true"]').text()).toBe(String(first?.likes))
+    expect(item.find('.count .visually-hidden').text()).toBe(String(first?.likes))
     expect(wrapper.findComponent(RouterLinkStub).props('to')).toBe(`/artykuly/${first?.id}`)
   })
 

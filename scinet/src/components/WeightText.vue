@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useReducedMotion } from '@/composables/useReducedMotion'
+import { afterScrollIdle, scrolledRecently } from '@/motion/scrollIdle'
 
 const props = withDefaults(
   defineProps<{
@@ -36,6 +37,10 @@ let inView = false
 let sweepStart = 0
 let swept = false
 let observer: IntersectionObserver | null = null
+// Środki liter na ekranie. Odczyt pozycji po zmianie grubości wymusza przeliczenie układu,
+// więc robimy go raz na ruch kursora albo raz na start fali, a nie w każdej klatce.
+let centers: { x: number; y: number }[] = []
+let cancelSweep: (() => void) | null = null
 
 function measure() {
   const el = root.value
@@ -49,14 +54,20 @@ function measure() {
   target = [...current]
 }
 
+function readCenters() {
+  centers = spans.map((span) => {
+    const box = span.getBoundingClientRect()
+    return { x: box.left + box.width / 2, y: box.top + box.height / 2 }
+  })
+}
+
 // Grubość litery zależy od odległości jej środka od punktu (kursora albo fali)
 function aim(x: number, y: number) {
   const el = root.value
   if (!el) return
   const radius = (parseFloat(getComputedStyle(el).fontSize) || 16) * RADIUS
-  target = spans.map((span) => {
-    const box = span.getBoundingClientRect()
-    const distance = Math.hypot(box.left + box.width / 2 - x, box.top + box.height / 2 - y)
+  target = centers.map((center) => {
+    const distance = Math.hypot(center.x - x, center.y - y)
     const strength = Math.max(0, 1 - distance / radius)
     return props.min + (props.max - props.min) * strength * strength * (3 - 2 * strength)
   })
@@ -73,12 +84,15 @@ function tick(now: number) {
   // Fala przy pierwszym pojawieniu się napisu: na dotyku jedyny efekt, na komputerze zapowiedź
   if (sweepStart) {
     const progress = (now - sweepStart) / SWEEP_MS
-    const box = root.value?.getBoundingClientRect()
-    if (progress >= 1 || !box) {
+    const first = centers[0]
+    const last = centers[centers.length - 1]
+    if (progress >= 1 || !first || !last) {
       sweepStart = 0
       rest()
     } else {
-      aim(box.left - box.width * 0.2 + box.width * 1.4 * progress, box.top + box.height / 2)
+      // Punkt fali przesuwa się od lewej do prawej, trochę poza skrajne litery
+      const span = last.x - first.x
+      aim(first.x - span * 0.2 + span * 1.4 * progress, first.y)
     }
   }
 
@@ -99,7 +113,26 @@ function schedule() {
 }
 
 function onPointerMove(event: PointerEvent) {
-  if (inView && event.pointerType === 'mouse') aim(event.clientX, event.clientY)
+  if (!inView || event.pointerType !== 'mouse') return
+  // Przewijanie pod nieruchomym kursorem też wysyła pointermove. Litery czekają wtedy
+  // na koniec przewijania, bo każda zmiana grubości przelicza ich układ.
+  if (scrolledRecently()) return
+  readCenters()
+  aim(event.clientX, event.clientY)
+}
+
+// Fala nie gra w trakcie przewijania: zmiana grubości liter przelicza ich układ,
+// więc czekamy, aż strona się zatrzyma. Wtedy też widać ją najlepiej.
+function queueSweep() {
+  cancelSweep?.()
+  cancelSweep = afterScrollIdle(() => {
+    cancelSweep = null
+    if (!inView || swept) return
+    swept = true
+    readCenters()
+    sweepStart = performance.now()
+    schedule()
+  })
 }
 
 onMounted(async () => {
@@ -110,11 +143,7 @@ onMounted(async () => {
 
   observer = new IntersectionObserver(([entry]) => {
     inView = Boolean(entry?.isIntersecting)
-    if (inView && !swept) {
-      swept = true
-      sweepStart = performance.now()
-      schedule()
-    }
+    if (inView && !swept) queueSweep()
     if (!inView) rest()
   })
   observer.observe(root.value)
@@ -125,6 +154,7 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   observer?.disconnect()
   window.removeEventListener('pointermove', onPointerMove)
+  cancelSweep?.()
   document.documentElement.removeEventListener('pointerleave', rest)
   cancelAnimationFrame(frame)
 })

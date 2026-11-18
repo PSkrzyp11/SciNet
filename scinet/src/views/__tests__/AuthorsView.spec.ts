@@ -11,9 +11,9 @@ function mountView() {
   const wrapper = mount(AuthorsView, {
     global: { plugins: [createPinia()], stubs: { RouterLink: RouterLinkStub } },
   })
-  const names = () => wrapper.findAll('.author h3').map((name) => name.text())
+  const names = () => wrapper.findAll('.author h2').map((name) => name.text())
   const card = (name: string) => {
-    const found = wrapper.findAll('.author').find((a) => a.find('h3').text() === name)
+    const found = wrapper.findAll('.author').find((a) => a.find('h2').text() === name)
     if (!found) throw new Error(`Brak autora: ${name}`)
     return found
   }

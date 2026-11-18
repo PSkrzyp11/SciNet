@@ -8,6 +8,7 @@ import FavoriteButton from '@/components/FavoriteButton.vue'
 import LikeButton from '@/components/LikeButton.vue'
 import SplitHeading from '@/components/SplitHeading.vue'
 import BaseBadge from '@/components/ui/BaseBadge.vue'
+import { useScrollReveal } from '@/composables/useScrollReveal'
 import { useToast } from '@/composables/useToast'
 import { readingTime } from '@/data/articles'
 import { sharedArticleId, viewTransitionsEnabled } from '@/motion/viewTransition'
@@ -29,14 +30,63 @@ const related = computed(() =>
   store.articles.filter((a) => a.id !== article.value?.id && a.author === article.value?.author),
 )
 
-// Pasek postępu czytania na górze ekranu
-const readProgress = ref(0)
+// Pasek postępu czytania na górze ekranu. Pisze transform prosto do elementu, najwyżej raz
+// na klatkę, a wysokość strony zna z ResizeObservera, więc scroll nie przelicza układu.
+const progressBar = ref<HTMLElement | null>(null)
+let scrollable = 0
+let progressFrame = 0
+let pageObserver: ResizeObserver | null = null
 
-function updateProgress() {
-  const scrollTop = window.scrollY || document.documentElement.scrollTop
-  const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight
-  readProgress.value = docHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / docHeight) * 100)) : 0
+function measurePage() {
+  scrollable = document.documentElement.scrollHeight - window.innerHeight
+  drawProgress()
 }
+
+function drawProgress() {
+  progressFrame = 0
+  const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0
+  if (progressBar.value) progressBar.value.style.transform = `scaleX(${progress})`
+}
+
+function onScroll() {
+  if (!progressFrame) progressFrame = requestAnimationFrame(drawProgress)
+}
+
+// Obrazek poniżej pierwszego ekranu odsłania się spod kurtyny w trakcie przewijania.
+// Obrazek widoczny od razu (zwykle element LCP) niczego nie ukrywa: przy przewijaniu
+// cała ramka zostaje lekko w tyle za tekstem. Ruszamy ramkę, a nie sam <img>, żeby efekt
+// WebGL na obrazie (rysowany w tej ramce) zgadzał się z tym, co widać.
+const articleElement = ref<HTMLElement | null>(null)
+
+useScrollReveal(articleElement, ({ gsap }, root) => {
+  const frame = root.querySelector<HTMLElement>('.article-image-frame')
+  const image = frame?.querySelector('img')
+  if (!frame || !image) return
+
+  if (frame.getBoundingClientRect().top < window.innerHeight * 0.85) {
+    gsap.fromTo(
+      frame,
+      { y: 0 },
+      {
+        y: 32,
+        ease: 'none',
+        scrollTrigger: { trigger: frame, start: 'top top+=80', end: 'bottom top', scrub: true },
+      },
+    )
+    return
+  }
+
+  const curtain = document.createElement('div')
+  curtain.className = 'image-curtain'
+  curtain.setAttribute('aria-hidden', 'true')
+  frame.append(curtain)
+
+  const scrollTrigger = { trigger: frame, start: 'top 95%', end: 'top 45%', scrub: true }
+  gsap.fromTo(curtain, { scaleY: 1 }, { scaleY: 0, ease: 'none', scrollTrigger })
+  gsap.fromTo(image, { scale: 1.12 }, { scale: 1, ease: 'none', scrollTrigger })
+
+  return () => curtain.remove()
+})
 
 async function copyArticleLink() {
   try {
@@ -54,19 +104,25 @@ async function copyArticleLink() {
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', updateProgress, { passive: true })
-  updateProgress()
+  window.addEventListener('scroll', onScroll, { passive: true })
+  if (typeof ResizeObserver !== 'undefined') {
+    pageObserver = new ResizeObserver(measurePage)
+    pageObserver.observe(document.body)
+  }
+  measurePage()
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', updateProgress)
+  window.removeEventListener('scroll', onScroll)
+  cancelAnimationFrame(progressFrame)
+  pageObserver?.disconnect()
 })
 </script>
 
 <template>
-  <article v-if="article" class="article">
+  <article v-if="article" ref="articleElement" class="article">
     <div class="progress-track" aria-hidden="true">
-      <div class="progress-bar" :style="{ transform: `scaleX(${readProgress / 100})` }"></div>
+      <div ref="progressBar" class="progress-bar"></div>
     </div>
 
     <header class="article-head">
@@ -200,9 +256,19 @@ onBeforeUnmount(() => {
   pointer-events: none;
 }
 
+/* Kurtyna nad obrazkiem, zwijana w górę w trakcie przewijania (tylko transform) */
+.article :deep(.image-curtain) {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  transform-origin: top center;
+  pointer-events: none;
+}
+
 .progress-bar {
   width: 100%;
   height: 100%;
+  transform: scaleX(0);
   background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
   transform-origin: left center;
   transition: transform var(--duration-instant) linear;

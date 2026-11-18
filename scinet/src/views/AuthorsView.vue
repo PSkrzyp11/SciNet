@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import AuthorAvatar from '@/components/AuthorAvatar.vue'
+import { revealInBatches, useScrollReveal } from '@/composables/useScrollReveal'
 import { authors, type Author } from '@/data/authors'
 import { useArticlesStore } from '@/stores/articles'
 
@@ -24,6 +25,12 @@ const allAuthors = computed<Author[]>(() => {
     })),
   ]
 })
+
+// Autorzy spoza pierwszego ekranu wchodzą grupami, gdy do nich dojedziemy
+const grid = ref<HTMLElement | null>(null)
+useScrollReveal(grid, (motion, root) =>
+  revealInBatches(motion, [...root.querySelectorAll('.author')]),
+)
 </script>
 
 <template>
@@ -33,7 +40,7 @@ const allAuthors = computed<Author[]>(() => {
     <p class="lead">Poznaj osoby, które piszą dla SciNet, i zobacz, o czym piszą.</p>
   </header>
 
-  <div class="grid">
+  <div ref="grid" class="grid">
     <div
       v-for="(author, index) in allAuthors"
       :key="author.name"
@@ -43,7 +50,7 @@ const allAuthors = computed<Author[]>(() => {
       <div class="head">
         <AuthorAvatar :name="author.name" :size="76" />
         <div class="identity">
-          <h3>{{ author.name }}</h3>
+          <h2>{{ author.name }}</h2>
           <span class="field">{{ author.field }}</span>
         </div>
       </div>
@@ -144,7 +151,7 @@ h1 {
   gap: var(--space-15);
 }
 
-h3 {
+h2 {
   margin: 0;
   font-family: var(--font-display);
   font-size: var(--text-xl);

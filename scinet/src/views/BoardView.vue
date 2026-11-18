@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import BaseButton from '@/components/ui/BaseButton.vue'
-import { computed, defineAsyncComponent, nextTick, ref } from 'vue'
+import { computed, defineAsyncComponent, nextTick, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ArticleCard from '@/components/ArticleCard.vue'
 import ArticleForm from '@/components/ArticleForm.vue'
 import AuthorAvatar from '@/components/AuthorAvatar.vue'
-import BaseInput from '@/components/ui/BaseInput.vue'
 import MarqueeStrip from '@/components/MarqueeStrip.vue'
 import TopLikedPanel from '@/components/TopLikedPanel.vue'
 import UserCard from '@/components/UserCard.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseInput from '@/components/ui/BaseInput.vue'
+import { revealInBatches, useScrollReveal } from '@/composables/useScrollReveal'
 import { useToast } from '@/composables/useToast'
 import { CATEGORIES, type Article, type ArticleDraft } from '@/data/articles'
 import { currentUser } from '@/data/authors'
@@ -87,6 +88,37 @@ const userLikes = computed(() => userArticles.value.reduce((sum, a) => sum + a.l
 const formOpen = ref(false)
 const addButton = ref<HTMLButtonElement | null>(null)
 const heroElement = ref<HTMLElement | null>(null)
+const boardElement = ref<HTMLElement | null>(null)
+
+// Animacje sterowane scrollem: hero zwija się przy przewijaniu, a karty spoza ekranu
+// wchodzą grupami, gdy do nich dojedziemy
+const { refresh: refreshScrollMotion } = useScrollReveal(boardElement, (motion, root) => {
+  const head = root.querySelector('.board-head')
+  const copy = head?.querySelector('.hero-copy')
+  const title = head?.querySelector('h1')
+  if (head && copy && title) {
+    motion.gsap
+      .timeline({
+        // Start, gdy hero dotknie paska menu, koniec, gdy zniknie za górną krawędzią
+        scrollTrigger: { trigger: head, start: 'top top+=80', end: 'bottom top', scrub: true },
+        defaults: { ease: 'none' },
+      })
+      // Treść odjeżdża wolniej niż strona, a tytuł maleje
+      .to(copy, { y: 120, opacity: 0.25 }, 0)
+      .to(title, { scale: 0.86, transformOrigin: 'left bottom' }, 0)
+  }
+  revealInBatches(motion, [...root.querySelectorAll('.feed .card')])
+})
+
+// Po filtrowaniu, sortowaniu albo dodaniu artykułu karty stoją gdzie indziej, więc animacje
+// ustawiają się od nowa. Żadna karta nie zostaje przy tym niewidoczna.
+watch(
+  () => filtered.value.map((a) => a.id).join(),
+  async () => {
+    await nextTick()
+    void refreshScrollMotion()
+  },
+)
 
 function handleHeroPointerMove(event: PointerEvent) {
   const el = heroElement.value
@@ -124,7 +156,7 @@ function handleRemove(id: number, title: string) {
 </script>
 
 <template>
-  <div class="board">
+  <div ref="boardElement" class="board">
     <header ref="heroElement" class="board-head" @pointermove="handleHeroPointerMove">
       <GradientCanvas />
       <svg class="hero-ornament" viewBox="0 0 200 200" aria-hidden="true">
