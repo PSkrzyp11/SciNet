@@ -1,67 +1,93 @@
 <div align="center">
 
-# SciNet
+# ✦ SciNet
 
 **Nauka podana po ludzku.**
 
-Portal społecznościowy dla ludzi nauki: tablica artykułów, które można publikować, poprawiać, polubić, komentować i zapisywać.
+Portal społecznościowy dla ludzi nauki. Publikujesz artykuły, czytasz cudze,<br>
+dajesz polubienia, komentujesz i zapisujesz te, do których chcesz wrócić.
 
 ![Vue 3](https://img.shields.io/badge/Vue-3.5-42b883?logo=vuedotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178c6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)
 ![Pinia](https://img.shields.io/badge/Pinia-4-f7d336?logo=pinia&logoColor=black)
+![GSAP](https://img.shields.io/badge/GSAP-3.15-0ae448?logo=greensock&logoColor=black)
+![Testy](https://img.shields.io/badge/testy-384-6e44c6)
+![Lighthouse](https://img.shields.io/badge/Lighthouse-100-f0b429?logo=lighthouse&logoColor=black)
+
+[Funkcje](#funkcje) · [Wygląd i ruch](#wygląd-i-ruch) · [Jakość](#jakość) · [Uruchomienie](#uruchomienie) · [Jak to jest zbudowane](#jak-to-jest-zbudowane)
 
 </div>
 
+<br>
+
+![Tablica SciNet w ciemnym motywie: animowany gradient w nagłówku, pasek dziedzin, menu dziedzin, pole dodawania artykułu i wizytówka autorki](docs/board.webp)
+
+> [!NOTE]
+> Projekt na zakończenie kursu Vue. Działa w całości w przeglądarce, bez serwera. Przykładowe artykuły, autorzy i dane kontaktowe są zmyślone, a formularz kontaktowy niczego nie wysyła.
+
 ## Funkcje
 
-- **Tablica:** artykuły od najnowszego, wyszukiwanie po tytule, filtrowanie po dziedzinie nauki i sortowanie. Dziedzina i wyszukiwana fraza zapisują się w adresie, więc wynikami można się podzielić linkiem.
-- **Publikowanie:** formularz z walidacją, który przyjmuje tytuł, autora, dziedzinę, treść i opcjonalnie adres obrazka.
-- **Edycja i usuwanie:** każdy artykuł można poprawić albo usunąć, a usunięty nie wraca po odświeżeniu.
-- **Polubienia:** przycisk „Lubię to” z licznikiem, a drugie kliknięcie cofa polubienie.
-- **Komentarze:** lista i formularz pod każdym artykułem oraz licznik na karcie.
-- **Panele boczne:** wizytówka użytkownika i najczęściej polubione artykuły.
-- **Zapisane:** zakładki z licznikiem w menu i osobną podstroną.
-- **Autorzy:** krótkie opisy i listy tekstów, także osób wpisanych w formularzu.
-- **Kontakt:** formularz z walidacją, dane kontaktowe i najczęstsze pytania.
-- **Każdy ekran:** trzy kolumny na komputerze, dwie na tablecie i jedna na telefonie, bez przewijania na boki.
-- **Motywy:** ciemny „nocne obserwatorium” (domyślny) i jasny, w barwach royal purple, biel i sunglow gold.
+### Czytanie
+
+- **Tablica** z artykułami od najnowszego: szukanie po tytule, dziedziny nauki i sortowanie. Filtry zapisują się w adresie, więc wynik można wysłać linkiem.
+- **Strona artykułu** z paskiem postępu czytania, polecanymi tekstami tego samego autora i przyciskiem „Udostępnij”.
+- **Zapisane:** własna lista zakładek z licznikiem w menu.
+- **Autorzy:** krótkie sylwetki i spis tekstów każdej osoby.
+
+### Pisanie
+
+- **Publikowanie** w formularzu z walidacją: tytuł, autor, dziedzina, treść i opcjonalny obrazek.
+- **Edycja i usuwanie** każdego artykułu. Usunięty nie wraca po odświeżeniu.
+- **Polubienia** z licznikiem. Drugie kliknięcie cofa polubienie.
+- **Komentarze** pod artykułem, z licznikiem na karcie.
+
+### Na co dzień
+
+- **Panele boczne:** wizytówka użytkowniczki i najczęściej polubione artykuły.
+- **Dwa motywy:** ciemny „nocne obserwatorium” (domyślny) i jasny, w barwach royal purple, bieli i sunglow gold.
+- **Każdy ekran:** trzy kolumny na komputerze, dwie na tablecie i jedna na telefonie.
+- **Pamięć w przeglądarce:** wszystko zapisuje się w `localStorage` i zostaje po odświeżeniu strony.
 
 ## Wygląd i ruch
 
-- **Hero tablicy:** żywy gradient rysowany w WebGL (własny shader w Web Workerze), który przyciąga się do kursora i mocniej faluje przy szybkim przewijaniu. Pod spodem zawsze jest statyczny gradient CSS.
-- **Typografia:** Archivo, Plus Jakarta Sans i JetBrains Mono z własnego serwera. Tytuły wysuwają się linia po linii, a litery dużego napisu w stopce grubieją pod kursorem.
-- **Przejścia między stronami** (View Transitions API): tytuł i obrazek karty płynnie przechodzą w nagłówek artykułu, a pozostałe strony zmieniają się z krótką kurtyną.
-- **Przewijanie:** płynne na komputerze (Lenis). Hero zwija się przy przewijaniu, a karty, liczniki i stopka reagują na pozycję strony.
-- **Detale:** obrazy falują pod kursorem, przyciski są lekko magnetyczne, a kursor-towarzysz pokazuje „Czytaj” nad kartą.
-- **Trzy poziomy efektów:** komputer z myszą dostaje wszystko. Telefon i słabszy sprzęt dostają lżejszą wersję z natywnym scrollem, bez kursora i zniekształceń, a kod tych efektów się nie pobiera. Przy ustawieniu „ogranicz ruch” albo bez WebGL strona zmienia się natychmiast, bez animacji.
+![Strona artykułu: duży tytuł, autorka, data, ilustracja czarnej dziury](docs/article.webp)
 
-## Dostępność i wydajność
-
-- Lighthouse na wersji produkcyjnej: komputer 100 we wszystkich kategoriach, telefon Performance 92–94, a dostępność, Best Practices i SEO 100. CLS najwyżej 0,004.
-- Każdy element da się obsłużyć klawiaturą, a fokus jest zawsze widoczny. Po zmianie strony fokus trafia na początek nowej treści.
-- Tekst ma kontrast co najmniej 4,5:1 w obu motywach, także na animowanym gradiencie.
-- Biblioteki animacji ładują się po wyświetleniu strony, a efekty, które zmieniają układ, czekają na koniec przewijania.
-
-Portal działa w całości w przeglądarce, bez serwera i bazy danych. Dane zapisują się w `localStorage`, więc zostają po odświeżeniu strony, ale nie przenoszą się na inne urządzenia.
-
-> [!NOTE]
-> To projekt na zakończenie kursu Vue. Przykładowe artykuły, autorzy i dane kontaktowe są zmyślone, a formularz kontaktowy nie wysyła wiadomości.
-
-## Technologie
-
-| Obszar | Narzędzie |
+| Efekt | Co robi |
 | --- | --- |
-| Framework | [Vue 3](https://vuejs.org/) (Composition API, `<script setup>`) |
-| Język | [TypeScript](https://www.typescriptlang.org/) |
-| Routing | [Vue Router](https://router.vuejs.org/) |
-| Stan aplikacji | [Pinia](https://pinia.vuejs.org/) |
-| Animacje | [GSAP](https://gsap.com/) (ScrollTrigger, SplitText), [Lenis](https://lenis.darkroom.engineering/) |
-| Grafika | WebGL 1 z OffscreenCanvas w Web Workerze, bez bibliotek 3D |
-| Fonty | [Fontsource](https://fontsource.org/) (Archivo, Plus Jakarta Sans, JetBrains Mono) |
-| Budowanie | [Vite](https://vite.dev/) |
-| Testy | [Vitest](https://vitest.dev/), [Vue Test Utils](https://test-utils.vuejs.org/) |
-| Jakość kodu | ESLint, Oxlint, Prettier |
+| **Żywy gradient** | Nagłówek tablicy to shader WebGL rysowany w osobnym wątku. Przyciąga się do kursora i mocniej faluje przy szybkim przewijaniu. |
+| **Przejścia stron** | Tytuł i obrazek karty płynnie przechodzą w nagłówek artykułu, a „wstecz” robi ten ruch odwrotnie. Inne strony zmieniają się z krótką kurtyną. |
+| **Przewijanie** | Płynne na komputerze. Nagłówek się zwija, karty wchodzą grupami, liczniki doliczają, a duży napis w stopce wyjeżdża na końcu strony. |
+| **Typografia** | Tytuły wysuwają się linia po linii, a litery napisu „SciNet” w stopce grubieją pod kursorem. |
+| **Detale** | Obrazy falują pod kursorem, przyciski są lekko magnetyczne, a kursor-towarzysz zmienia się w „Czytaj” nad kartą. |
+
+### Na telefonie
+
+<p align="center">
+  <img src="docs/phones.webp" width="640" alt="Tablica na telefonie w ciemnym i jasnym motywie">
+</p>
+
+Efekty dopasowują się do urządzenia. Strona sama wybiera jeden z trzech poziomów:
+
+| Poziom | Kiedy | Co dostajesz |
+| --- | --- | --- |
+| **Pełny** | komputer z myszą | wszystkie efekty |
+| **Lekki** | telefon, słabszy sprzęt, oszczędzanie danych | natywne przewijanie, lżejszy gradient, krótsze animacje. Kod kursora i zniekształceń w ogóle się nie pobiera. |
+| **Wyłączony** | ustawienie „ogranicz ruch” albo brak WebGL | statyczne tła i natychmiastowe zmiany |
+
+## Jakość
+
+| Lighthouse (wersja produkcyjna) | Komputer | Telefon |
+| --- | :---: | :---: |
+| Performance | 100 | 92–94 |
+| Accessibility | 100 | 100 |
+| Best Practices | 100 | 100 |
+| SEO | 100 | 100 |
+
+- **Dostępność:** całą aplikację da się obsłużyć klawiaturą, a fokus jest zawsze widoczny. Kontrast tekstu wynosi co najmniej 4,5:1 w obu motywach, także na animowanym gradiencie. Sprawdzone narzędziem axe-core na wszystkich podstronach.
+- **Stabilny układ:** nic nie skacze przy wczytywaniu (CLS najwyżej 0,004).
+- **Płynność:** najdłuższa klatka przy przewijaniu trwa 7 ms. Biblioteki animacji ładują się dopiero po wyświetleniu strony.
+- **Testy:** 384 testy jednostkowe i komponentów (Vitest), do tego sprawdzanie typów i lint.
 
 ## Uruchomienie
 
@@ -74,11 +100,12 @@ npm install
 npm run dev
 ```
 
-Aplikacja uruchomi się pod adresem http://localhost:5173.
+Aplikacja działa pod adresem http://localhost:5173.
 
-### Przydatne polecenia
+<details>
+<summary><strong>Wszystkie polecenia</strong> (uruchamiaj w folderze <code>scinet</code>)</summary>
 
-Uruchamiaj je w folderze `scinet`.
+<br>
 
 | Polecenie | Działanie |
 | --- | --- |
@@ -91,35 +118,63 @@ Uruchamiaj je w folderze `scinet`.
 | `npm run lint` | sprawdzenie i poprawa kodu |
 | `npm run format` | formatowanie kodu |
 
-## Struktura projektu
+</details>
+
+## Jak to jest zbudowane
+
+| Obszar | Narzędzie |
+| --- | --- |
+| Framework | [Vue 3](https://vuejs.org/) (Composition API, `<script setup>`) |
+| Język | [TypeScript](https://www.typescriptlang.org/) |
+| Routing i stan | [Vue Router](https://router.vuejs.org/), [Pinia](https://pinia.vuejs.org/) |
+| Animacje | [GSAP](https://gsap.com/) (ScrollTrigger, SplitText), [Lenis](https://lenis.darkroom.engineering/), View Transitions API |
+| Grafika | WebGL 1 w Web Workerze (OffscreenCanvas), własne shadery, bez bibliotek 3D |
+| Fonty | [Fontsource](https://fontsource.org/): Archivo, Plus Jakarta Sans, JetBrains Mono |
+| Budowanie i testy | [Vite](https://vite.dev/), [Vitest](https://vitest.dev/), [Vue Test Utils](https://test-utils.vuejs.org/) |
+| Jakość kodu | ESLint, Oxlint, Prettier |
+
+<details>
+<summary><strong>Struktura folderów</strong></summary>
+
+<br>
 
 ```text
 scinet/src/
 ├── assets/       # kafle ziarna tła
-├── components/   # karta artykułu, formularz, komentarze, panele, menu, ui/ (przyciski, pola)
+├── components/   # karta artykułu, formularze, komentarze, panele, menu
+│   └── ui/       # wspólne przyciski, pola, odznaki, okno modalne
 ├── composables/  # motyw, powiadomienia, animacje przy przewijaniu, poziom efektów
 ├── data/         # model danych, przykładowe artykuły i autorzy
-├── fx/           # efekty WebGL: gradient hero, fale na obrazach, shadery, workery
+├── fx/           # efekty WebGL: gradient, fale na obrazach, shadery i workery
 ├── motion/       # płynny scroll, przejścia stron, poziomy efektów, podział tekstu
 ├── router/       # adresy podstron i tytuły kart
 ├── stores/       # stan aplikacji: artykuły i zakładki
+├── styles/       # tokens.css (zmienne projektu) i base.css (style bazowe)
 ├── views/        # całe podstrony, w tym tablica
 ├── App.vue       # główny układ strony
-├── main.ts       # punkt startowy aplikacji
-└── styles/       # tokens.css (zmienne) i base.css (style bazowe)
+└── main.ts       # punkt startowy
 ```
 
-Komponenty dostają dane przez propsy, a zmiany zgłaszają przez emity. Dane w store'ach zmieniają dopiero widoki.
+Komponenty dostają dane przez propsy i zgłaszają zmiany przez emity. Dane w store'ach zmieniają dopiero widoki.
 
-### Przykładowe dane
+</details>
 
-Przykładowe artykuły z `scinet/src/data/articles.ts` wczytują się tylko przy pierwszym uruchomieniu. Później aplikacja korzysta z danych zapisanych w przeglądarce, więc po zmianie tego pliku trzeba usunąć klucz `scinet-articles` z `localStorage`. Nową dziedzinę nauki dodaje się do listy `CATEGORIES`.
+<details>
+<summary><strong>Przykładowe dane</strong></summary>
 
-Obrazki przykładowych artykułów są w domenie publicznej i pochodzą z Wikimedia Commons: [ilustracja NASA/CXC/SAO](https://commons.wikimedia.org/wiki/File:Artist%27s_illustration_showing_material_in_a_disk_that_is_falling_towards_a_supermassive_black_hole.jpg) i [zdjęcie NOAA Marine Debris Program](https://commons.wikimedia.org/wiki/File:Pre-production_plastic_pellets_(7656726070).jpg).
+<br>
+
+Przykładowe artykuły z `scinet/src/data/articles.ts` wczytują się tylko przy pierwszym uruchomieniu. Potem aplikacja korzysta z danych zapisanych w przeglądarce, więc po zmianie tego pliku trzeba usunąć klucz `scinet-articles` z `localStorage`. Nową dziedzinę nauki dodaje się do listy `CATEGORIES`.
+
+</details>
+
+## Źródła
+
+Obrazki przykładowych artykułów są w domenie publicznej i pochodzą z Wikimedia Commons: [ilustracja NASA/CXC/SAO](https://commons.wikimedia.org/wiki/File:Artist%27s_illustration_showing_material_in_a_disk_that_is_falling_towards_a_supermassive_black_hole.jpg) i [zdjęcie NOAA Marine Debris Program](https://commons.wikimedia.org/wiki/File:Pre-production_plastic_pellets_(7656726070).jpg). Fonty są na licencji SIL Open Font License.
 
 ## Plany
 
-- [x] Testy automatyczne (Vitest)
+- [x] Testy automatyczne
 - [x] Publikowanie, edycja, usuwanie i komentarze
 - [x] Polubienia, panele boczne i widok na każdy ekran
 - [x] Nowy wygląd: tryb ciemny, animacje, efekty WebGL i przejścia między stronami
