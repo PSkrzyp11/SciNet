@@ -259,6 +259,8 @@
   --fx-color-2: #7c4ddb;
   --fx-color-3: #f0b429;
   --fx-grain: 0.05;
+  /* Ziarno na całej stronie: mały kafel PNG z szumem, krycie zapisane w samym pliku */
+  --grain-image: url('../assets/grain-light.png');
   /* Tekst na gradiencie jest jasny w obu motywach, bo hero jest zawsze ciemne */
   --fx-text: #f6f1fd;
   --fx-text-muted: #d5c9ea;
@@ -359,6 +361,7 @@
   --fx-color-2: #7c4ddb;
   --fx-color-3: #f5c445;
   --fx-grain: 0.07;
+  --grain-image: url('../assets/grain-dark.png');
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.35), 0 6px 16px -2px rgba(0, 0, 0, 0.3);

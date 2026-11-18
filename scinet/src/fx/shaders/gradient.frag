@@ -8,6 +8,10 @@ uniform vec3 uColor1;
 uniform vec3 uColor2;
 uniform vec3 uColor3;
 uniform float uGrain;
+// Kursor (0–1 od lewego dolnego rogu), siła jego wpływu i prędkość scrolla (0–1)
+uniform vec2 uPointer;
+uniform float uPointerStrength;
+uniform float uVelocity;
 
 float hash(vec2 p) {
   p = fract(p * vec2(123.34, 456.21));
@@ -40,16 +44,25 @@ float fbm(vec2 p) {
 
 void main() {
   vec2 uv = gl_FragCoord.xy / uResolution;
+  float aspect = uResolution.x / uResolution.y;
   vec2 p = uv;
-  p.x *= uResolution.x / uResolution.y;
+  p.x *= aspect;
+
+  // Kursor przyciąga plamy koloru: przestrzeń szumu ugina się w jego stronę
+  vec2 toPointer = vec2(uPointer.x * aspect, uPointer.y) - p;
+  float pull = exp(-dot(toPointer, toPointer) * 5.0) * uPointerStrength;
+  p += toPointer * pull * 0.35;
+
+  // Szybki scroll mocniej zniekształca gradient
+  float warp = 2.0 + uVelocity * 2.5;
 
   float t = uTime * 0.06;
 
   // Szum podawany sam do siebie daje miękki, organiczny ruch zamiast przesuwania tekstury
   vec2 q = vec2(fbm(p * 1.2 + vec2(0.0, t)), fbm(p * 1.2 + vec2(5.2, -t)));
   vec2 r = vec2(
-    fbm(p * 1.6 + 2.0 * q + vec2(1.7, 9.2) + t * 0.7),
-    fbm(p * 1.6 + 2.0 * q + vec2(8.3, 2.8) - t * 0.5)
+    fbm(p * 1.6 + warp * q + vec2(1.7, 9.2) + t * 0.7),
+    fbm(p * 1.6 + warp * q + vec2(8.3, 2.8) - t * 0.5)
   );
   float f = fbm(p * 1.4 + 2.2 * r);
 
@@ -58,11 +71,14 @@ void main() {
   color = mix(color, uColor2, smoothstep(0.45, 0.95, length(r)) * 0.75);
 
   // Na wąskim hero (telefon) tekst zajmuje całą szerokość, a nie tylko lewą część
-  float narrow = 1.0 - smoothstep(1.4, 2.4, uResolution.x / uResolution.y);
+  float narrow = 1.0 - smoothstep(1.4, 2.4, aspect);
 
   // Złota poświata trzyma się prawej strony, z dala od tekstu
   float glow = smoothstep(0.55, 0.0, distance(uv, vec2(0.86, 0.7) + (q - 0.5) * 0.25));
   color = mix(color, uColor3, glow * glow * 0.55 * (0.6 + 0.4 * f) * (1.0 - 0.6 * narrow));
+
+  // Delikatne światło pod kursorem
+  color = mix(color, uColor2, pull * 0.18);
 
   // Przyciemnienie po lewej pilnuje kontrastu tytułu
   color = mix(color, uBase, smoothstep(0.75, 0.0, uv.x) * 0.6);

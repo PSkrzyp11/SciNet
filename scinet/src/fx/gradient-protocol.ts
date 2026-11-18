@@ -23,6 +23,10 @@ export type ToWorker =
   | { type: 'colors'; colors: GradientColors }
   | { type: 'play' }
   | { type: 'pause' }
+  // Kursor nad hero: pozycja 0–1 od lewego dolnego rogu, `active` znika po wyjściu kursora
+  | { type: 'pointer'; x: number; y: number; active: boolean }
+  // Prędkość przewijania 0–1 (1 to bardzo szybki scroll)
+  | { type: 'velocity'; value: number }
 
 export type FromWorker =
   // Pierwsza klatka jest gotowa, canvas może się pojawić

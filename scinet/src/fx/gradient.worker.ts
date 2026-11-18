@@ -11,6 +11,14 @@ const SAMPLE_FRAMES = 90
 const SLOW_FRAME_MS = 24
 // Co ile klatek wysyłamy licznik do strony
 const REPORT_EVERY = 30
+// Wygładzanie ruchu kursora i prędkości scrolla w każdej klatce (0–1)
+const POINTER_EASE = 0.08
+const STRENGTH_EASE = 0.05
+const VELOCITY_EASE = 0.12
+// Bez nowych zdarzeń scrolla prędkość wygasa
+const VELOCITY_DECAY = 0.92
+// Tyle razy szybciej płynie czas gradientu przy najszybszym scrollu
+const VELOCITY_TIME_BOOST = 3
 
 let canvas: OffscreenCanvas | null = null
 let gl: WebGLRenderingContext | null = null
@@ -29,6 +37,13 @@ let elapsed = 0
 let frames = 0
 let sampleFrames = 0
 let sampleTime = 0
+
+// Stan interakcji: wartości docelowe z wiadomości i wartości wygładzone
+const pointer = { x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5 }
+let strength = 0
+let pointerActive = false
+let velocity = 0
+let velocityTarget = 0
 
 const post = (message: FromWorker) => self.postMessage(message)
 
@@ -71,10 +86,22 @@ function render(now: number) {
   if (!gl || !program) return
   const delta = last ? Math.min(now - last, 100) : 16
   last = now
-  elapsed += delta
   frames += 1
 
+  // Wygładzanie: gradient dąży do kursora zamiast skakać za nim
+  pointer.x += (pointer.targetX - pointer.x) * POINTER_EASE
+  pointer.y += (pointer.targetY - pointer.y) * POINTER_EASE
+  strength += ((pointerActive ? 1 : 0) - strength) * STRENGTH_EASE
+  velocity += (velocityTarget - velocity) * VELOCITY_EASE
+  velocityTarget *= VELOCITY_DECAY
+
+  // Przy szybkim scrollu czas płynie szybciej, ale bez skoku
+  elapsed += delta * (1 + velocity * VELOCITY_TIME_BOOST)
+
   gl.uniform1f(uniforms.time ?? null, elapsed / 1000)
+  gl.uniform2f(uniforms.pointer ?? null, pointer.x, pointer.y)
+  gl.uniform1f(uniforms.pointerStrength ?? null, strength)
+  gl.uniform1f(uniforms.velocity ?? null, velocity)
   program.draw()
   if (frames === 1) post({ type: 'ready' })
   if (frames % REPORT_EVERY === 0) post({ type: 'frames', frames })
@@ -135,6 +162,9 @@ async function init(target: OffscreenCanvas) {
     color1: 'uColor1',
     color2: 'uColor2',
     color3: 'uColor3',
+    pointer: 'uPointer',
+    pointerStrength: 'uPointerStrength',
+    velocity: 'uVelocity',
   })) {
     uniforms[key] = program.uniform(name)
   }
@@ -166,6 +196,19 @@ self.addEventListener('message', (event: MessageEvent<ToWorker>) => {
     case 'pause':
       playing = false
       pause()
+      break
+    case 'pointer':
+      // Pierwsze wejście kursora ustawia pozycję od razu, żeby plama nie płynęła przez cały ekran
+      if (!pointerActive && strength < 0.01) {
+        pointer.x = message.x
+        pointer.y = message.y
+      }
+      pointer.targetX = message.x
+      pointer.targetY = message.y
+      pointerActive = message.active
+      break
+    case 'velocity':
+      velocityTarget = Math.max(velocityTarget, message.value)
       break
   }
 })

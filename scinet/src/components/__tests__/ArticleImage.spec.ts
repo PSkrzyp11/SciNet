@@ -35,4 +35,38 @@ describe('ArticleImage', () => {
 
     expect(wrapper.find('img').attributes('src')).toBe('https://example.com/inny.jpg')
   })
+
+  it('obraz z Wikimedia pobiera się z CORS, żeby mógł trafić do WebGL', () => {
+    const wiki = 'https://thumb.wikimedia.org/obraz.jpg'
+    const img = mount(ArticleImage, { props: { src: wiki, alt: 'Opis' } }).find('img')
+
+    expect(img.attributes('crossorigin')).toBe('anonymous')
+  })
+
+  it('obraz z innego hosta pobiera się zwyczajnie, bez CORS', () => {
+    const img = mount(ArticleImage, { props: { src, alt: 'Opis' } }).find('img')
+
+    expect(img.attributes('crossorigin')).toBeUndefined()
+  })
+
+  it('gdy CORS zawiedzie, próbuje jeszcze raz jako zwykły obraz', async () => {
+    const wrapper = mount(ArticleImage, {
+      props: { src: 'https://thumb.wikimedia.org/obraz.jpg', alt: 'Opis' },
+    })
+
+    await wrapper.find('img').trigger('error')
+
+    expect(wrapper.find('img').exists()).toBe(true)
+    expect(wrapper.find('img').attributes('crossorigin')).toBeUndefined()
+
+    await wrapper.find('img').trigger('error')
+    expect(wrapper.find('img').exists()).toBe(false)
+  })
+
+  it('obraz widoczny od razu ładuje się bez czekania i z wysokim priorytetem', () => {
+    const img = mount(ArticleImage, { props: { src, alt: 'Opis', eager: true } }).find('img')
+
+    expect(img.attributes('loading')).toBe('eager')
+    expect(img.attributes('fetchpriority')).toBe('high')
+  })
 })

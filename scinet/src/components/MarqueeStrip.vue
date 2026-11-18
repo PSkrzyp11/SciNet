@@ -156,6 +156,10 @@ const linkTo = (item: string) => ({ path: '/', query: { kategoria: item } })
 }
 
 .marquee-toggle {
+  /* Przesuwany pasek ma transform i maskę, więc rysuje się wyżej. Przycisk musi leżeć
+     nad nim, inaczej przycięte linki formalnie go zasłaniają (audyt rozmiaru celu). */
+  position: relative;
+  z-index: var(--z-raised);
   display: inline-grid;
   flex-shrink: 0;
   place-items: center;

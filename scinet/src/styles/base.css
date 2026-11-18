@@ -10,6 +10,10 @@
 body {
   margin: 0;
   background-color: var(--color-bg);
+  /* Ziarno na całej stronie: statyczny kafel PNG pod treścią, bez animacji i bez canvasu.
+     Filtr SVG (feTurbulence) rysował się na wątku głównym i opóźniał LCP o ok. 1 s. */
+  background-image: var(--grain-image);
+  background-size: 96px;
   color: var(--color-text);
   transition:
     background-color var(--duration-normal) var(--ease-out),

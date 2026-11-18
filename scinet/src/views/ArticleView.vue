@@ -93,7 +93,7 @@ onBeforeUnmount(() => {
       </div>
     </header>
 
-    <ArticleImage class="image" :src="article.image" :alt="article.title" />
+    <ArticleImage class="image" :src="article.image" :alt="article.title" eager />
 
     <p v-for="(paragraph, i) in article.content" :key="i">{{ paragraph }}</p>
 

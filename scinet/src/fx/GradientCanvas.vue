@@ -3,6 +3,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useReducedMotion } from '@/composables/useReducedMotion'
 import { useTheme } from '@/composables/useTheme'
 import type { FromWorker, GradientColors, GradientSize, ToWorker } from './gradient-protocol'
+import { hasFinePointer, trackPointer, trackScrollVelocity } from './interaction'
 import { hexToRgb } from './webgl'
 
 // Gęstość pikseli ponad 1,5 nie poprawia miękkiego gradientu, a kosztuje kartę graficzną
@@ -70,7 +71,19 @@ function start() {
   })
   const sizeObserver = new ResizeObserver(() => send({ type: 'resize', ...sizeOf(el) }))
 
+  // Kursor i scroll poruszają gradientem tylko z myszą. Na dotyku gradient płynie sam.
+  const interactions = hasFinePointer()
+    ? [
+        // Canvas nie łapie zdarzeń, więc słuchamy całego hero
+        trackPointer(el.parentElement ?? el, (pointer) => send({ type: 'pointer', ...pointer })),
+        trackScrollVelocity((value) => {
+          if (inView) send({ type: 'velocity', value })
+        }),
+      ]
+    : []
+
   function teardown() {
+    interactions.forEach((stopTracking) => stopTracking())
     worker.terminate()
     viewObserver.disconnect()
     sizeObserver.disconnect()

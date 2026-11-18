@@ -161,4 +161,50 @@ describe('GradientCanvas', () => {
 
     expect(FakeWorker.instances[0]?.terminated).toBe(true)
   })
+
+  it('z myszą przekazuje workerowi pozycję kursora nad hero', async () => {
+    stubOffscreenSupport()
+    // Mysz: precyzyjny wskaźnik, ale bez ograniczenia ruchu
+    vi.stubGlobal(
+      'matchMedia',
+      vi.fn((query: string) => ({
+        matches: query.includes('pointer: fine'),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      })),
+    )
+    const frames: FrameRequestCallback[] = []
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) =>
+      frames.push(callback),
+    )
+    const hero = document.createElement('header')
+    document.body.append(hero)
+
+    const wrapper = mount(GradientCanvas, { attachTo: hero })
+    const event = new MouseEvent('pointermove', { clientX: 0, clientY: 0 })
+    Object.defineProperty(event, 'pointerType', { value: 'mouse' })
+    // Canvas nie łapie zdarzeń, więc komponent słucha swojego rodzica
+    wrapper.element.parentElement?.dispatchEvent(event)
+    frames.forEach((callback) => callback(0))
+
+    expect(FakeWorker.instances[0]?.types()).toContain('pointer')
+    wrapper.unmount()
+    hero.remove()
+  })
+
+  it('na ekranie dotykowym nie śledzi kursora', () => {
+    stubOffscreenSupport()
+    stubMotionPreference(false)
+    const hero = document.createElement('header')
+    document.body.append(hero)
+
+    const wrapper = mount(GradientCanvas, { attachTo: hero })
+    const event = new MouseEvent('pointermove')
+    Object.defineProperty(event, 'pointerType', { value: 'mouse' })
+    wrapper.element.parentElement?.dispatchEvent(event)
+
+    expect(FakeWorker.instances[0]?.types()).not.toContain('pointer')
+    wrapper.unmount()
+    hero.remove()
+  })
 })

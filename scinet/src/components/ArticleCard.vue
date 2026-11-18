@@ -391,10 +391,6 @@ h3 {
   border-radius: var(--radius-md);
 }
 
-.card:hover .media-wrap :deep(.article-image) {
-  transform: scale(1.025);
-}
-
 .bar {
   display: flex;
   align-items: center;

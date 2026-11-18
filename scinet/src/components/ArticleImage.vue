@@ -1,10 +1,30 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { canDistort, isCorsFriendly } from '@/fx/interaction'
 
-const props = defineProps<{ src?: string; alt: string }>()
+// Efekt WebGL ładuje się dopiero przy pierwszym najechaniu myszą na obraz
+type Distortion = typeof import('@/fx/imageDistortion')
+let distortion: Distortion | null = null
+
+const props = defineProps<{
+  src?: string
+  alt: string
+  /** Obraz widoczny od razu (np. na stronie artykułu): bez leniwego ładowania */
+  eager?: boolean
+}>()
 
 const failed = ref(false)
 const loaded = ref(false)
+// Gdy obraz z CORS jednak się nie wczyta, próbujemy jeszcze raz jako zwykły obraz
+const corsBlocked = ref(false)
+
+const frame = ref<HTMLElement | null>(null)
+const image = ref<HTMLImageElement | null>(null)
+
+// Tylko obraz pobrany z CORS może trafić do WebGL. Inne adresy dostają efekt CSS.
+const useCors = computed(
+  () => Boolean(props.src) && !corsBlocked.value && isCorsFriendly(props.src!),
+)
 
 // Nowy adres (np. po edycji artykułu) dostaje kolejną szansę
 watch(
@@ -12,31 +32,75 @@ watch(
   () => {
     failed.value = false
     loaded.value = false
+    corsBlocked.value = false
   },
 )
+
+function onError() {
+  if (useCors.value) corsBlocked.value = true
+  else failed.value = true
+}
+
+async function onEnter(event: PointerEvent) {
+  if (event.pointerType !== 'mouse' || !useCors.value || !canDistort()) return
+  try {
+    distortion ??= await import('@/fx/imageDistortion')
+  } catch {
+    return
+  }
+  // Kursor mógł zjechać z obrazu, zanim moduł się wczytał
+  if (!frame.value || !image.value || !frame.value.matches(':hover')) return
+  if (await distortion.activate(frame.value, image.value)) distortion.move(frame.value, event)
+}
+
+function onMove(event: PointerEvent) {
+  if (frame.value) distortion?.move(frame.value, event)
+}
+
+function onLeave() {
+  if (frame.value) distortion?.deactivate(frame.value)
+}
 </script>
 
 <template>
   <!-- Bez adresu albo przy błędzie nie zostaje żadna pusta ramka -->
-  <img
+  <div
     v-if="src && !failed"
-    class="article-image"
-    :class="{ loaded }"
-    :src="src"
-    :alt="alt"
-    loading="lazy"
-    referrerpolicy="no-referrer"
-    @load="loaded = true"
-    @error="failed = true"
-  />
+    ref="frame"
+    class="article-image-frame"
+    @pointerenter="onEnter"
+    @pointermove="onMove"
+    @pointerleave="onLeave"
+  >
+    <img
+      ref="image"
+      class="article-image"
+      :class="{ loaded }"
+      :src="src"
+      :alt="alt"
+      :crossorigin="useCors ? 'anonymous' : undefined"
+      :loading="eager ? 'eager' : 'lazy'"
+      :fetchpriority="eager ? 'high' : undefined"
+      referrerpolicy="no-referrer"
+      @load="loaded = true"
+      @error="onError"
+    />
+  </div>
 </template>
 
 <style scoped>
+.article-image-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
 .article-image {
+  display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border-radius: var(--radius-md);
+  border-radius: inherit;
   border: 1px solid var(--color-border-subtle);
   background: linear-gradient(
     90deg,
@@ -55,6 +119,34 @@ watch(
 .article-image.loaded {
   animation: none;
   background: var(--color-bg-subtle);
+}
+
+/* Plan B bez WebGL: obraz pod kursorem lekko się przybliża. Przy efekcie WebGL
+   powiększenie robi shader, więc CSS go nie dubluje. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .article-image-frame:hover .article-image {
+    transform: scale(1.04);
+  }
+
+  .article-image-frame.fx-on .article-image {
+    transform: none;
+  }
+}
+
+/* Wspólny canvas efektu WebGL, dokładany do ramki obrazu pod kursorem */
+.article-image-frame :deep(.distortion-canvas) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.article-image-frame :deep(.distortion-canvas.visible) {
+  opacity: 1;
 }
 
 @keyframes image-shimmer {
